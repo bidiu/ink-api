@@ -1,0 +1,13 @@
+{
+    "host": "ink_database",
+    "port": 3306,
+    "username": "username",
+    "password": "password",
+    "dialect": "mysql",
+    "pool": {
+        "max": 5,
+        "min": 0,
+        "idle": 10000,
+        "evict": 10000
+    }
+}

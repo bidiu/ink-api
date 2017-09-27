@@ -56,3 +56,10 @@ typings/
 
 # dotenv environment variables file
 .env
+
+/config/**/*.json
+!/config/**/*.example.json
+.DS_Store
+*~
+*.swp
+*.swo
