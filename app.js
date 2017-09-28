@@ -13,8 +13,8 @@ http.createServer(app).listen(3000);
 
 // TODO only for debug
 function debug(req, res) {
-	const db = require('./db/db.js');
-	db.authenticate()
+	const sequelize = require('./db/db');
+	sequelize.authenticate()
 			.then(() => {
 				res.end('Connect to database successfully.');
 			})
