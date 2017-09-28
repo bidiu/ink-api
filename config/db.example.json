@@ -1,6 +1,7 @@
 {
     "host": "ink_database",
     "port": 3306,
+    "database": "ink_dev",
     "username": "username",
     "password": "password",
     "dialect": "mysql",
