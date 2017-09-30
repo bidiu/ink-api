@@ -9,5 +9,6 @@ RUN npm install -g nodemon
 # replace this with your application's default port
 EXPOSE 3000
 
-CMD npm start
+# for production, here will exec "npm install"
+CMD npm install && npm start
 
