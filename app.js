@@ -1,13 +1,15 @@
 const http = require('http');
 const express = require('express');
+const apiRouter = require('./routers/api/api');
 
 const app = express();
 
-app.use((req, res) => {
-	// res.end('You\'ll make it.\n');
-	debug(req, res);
-});
 
+// load routers
+app.use('/api', apiRouter);
+
+
+// create the api server itself
 http.createServer(app).listen(3000);
 
 
