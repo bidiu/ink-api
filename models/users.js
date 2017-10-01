@@ -4,7 +4,7 @@ const sequelize = require('../db/db');
 
 // sequlize will convert 'user' to 'users' table
 const User = sequelize.define('user', {
-    userId: {
+    id: {
         type: Sequalize.INTEGER, 
         primaryKey: true, 
         autoIncrement: true,
@@ -47,9 +47,14 @@ const User = sequelize.define('user', {
             isAlphanumeric: true
         }
     },
+    status: {
+        type: Sequalize.ENUM('new', 'valid'),
+        defaultValue: 'newly'
+    },
     // following are optional
     sex: { type: Sequalize.ENUM('m', 'f') },
     city: { type: Sequalize.STRING },
+    province: { type: Sequalize.STRING },
     country: { type: Sequalize.STRING },
     hobbies: { type: Sequalize.STRING },
     bio: { type: Sequalize.STRING },
@@ -66,6 +71,9 @@ const User = sequelize.define('user', {
             isUrl: true
         }
     }
+}, {
+    paranoid: true,
+    tableName: 'users'
 });
 
 
