@@ -49,7 +49,7 @@ const User = sequelize.define('user', {
     },
     status: {
         type: Sequalize.ENUM('new', 'valid'),
-        defaultValue: 'newly'
+        defaultValue: 'new'
     },
     // following are optional
     sex: { type: Sequalize.ENUM('m', 'f') },
