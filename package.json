@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.15.5",
+    "morgan": "^1.9.0",
     "mysql2": "^1.4.2",
     "sequelize": "^4.11.0"
   }
