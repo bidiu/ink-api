@@ -1,15 +1,17 @@
 const express = require('express');
+const userController = require('../../controllers/users');
 
 
 const v1Router = express.Router();
 
-v1Router.use(debug);
 
+/** user resources start */
 
-// TODO only for debug
-function debug(req, res, next) {
-    res.end(req.originalUrl);
-}
+v1Router.get('/users', (req, res) => {
+    userController.list(req, res);
+});
+
+/** user resources endt */
 
 
 module.exports = v1Router;
