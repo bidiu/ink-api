@@ -3,11 +3,11 @@ const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const errorHandler = require('./middleware/errors');
 const apiRouter = require('./routers/api/api');
+const errorHandlers = require('./middleware/errors');
+const Err = require('./common/err');
 
 
-// inkbook.io/api
 const app = express();
 
 
@@ -22,14 +22,11 @@ app.use('/api', apiRouter);
 
 // 404 and forward to error handler
 app.use(function(req, res, next) {
-	let err = new Error();
-	err.status = 404;
-	err.message = 'Not Found';
-	next(err);
+	next(new Err(404, 'Resources are not found'));
 });
 
 // handle errors
-app.use(errorHandler);
+app.use(errorHandlers.errorHandler);
 
 
 // create the api server itself and listen

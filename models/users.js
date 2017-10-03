@@ -25,7 +25,6 @@ const User = sequelize.define('user', {
         allowNull: false, 
         unique: true,
         validate: {
-            notNull: true,
             notEmpty: true
             // TODO
         }
@@ -34,7 +33,6 @@ const User = sequelize.define('user', {
         type: Sequalize.STRING, 
         allowNull: false,
         validate: {
-            notNull: true,
             notEmpty: true
         }
     },
@@ -42,7 +40,6 @@ const User = sequelize.define('user', {
         type: Sequalize.STRING, 
         allowNull: false,
         validate: {
-            notNull: true,
             notEmpty: true,
             isAlphanumeric: true
         }
@@ -50,6 +47,10 @@ const User = sequelize.define('user', {
     status: {
         type: Sequalize.ENUM('new', 'valid'),
         defaultValue: 'new'
+    },
+    // a random string unknown to users before email validation
+    secret: {
+        type: Sequalize.STRING, 
     },
     // following are optional
     sex: { type: Sequalize.ENUM('m', 'f') },
@@ -75,6 +76,35 @@ const User = sequelize.define('user', {
     paranoid: true,
     tableName: 'users'
 });
+
+
+User.fields = [
+    'id', 'email', 'username', 'password', 'name', 'status', 'secret', 
+    'sex', 'city', 'province', 'country', 'hobbies', 'bio', 'birthday', 
+    'avatarUrl', 'homeUrl'
+];
+
+User.sanitize = function(query, exclude) {
+    let sanitized = {};
+    Object.keys(query).forEach((field) => {
+        if (User.fields.includes(field) && !exclude.includes(field)) {
+            sanitized[field] = query[field];
+        }
+    });
+    return sanitized;
+}
+
+User.sanitizeOnCreate = function(query) {
+    return User.sanitize(query, ['id', 'status', 'secret']);
+}
+
+User.sanitizeOnUpdate = function(query) {
+    return User.sanitize(query, ['secret']);
+}
+
+User.sanitizeOnRetrieve = function(retrieved) {
+    return User.sanitize(retrieved, ['password', 'secret']);
+}
 
 
 module.exports = User;

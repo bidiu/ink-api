@@ -1,9 +1,10 @@
-// error handler
-module.exports = function(err, req, res, next) {
-	if (!err) {
-		var err = new Error();
-		err.status = 500;
-		err.message = 'Unknown Server Error';
+const Err = require('../common/err');
+
+
+exports.errorHandler = function(err, req, res, next) {
+	if (err instanceof Err) {
+		res.status(err.status).json(err);
+	} else {
+		next(err);
 	}
-	res.status(err.status).json(err);
-};
+}

@@ -1,17 +1,19 @@
 const User = require('../models/users');
+const Ack = require('../common/ack');
+const Err = require('../common/err');
 
 
 /**
  * GET /users
  */
-exports.index = function(req, res) {
+exports.index = function(req, res, next) {
     res.end('index');
 }
 
 /**
  * GET /users/1
  */
-exports.retrieve = function(req, res) {
+exports.retrieve = function(req, res, next) {
     res.end('retrieve');
 }
 
@@ -19,9 +21,25 @@ exports.retrieve = function(req, res) {
  * POST /users      (non-idempotent)
  * 
  * create a new user
+ * 
+ * additional params:
+ *      _return = true/false        (return the created user or not)
  */
-exports.create = function(req, res) {
-    res.end('create');
+exports.create = function(req, res, next) {
+    let query = User.sanitizeOnCreate(req.query);
+    let user = User.build(query);
+
+    user.save().then((saved) => {
+        let ack = new Ack(200, 'User was created successfully.');
+        if (req.query._return) {
+            ack.data = User.sanitizeOnRetrieve(saved.get({ plain: true }));
+        }
+        res.status(ack.status).json(ack);
+    }, (err) => {
+        next(new Err(400, err));
+    }).catch((err) => {
+        next(err);
+    });
 }
 
 /**
@@ -29,13 +47,13 @@ exports.create = function(req, res) {
  * 
  * update a existing user (could be partially update)
  */
-exports.update = function(req, res) {
+exports.update = function(req, res, next) {
     res.end('update');
 }
 
 /**
  * DELETE /users/1  (idempotent)
  */
-exports.destroy = function(req, res) {
+exports.destroy = function(req, res, next) {
     res.end('destroy');
 }
