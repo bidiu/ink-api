@@ -18,7 +18,7 @@
     },
     "mac": {
         "host": "127.0.0.1",
-        "port": 2306,
+        "port": 3306,
         "database": "ink_dev",
         "username": "username",
         "password": "password",
