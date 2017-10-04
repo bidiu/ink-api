@@ -26,12 +26,12 @@ exports.retrieve = function(req, res, next) {
  *      _return = true/false        (return the created user or not)
  */
 exports.create = function(req, res, next) {
-    let query = User.sanitizeOnCreate(req.query);
-    let user = User.build(query);
+    let received = User.sanitizeOnCreate(req.body);
+    let user = User.build(received);
 
     user.save().then((saved) => {
         let ack = new Ack(200, 'User was created successfully.');
-        if (req.query._return) {
+        if (req.body._return) {
             ack.data = User.sanitizeOnRetrieve(saved.get({ plain: true }));
         }
         res.status(ack.status).json(ack);

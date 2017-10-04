@@ -15,7 +15,9 @@ const User = sequelize.define('user', {
     email: { 
         type: Sequalize.STRING,
         allowNull: false, 
-        unique: true,
+        unique: {
+            msg: 'The given email is already registered.'
+        },
         validate: {
             isEmail: true
         }
@@ -23,7 +25,9 @@ const User = sequelize.define('user', {
     username: {
         type: Sequalize.STRING, 
         allowNull: false, 
-        unique: true,
+        unique: {
+            msg: 'The given username is already used by another user.'
+        },
         validate: {
             notEmpty: true
             // TODO
@@ -84,22 +88,22 @@ User.fields = [
     'avatarUrl', 'homeUrl'
 ];
 
-User.sanitize = function(query, exclude) {
+User.sanitize = function(received, exclude) {
     let sanitized = {};
-    Object.keys(query).forEach((field) => {
+    Object.keys(received).forEach((field) => {
         if (User.fields.includes(field) && !exclude.includes(field)) {
-            sanitized[field] = query[field];
+            sanitized[field] = received[field];
         }
     });
     return sanitized;
 }
 
-User.sanitizeOnCreate = function(query) {
-    return User.sanitize(query, ['id', 'status', 'secret']);
+User.sanitizeOnCreate = function(received) {
+    return User.sanitize(received, ['id', 'status', 'secret']);
 }
 
-User.sanitizeOnUpdate = function(query) {
-    return User.sanitize(query, ['secret']);
+User.sanitizeOnUpdate = function(received) {
+    return User.sanitize(received, ['secret']);
 }
 
 User.sanitizeOnRetrieve = function(retrieved) {
