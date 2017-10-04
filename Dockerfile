@@ -10,5 +10,5 @@ RUN npm install -g nodemon
 EXPOSE 3000
 
 # for production, here will exec "npm install"
-CMD npm install && npm start
+CMD npm start
 
