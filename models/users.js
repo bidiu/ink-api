@@ -86,29 +86,36 @@ const User = sequelize.define('user', definition, {
 });
 
 
-User.fields = Object.keys(definition);
+// hidden fields are those that are never updated with JS code
+User.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
+// all fields (except for foreign keys)
+User.fields = Object.keys(definition).concat(User.hiddenFields);
 
-User.sanitize = function(received, exclude) {
+
+User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) {
     let sanitized = {};
-    Object.keys(received).forEach((field) => {
-        if (User.fields.includes(field) && !exclude.includes(field)) {
-            sanitized[field] = received[field];
+    toInclude = toInclude.filter((field) => !toExclude.includes(field));
+    Object.keys(raw).forEach((field) => {
+        if (toInclude.includes(field)) {
+            sanitized[field] = raw[field];
         }
     });
     return sanitized;
 }
 
+User.toExcludeOnCreate = ['id', 'status', 'secret'].concat(User.hiddenFields);
 User.sanitizeOnCreate = function(received) {
-    return User.sanitize(received, ['id', 'status', 'secret']);
+    return User.sanitize(received, { toExclude: User.toExcludeOnCreate });
 }
 
-// TODO deleteAt...
+User.toExcludeOnUpdate = ['secret'].concat(User.hiddenFields);
 User.sanitizeOnUpdate = function(received) {
-    return User.sanitize(received, ['secret']);
+    return User.sanitize(received, { toExclude: User.toExcludeOnUpdate });
 }
 
+User.toExcludeOnRetrieve = ['password', 'secret', 'deletedAt'];
 User.sanitizeOnRetrieve = function(retrieved) {
-    return User.sanitize(retrieved, ['password', 'secret']);
+    return User.sanitize(retrieved, { toExclude: User.toExcludeOnRetrieve });
 }
 
 
