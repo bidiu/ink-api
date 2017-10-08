@@ -17,6 +17,7 @@ exports.errorHandler = function(err, req, res, next) {
 	if (err instanceof Err) {
 		res.status(err.status).json(sanitizeSequelizeErr(err));
 	} else {
+		// programing error, let express to handle that
 		next(err);
 	}
 }
