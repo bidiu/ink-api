@@ -2,8 +2,9 @@ const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
 
 
-// sequlize will convert 'user' to 'users' table
-const User = sequelize.define('user', {
+const TABLE_NAME = 'users';
+
+const definition = {
     id: {
         type: Sequalize.INTEGER, 
         primaryKey: true, 
@@ -76,17 +77,16 @@ const User = sequelize.define('user', {
             isUrl: true
         }
     }
-}, {
+};
+
+// sequlize will convert 'user' to 'users' table
+const User = sequelize.define('user', definition, {
     paranoid: true,
-    tableName: 'users'
+    tableName: TABLE_NAME
 });
 
 
-User.fields = [
-    'id', 'email', 'username', 'password', 'name', 'status', 'secret', 
-    'sex', 'city', 'province', 'country', 'hobbies', 'bio', 'birthday', 
-    'avatarUrl', 'homeUrl'
-];
+User.fields = Object.keys(definition);
 
 User.sanitize = function(received, exclude) {
     let sanitized = {};
@@ -102,6 +102,7 @@ User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, ['id', 'status', 'secret']);
 }
 
+// TODO deleteAt...
 User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, ['secret']);
 }
