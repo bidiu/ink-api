@@ -1,6 +1,7 @@
 const userService = require('../services/users.v1');
 const Ack = require('../common/ack');
 const Err = require('../common/err');
+const commonUtils = require('../utils/common');
 
 
 /**
@@ -26,6 +27,9 @@ exports.retrieve = function(req, res, next) {
  *      _fields
  */
 exports.create = function(req, res, next) {
+    let body = req.body;
+    body._fields = commonUtils.arrayWrap(body._fields) || '*';
+
     userService.create(req.body)
             .then((saved) => {
                 let ack = new Ack('User was created successfully.', saved);

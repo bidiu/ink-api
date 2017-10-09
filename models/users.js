@@ -130,7 +130,7 @@ User.toExcludeOnRetrieve = ['password', 'secret'].concat(['deletedAt']);
  * @param retrieved
  * @param toInclude 
  *      An array/'*' (optional):
- *          undefined/'*' mean include all fields, 
+ *          undefined/'*' means including all fields, 
  *          while [] means include no field at all
  */
 User.sanitizeOnRetrieve = function(retrieved, toInclude) {

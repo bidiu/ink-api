@@ -10,16 +10,16 @@ const Err = require('../common/err');
  * 
  * @param params 
  *      data to be created and saved, There are also some meta params:
- *              _fields:    (optional) array of fields to return if successful
+ *              _fields:    (optional) array of fields to return if successful, 
+ *                          undefined/'*' means returning all fields
  * @return 
  *      A promise to resolve the saved data (null if _fields is not present),
  *      or to reject with any error
  */
 exports.create = function(params) {
     let sanitized = User.sanitizeOnCreate(params);
-    let toInclude = params._fields || '*';
     return User.create(sanitized)
             .then((saved) => {
-                return User.sanitizeOnRetrieve(saved.get({ plain: true }), toInclude);
+                return User.sanitizeOnRetrieve(saved.get({ plain: true }), params._fields);
             });
 }
