@@ -42,6 +42,7 @@ exports.retrieve = function(params) {
 exports.create = function(params) {
     let sanitized = User.sanitizeOnCreate(params);
     return User.create(sanitized)
+            .then((saved) => saved.reload())
             .then((saved) => {
                 return User.sanitizeOnRetrieve(saved.get({ plain: true }), params._fields);
             });
