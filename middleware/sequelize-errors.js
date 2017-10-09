@@ -27,7 +27,7 @@ function onValidationError(err, req, res, next) {
                 };
             })
         };
-        next(new Err(400, details));
+        next(new Err(400, 'Bad request.', details));
     } else {
         // TODO need a logging infrastructure
         console.error(err);

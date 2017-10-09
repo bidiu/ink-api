@@ -1,5 +1,5 @@
-module.exports = function Err(status, details, stack) {
+module.exports = function Err(status, message, details) {
     this.status = status;
+    this.message = message;
     this.details = details;
-    this.stack = stack;
 }
