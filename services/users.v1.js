@@ -18,8 +18,7 @@ const Err = require('../common/err');
 exports.create = function(params) {
     let sanitized = User.sanitizeOnCreate(params);
     let toInclude = params._fields || '*';
-    return User.build(sanitized)
-            .save()
+    return User.create(sanitized)
             .then((saved) => {
                 return User.sanitizeOnRetrieve(saved.get({ plain: true }), toInclude);
             });
