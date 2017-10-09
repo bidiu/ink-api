@@ -27,10 +27,10 @@ exports.retrieve = function(req, res, next) {
  *      _fields
  */
 exports.create = function(req, res, next) {
-    let body = req.body;
-    body._fields = commonUtils.arrayWrap(body._fields) || '*';
+    let params = req.body;
+    params._fields = commonUtils.arrayWrap(params._fields) || '*';
 
-    userService.create(req.body)
+    userService.create(params)
             .then((saved) => {
                 let ack = new Ack('User was created successfully.', saved);
                 res.status(ack.status).json(ack);
