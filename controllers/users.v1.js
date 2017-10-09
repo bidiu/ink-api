@@ -1,4 +1,4 @@
-const User = require('../models/users');
+const userService = require('../services/users.v1');
 const Ack = require('../common/ack');
 const Err = require('../common/err');
 
@@ -18,28 +18,22 @@ exports.retrieve = function(req, res, next) {
 }
 
 /**
- * POST /users      (non-idempotent)
+ * Create a new user.
  * 
- * create a new user
+ * POST /users (non-idempotent)
  * 
- * additional params:
- *      _return = true/false        (return the created user or not)
+ * Additional params:
+ *      _fields
  */
 exports.create = function(req, res, next) {
-    let received = User.sanitizeOnCreate(req.body);
-    let user = User.build(received);
-
-    user.save().then((saved) => {
-        let ack = new Ack(200, 'User was created successfully.');
-        if (req.body._return) {
-            ack.data = User.sanitizeOnRetrieve(saved.get({ plain: true }));
-        }
-        res.status(ack.status).json(ack);
-    }, (err) => {
-        next(new Err(400, err));
-    }).catch((err) => {
-        next(err);
-    });
+    userService.create(req.body)
+            .then((saved) => {
+                let ack = new Ack('User was created successfully.', saved);
+                res.status(ack.status).json(ack);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**

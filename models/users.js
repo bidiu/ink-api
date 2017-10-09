@@ -92,9 +92,21 @@ User.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
 User.fields = Object.keys(definition).concat(User.hiddenFields);
 
 
+/**
+ * Notes:
+ *      1. If a field is present both in 'toExclude' and 'toInclude', 
+ *         'toExclude' will take precedence.
+ *      2. This method is a little dangerous (might expose secret info 
+ *         to outside if used wrongly, for example). So, instead, you'd 
+ *         better call functions after this one.
+ * @return
+ *      A new sanitized object ('raw' will not be changed)
+ */
 User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) {
     let sanitized = {};
-    toInclude = toInclude.filter((field) => !toExclude.includes(field));
+    toInclude = toInclude.filter((field) => {
+        return User.fields.includes(field) && !toExclude.includes(field);
+    });
     Object.keys(raw).forEach((field) => {
         if (toInclude.includes(field)) {
             sanitized[field] = raw[field];
@@ -113,9 +125,19 @@ User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, { toExclude: User.toExcludeOnUpdate });
 }
 
-User.toExcludeOnRetrieve = ['password', 'secret', 'deletedAt'];
-User.sanitizeOnRetrieve = function(retrieved) {
-    return User.sanitize(retrieved, { toExclude: User.toExcludeOnRetrieve });
+User.toExcludeOnRetrieve = ['password', 'secret'].concat(['deletedAt']);
+/**
+ * @param retrieved
+ * @param toInclude 
+ *      An array/'*' (optional):
+ *          undefined/'*' mean include all fields, 
+ *          while [] means include no field at all
+ */
+User.sanitizeOnRetrieve = function(retrieved, toInclude) {
+    return User.sanitize(retrieved, {
+        toExclude: User.toExcludeOnRetrieve, 
+        toInclude: toInclude === '*' ? undefined : toInclude
+    });
 }
 
 

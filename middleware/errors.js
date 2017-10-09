@@ -6,8 +6,8 @@ const Err = require('../common/err');
  * so here sanitize them
  */
 function sanitizeSequelizeErr(err) {
-	if (err.message && err.message.errors) {
-		return new Err(err.status, err.message.errors);
+	if (err.details && err.details.errors) {
+		return new Err(err.status, err.details.errors);
 	}
 	return err;
 }

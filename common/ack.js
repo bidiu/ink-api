@@ -1,5 +1,5 @@
-module.exports = function Ack(status, message, data) {
-    this.status = status;
+module.exports = function Ack(message, data) {
+    this.status = 200;
     this.message = message;
     this.data = data;
 }
