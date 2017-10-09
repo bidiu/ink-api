@@ -23,7 +23,7 @@ app.use('/api', apiRouter);
 
 // 404 and forward to error handler
 app.use(function(req, res, next) {
-	next(new Err(404, 'Resources are not found'));
+	next(Err.NotFound);
 });
 
 // handle errors

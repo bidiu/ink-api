@@ -4,17 +4,40 @@ const Err = require('../common/err');
 
 
 /**
- * Note:
- *      1. Outside can execute this service
- *      2. This function won't change the parameter 'params'
+ * Notes:
+ *      1. Outside can execute this service.
+ *      2. This function won't change the parameter 'params'.
+ * 
+ * @param params
+ *      MUST have following attr:
+ *          id:         id of the user to retrieve
+ *          _fields:    (optional) See "create()".
+ * @returns
+ *      A promise to resolve the retrieved data (null) if it doesn't 
+ *      exists, or to reject with any error.
+ */
+exports.retrieve = function(params) {
+    return User.findById(params.id)
+            .then((retrieved) => {
+                if (retrieved) {
+                    return User.sanitizeOnRetrieve(retrieved.get({ plain: true }), params._fields);
+                }
+                return null;
+            });
+}
+
+/**
+ * Notes:
+ *      1. Outside can execute this service.
+ *      2. This function won't change the parameter 'params'.
  * 
  * @param params 
  *      data to be created and saved, There are also some meta params:
- *              _fields:    (optional) array of fields to return if successful, 
- *                          undefined/'*' means returning all fields
+ *              _fields:    (optional) array of fields to return if successful.
+ *                          undefined/'*' means returning all fields, while []
+ *                          means return empty object {}.
  * @return 
- *      A promise to resolve the saved data (null if _fields is not present),
- *      or to reject with any error
+ *      A promise to resolve the saved data, or to reject with any error
  */
 exports.create = function(params) {
     let sanitized = User.sanitizeOnCreate(params);

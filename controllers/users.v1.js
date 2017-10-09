@@ -15,7 +15,23 @@ exports.index = function(req, res, next) {
  * GET /users/1
  */
 exports.retrieve = function(req, res, next) {
-    res.end('retrieve');
+    let params = {
+        id: req.params.id,
+        _fields: commonUtils.arrayWrap(req.query._fields) || '*'
+    };
+
+    userService.retrieve(params)
+            .then((retrieved) => {
+                if (retrieved) {
+                    let ack = new Ack('Request is processed successfully.', retrieved);
+                    res.status(ack.status).json(ack);
+                    return;
+                }
+                next(Err.NotFound);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**
