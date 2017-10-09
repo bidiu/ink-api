@@ -22,8 +22,5 @@ exports.create = function(params) {
             .save()
             .then((saved) => {
                 return User.sanitizeOnRetrieve(saved.get({ plain: true }), toInclude);
-            })
-            .catch(Sequalize.ValidationError, (err) => {
-                throw new Err(400, err);
             });
 }

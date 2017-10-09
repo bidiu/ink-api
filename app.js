@@ -4,7 +4,8 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/api/api');
-const errorHandlers = require('./middleware/errors');
+const sequelizeErrorHandler = require('./middleware/sequelize-errors');
+const errorHandler = require('./middleware/errors');
 const Err = require('./common/err');
 
 
@@ -26,7 +27,8 @@ app.use(function(req, res, next) {
 });
 
 // handle errors
-app.use(errorHandlers.errorHandler);
+app.use(sequelizeErrorHandler);
+app.use(errorHandler);
 
 
 // create the api server itself and listen
