@@ -23,7 +23,7 @@ exports.retrieve = function(req, res, next) {
     userService.retrieve(params)
             .then((retrieved) => {
                 if (retrieved) {
-                    let ack = new Ack('Request is processed successfully.', retrieved);
+                    let ack = new Ack(retrieved);
                     res.status(ack.status).json(ack);
                     return;
                 }
@@ -48,7 +48,7 @@ exports.create = function(req, res, next) {
 
     userService.create(params)
             .then((saved) => {
-                let ack = new Ack('User was created successfully.', saved);
+                let ack = new Ack(saved || undefined);
                 res.status(ack.status).json(ack);
             })
             .catch((err) => {

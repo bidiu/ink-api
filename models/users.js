@@ -88,7 +88,7 @@ const User = sequelize.define('user', definition, {
 
 // hidden fields are those that are never updated with JS code
 User.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
-// all fields (except for foreign keys)
+// TODO all fields (except for foreign keys)
 User.fields = Object.keys(definition).concat(User.hiddenFields);
 
 
@@ -115,27 +115,27 @@ User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) 
     return sanitized;
 }
 
-User.toExcludeOnCreate = ['id', 'status', 'secret'].concat(User.hiddenFields);
+User.excludeOnCreate = ['id', 'status', 'secret'].concat(User.hiddenFields);
 User.sanitizeOnCreate = function(received) {
-    return User.sanitize(received, { toExclude: User.toExcludeOnCreate });
+    return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
-User.toExcludeOnUpdate = ['secret'].concat(User.hiddenFields);
+User.excludeOnUpdate = ['secret'].concat(User.hiddenFields);
 User.sanitizeOnUpdate = function(received) {
-    return User.sanitize(received, { toExclude: User.toExcludeOnUpdate });
+    return User.sanitize(received, { toExclude: User.excludeOnUpdate });
 }
 
-User.toExcludeOnRetrieve = ['password', 'secret'].concat(['deletedAt']);
+User.excludeOnRetrieve = ['password', 'secret'];
 /**
  * @param retrieved
  * @param toInclude 
  *      An array/'*' (optional):
- *          undefined/'*' means including all fields, 
- *          while [] means include no field at all
+ *          undefined/'*' means including all fields, while [] means 
+ *          including no field at all, {} will be returned then.
  */
 User.sanitizeOnRetrieve = function(retrieved, toInclude) {
     return User.sanitize(retrieved, {
-        toExclude: User.toExcludeOnRetrieve, 
+        toExclude: User.excludeOnRetrieve, 
         toInclude: toInclude === '*' ? undefined : toInclude
     });
 }
