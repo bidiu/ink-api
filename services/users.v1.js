@@ -5,65 +5,61 @@ const InkError = require('../common/models/ink-errors');
 
 /**
  * @param id
+ *      id of the user to retrieve.
  * @param options
- *      _fields     See 'create()'.
+ *      raw         ture means only data, without instance methods and attr from 
+ *                  sequelize.
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(id, { _fields = '*' } = {}) {
-    return User.findById(id, { attributes: { exclude: User.excludeOnRetrieve }, raw: true })
+function retrieve(id, { raw = true } = {}) {
+    return User.findById(id, { attributes: { exclude: User.excludeOnRetrieve }, raw: raw })
             .then((retrieved) => {
                 if (retrieved) {
-                    return User.sanitizeOnRetrieve(retrieved, _fields);
+                    return retrieved;
                 }
                 throw new InkError.NotFound();
             });
 }
 
 /**
+ * TODO should be in an transaction
+ * 
  * @param params 
  *      Data (field values) from which user will be created. This function won't
  *      alter this parameter.
  * @param options       
- *      _fields     Array of fields to return if successful. '*' means returning 
- *                  all fields, while [] means returning undefined.
+ *      raw         ture means only data, without instance methods and attr from 
+ *                  sequelize.
  * @return 
  *      A promise to resolve the saved data with specified fields (or undefined).
  */
-function create(params, { _fields = '*' } = {}) {
+function create(params, { raw = true } = {}) {
     let sanitized = User.sanitizeOnCreate(params);
+    
     return User.create(sanitized)
             .then((saved) => {
-                if (_fields.length !== 0) {
-                    // TODO should be in an transaction
-                    return User.findById(saved.id, {
-                        attributes: { exclude: User.excludeOnRetrieve }, 
-                        raw: true 
-                    });
-                }
-                // client doesn't need response data, by passing []
-                return undefined;
-            })
-            .then((retrieved) => {
-                if (retrieved) {
-                    return User.sanitizeOnRetrieve(retrieved, _fields);
-                }
-                // client doesn't need response data, by passing []
-                return undefined;
+                return retrieve(saved.id, { raw: raw });
             });
 }
 
 /**
- * @param params
- *      Data to be updated, There are also some meta params:
- *              _fields:    Array of fields to return if successful.
- *                          '*' means returning all fields, while []
- *                          means returning null.
- * @return
- *      A promise to resolve the updated data, or to reject with any error.
+ * TODO should be in an transaction
+ * TODO updating secret
+ * 
+ * @param params 
+ *      Data (field values) from which user will be updated. This function won't
+ *      alter this parameter.
+ * @param options       
+ *      raw         ture means only data, without instance methods and attr from 
+ *                  sequelize.
+ * @return 
+ *      A promise to resolve the updated data with specified fields (or undefined).
  */
-function update(params) {
-    // TODO let sanitized = User.sanitizeOnUpdate(params);
+function update(id, params, { raw = true } = {}) {
+    let sanitized = User.sanitizeOnUpdate(params);
+
+    // TODO
 } 
 
 

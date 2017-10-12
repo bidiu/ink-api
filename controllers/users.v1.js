@@ -15,9 +15,8 @@ exports.index = function(req, res, next) {
  */
 exports.retrieve = function(req, res, next) {
     let id = req.params.id;
-    let _fields = commonUtils.arrayWrap(req.query._fields);
 
-    userService.retrieve(id, { _fields: _fields })
+    userService.retrieve(id)
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 res.status(payload.status).json(payload);
@@ -37,9 +36,8 @@ exports.retrieve = function(req, res, next) {
  */
 exports.create = function(req, res, next) {
     let params = req.body;
-    let _fields = commonUtils.arrayWrap(params._fields);
 
-    userService.create(params, { _fields: _fields })
+    userService.create(params)
             .then((saved) => {
                 let payload = new Res.Ok({ data: saved });
                 res.status(payload.status).json(payload);
