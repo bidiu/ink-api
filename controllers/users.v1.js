@@ -38,8 +38,8 @@ exports.create = function(req, res, next) {
     let params = req.body;
 
     userService.create(params)
-            .then((saved) => {
-                let payload = new Res.Ok({ data: saved });
+            .then((created) => {
+                let payload = new Res.Ok({ data: created });
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {
@@ -53,7 +53,17 @@ exports.create = function(req, res, next) {
  * update a existing user (could be partially update)
  */
 exports.update = function(req, res, next) {
-    res.end('update');
+    let id = req.params.id;
+    let params = req.body;
+
+    userService.update(id, params)
+            .then((updated) => {
+                let payload = new Res.Ok({ data: updated });
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**
