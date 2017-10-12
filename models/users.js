@@ -120,7 +120,7 @@ User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
-User.excludeOnUpdate = ['secret'].concat(User.hiddenFields);
+User.excludeOnUpdate = ['id', 'username', 'password', 'secret'].concat(User.hiddenFields);
 User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnUpdate });
 }
