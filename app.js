@@ -4,9 +4,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/api/api');
+const notFoundHandler = require('./middleware/not-found');
+const inkErrorHandler = require('./middleware/ink-errors');
 const sequelizeErrorHandler = require('./middleware/sequelize-errors');
 const errorHandler = require('./middleware/errors');
-const Err = require('./common/err');
 
 
 const app = express();
@@ -21,12 +22,11 @@ app.use(cookieParser());
 // load routers
 app.use('/api', apiRouter);
 
-// 404 and forward to error handler
-app.use(function(req, res, next) {
-	next(Err.NotFound);
-});
+// 404 handler
+app.use(notFoundHandler);
 
-// handle errors
+// error handlers
+app.use(inkErrorHandler);
 app.use(sequelizeErrorHandler);
 app.use(errorHandler);
 

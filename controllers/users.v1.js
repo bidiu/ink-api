@@ -1,6 +1,5 @@
 const userService = require('../services/users.v1');
-const Ack = require('../common/ack');
-const Err = require('../common/err');
+const Res = require('../common/models/responses');
 const commonUtils = require('../utils/common');
 
 
@@ -22,12 +21,8 @@ exports.retrieve = function(req, res, next) {
 
     userService.retrieve(params)
             .then((retrieved) => {
-                if (retrieved) {
-                    let ack = new Ack(retrieved);
-                    res.status(ack.status).json(ack);
-                    return;
-                }
-                next(Err.NotFound);
+                let payload = new Res.Ok({ data: retrieved });
+                res.status(payload.status).json(payload);
             })
             .catch((err) => {
                 next(err);
@@ -48,8 +43,8 @@ exports.create = function(req, res, next) {
 
     userService.create(params)
             .then((saved) => {
-                let ack = new Ack(saved || undefined);
-                res.status(ack.status).json(ack);
+                let payload = new Res.Ok({ data: saved });
+                res.status(payload.status).json(payload);
             })
             .catch((err) => {
                 next(err);

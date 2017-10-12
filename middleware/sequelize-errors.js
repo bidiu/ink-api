@@ -1,9 +1,12 @@
 const Sequelize = require('sequelize');
-const Err = require('../common/err');
+const Res = require('../common/models/responses');
 
 
 module.exports = function(err, req, res, next) {
-	if (!(err instanceof Sequelize.Error)) { next(err); }
+	if (!(err instanceof Sequelize.Error)) {
+        next(err);
+        return;
+    }
 
     if (err instanceof Sequelize.ValidationError) {
         // validation error
@@ -16,8 +19,9 @@ module.exports = function(err, req, res, next) {
 
 
 function onValidationError(err, req, res, next) {
+    let payload = null;
     if (err.errors instanceof Array) {
-        details = {
+        let details = {
             validationErrors: err.errors.map((error) => {
                 return {
                     message: error.message,
@@ -27,16 +31,18 @@ function onValidationError(err, req, res, next) {
                 };
             })
         };
-        next(new Err(400, 'Bad request.', details));
+        payload = new Res.BadReq({ details: details })
     } else {
         // TODO need a logging infrastructure
         console.error(err);
-        next(new Err(400, 'Bad request (Unknown reason).'));
+        payload = new Res.BadReq({ message: 'Bad Request (Reason Unknown)' });
     }
+    res.status(payload.status).json(payload);
 }
 
 function onNonValidationError(err, req, res, next) {
     // TODO need a logging infrastructure
     console.error(err);
-    next(new Err(500, 'Server run into an error while processing your request.'));
+    let payload = new Res.ServerErr();
+    res.status(payload.status).json(payload);
 }
