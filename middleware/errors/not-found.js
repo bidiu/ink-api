@@ -1,4 +1,4 @@
-const Res = require('../common/models/responses');
+const Res = require('../../common/models/responses');
 
 
 module.exports = function(req, res, next) {

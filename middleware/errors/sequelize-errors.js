@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const Res = require('../common/models/responses');
+const Res = require('../../common/models/responses');
 
 
 module.exports = function(err, req, res, next) {

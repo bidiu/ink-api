@@ -1,6 +1,6 @@
-const appConfig = require('../config/app.config');
-const InkError = require('../common/models/ink-errors');
-const Res = require('../common/models/responses');
+const appConfig = require('../../config/app.config');
+const InkError = require('../../common/models/ink-errors');
+const Res = require('../../common/models/responses');
 
 
 const ERROR_MAP = new Map([
