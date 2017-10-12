@@ -14,12 +14,10 @@ exports.index = function(req, res, next) {
  * GET /users/1
  */
 exports.retrieve = function(req, res, next) {
-    let params = {
-        id: req.params.id,
-        _fields: commonUtils.arrayWrap(req.query._fields) || '*'
-    };
+    let id = req.params.id;
+    let _fields = commonUtils.arrayWrap(req.query._fields);
 
-    userService.retrieve(params)
+    userService.retrieve(id, { _fields: _fields })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 res.status(payload.status).json(payload);

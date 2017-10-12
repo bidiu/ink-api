@@ -4,30 +4,23 @@ const InkError = require('../common/models/ink-errors');
 
 
 /**
- * Outside can execute this service.
- * This function won't change the parameter 'params'.
- * 
- * @param params
- *      MUST have following attributes:
- *          id:         id of the user to retrieve
- *          _fields:    See "create()".
+ * @param id
+ * @param options
+ *      _fields     See 'create()'.
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(params) {
-    return User.findById(params.id, { attributes: { exclude: User.excludeOnRetrieve }, raw: true })
+function retrieve(id, { _fields = '*' } = {}) {
+    return User.findById(id, { attributes: { exclude: User.excludeOnRetrieve }, raw: true })
             .then((retrieved) => {
                 if (retrieved) {
-                    return User.sanitizeOnRetrieve(retrieved, params._fields);
+                    return User.sanitizeOnRetrieve(retrieved, _fields);
                 }
                 throw new InkError.NotFound();
             });
 }
 
 /**
- * Outside can execute this service.
- * This function won't change the parameter 'params'.
- * 
  * @param params 
  *      Data to be created. There are also some meta params:
  *              _fields:    Array of fields to return if successful. '*' means 
@@ -59,9 +52,6 @@ function create(params) {
 }
 
 /**
- * Outside can execute this service.
- * This function won't change the parameter 'params'.
- * 
  * @param params
  *      Data to be updated, There are also some meta params:
  *              _fields:    Array of fields to return if successful.
