@@ -22,17 +22,19 @@ function retrieve(id, { _fields = '*' } = {}) {
 
 /**
  * @param params 
- *      Data to be created. There are also some meta params:
- *              _fields:    Array of fields to return if successful. '*' means 
- *                          returning all fields, while [] means returning undefined.
+ *      Data (field values) from which user will be created. This function won't
+ *      alter this parameter.
+ * @param options       
+ *      _fields     Array of fields to return if successful. '*' means returning 
+ *                  all fields, while [] means returning undefined.
  * @return 
  *      A promise to resolve the saved data with specified fields (or undefined).
  */
-function create(params) {
+function create(params, { _fields = '*' } = {}) {
     let sanitized = User.sanitizeOnCreate(params);
     return User.create(sanitized)
             .then((saved) => {
-                if (params._fields.length !== 0) {
+                if (_fields.length !== 0) {
                     // TODO should be in an transaction
                     return User.findById(saved.id, {
                         attributes: { exclude: User.excludeOnRetrieve }, 
@@ -44,7 +46,7 @@ function create(params) {
             })
             .then((retrieved) => {
                 if (retrieved) {
-                    return User.sanitizeOnRetrieve(retrieved, params._fields);
+                    return User.sanitizeOnRetrieve(retrieved, _fields);
                 }
                 // client doesn't need response data, by passing []
                 return undefined;

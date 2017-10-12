@@ -37,9 +37,9 @@ exports.retrieve = function(req, res, next) {
  */
 exports.create = function(req, res, next) {
     let params = req.body;
-    params._fields = commonUtils.arrayWrap(params._fields) || '*';
+    let _fields = commonUtils.arrayWrap(params._fields);
 
-    userService.create(params)
+    userService.create(params, { _fields: _fields })
             .then((saved) => {
                 let payload = new Res.Ok({ data: saved });
                 res.status(payload.status).json(payload);
