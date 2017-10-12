@@ -4,10 +4,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const apiRouter = require('./routers/api/api');
-const notFoundHandler = require('./middleware/not-found');
-const inkErrorHandler = require('./middleware/ink-errors');
-const sequelizeErrorHandler = require('./middleware/sequelize-errors');
-const errorHandler = require('./middleware/errors');
+const notFoundHandler = require('./middleware/errors/not-found');
+const inkErrorHandler = require('./middleware/errors/ink-errors');
+const sequelizeErrorHandler = require('./middleware/errors/sequelize-errors');
+const errorHandler = require('./middleware/errors/errors');
 
 
 const app = express();
