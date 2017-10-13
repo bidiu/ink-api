@@ -2,9 +2,10 @@ const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
 
 
+const MODEL_NAME = 'user';
 const TABLE_NAME = 'users';
 
-const definition = {
+const DEF = {
     id: {
         type: Sequalize.INTEGER, 
         primaryKey: true, 
@@ -80,7 +81,7 @@ const definition = {
 };
 
 // sequlize will convert 'user' to 'users' table
-const User = sequelize.define('user', definition, {
+const User = sequelize.define(MODEL_NAME, DEF, {
     paranoid: true,
     tableName: TABLE_NAME
 });
@@ -89,7 +90,7 @@ const User = sequelize.define('user', definition, {
 // hidden fields are those that are never updated with JS code
 User.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
 // TODO all fields (except for foreign keys)
-User.fields = Object.keys(definition).concat(User.hiddenFields);
+User.fields = Object.keys(DEF).concat(User.hiddenFields);
 
 
 /**
