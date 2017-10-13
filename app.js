@@ -3,6 +3,7 @@ const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const modelMap = require('./models/models');
 const apiRouter = require('./routers/api/api');
 const notFoundHandler = require('./middleware/errors/not-found');
 const inkErrorHandler = require('./middleware/errors/ink-errors');
