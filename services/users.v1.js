@@ -1,4 +1,3 @@
-const Sequalize = require('sequelize');
 const User = require('../models/users');
 const InkError = require('../common/models/ink-errors');
 
