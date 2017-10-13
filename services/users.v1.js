@@ -59,9 +59,17 @@ function update(id, params) {
             .then((updated) => {
                 return updated;
             });
-} 
+}
+
+function destroy(id) {
+    return retrieve(id)
+            .then((retrieved) => {
+                return retrieved.destroy();
+            })
+}
 
 
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;
+exports.destroy = destroy;

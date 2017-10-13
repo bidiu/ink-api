@@ -70,5 +70,14 @@ exports.update = function(req, res, next) {
  * DELETE /users/1  (idempotent)
  */
 exports.destroy = function(req, res, next) {
-    res.end('destroy');
+    let id = req.params.id;
+
+    userService.destroy(id)
+            .then(() => {
+                let payload = new Res.Ok();
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
