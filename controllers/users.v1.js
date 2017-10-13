@@ -27,12 +27,9 @@ exports.retrieve = function(req, res, next) {
 }
 
 /**
- * Create a new user.
- * 
  * POST /users (non-idempotent)
  * 
- * Additional params:
- *      _fields
+ * Create a new user.
  */
 exports.create = function(req, res, next) {
     let params = req.body;
@@ -48,7 +45,7 @@ exports.create = function(req, res, next) {
 }
 
 /**
- * PATCH /users/1   (idempotent)
+ * PATCH /users/1 (idempotent)
  * 
  * update a existing user (could be partially update)
  */
@@ -67,7 +64,7 @@ exports.update = function(req, res, next) {
 }
 
 /**
- * DELETE /users/1  (idempotent)
+ * DELETE /users/1 (idempotent)
  */
 exports.destroy = function(req, res, next) {
     let id = req.params.id;

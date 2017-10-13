@@ -55,12 +55,15 @@ function update(id, params) {
     return retrieve(id)
             .then((retrieved) => {
                 return retrieved.update(sanitized)
-            })
-            .then((updated) => {
-                return updated;
             });
 }
 
+/**
+ * TODO transaction
+ * 
+ * @param id
+ *      id of the user to delete.
+ */
 function destroy(id) {
     return retrieve(id)
             .then((retrieved) => {
