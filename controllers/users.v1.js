@@ -1,6 +1,5 @@
 const userService = require('../services/users.v1');
 const Res = require('../common/models/responses');
-const commonUtils = require('../utils/common');
 
 
 /**
