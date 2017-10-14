@@ -16,8 +16,9 @@ exports.index = function(req, res, next) {
 exports.retrieve = function(req, res, next) {
     let notebookId = req.params.notebookId;
     let userId = req.params.userId; // might be undefined
+    let params = req.query;
 
-    notebookService.retrieve(notebookId, { userId: userId })
+    notebookService.retrieve(notebookId, { userId: userId, params: params })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 res.status(payload.status).json(payload);

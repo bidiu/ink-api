@@ -1,9 +1,11 @@
 const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
+const User = require('./users');
 
 
 const MODEL_NAME = 'notebook';
 const TABLE_NAME = 'notebooks';
+const ASSOCIATIONS = [User];
 
 const DEF = {
     id: {
@@ -66,17 +68,19 @@ Notebook.sanitize = function(raw, { toExclude = [], toInclude = Notebook.fields 
 }
 
 Notebook.excludeOnCreate = ['id'].concat(Notebook.hiddenFields);
+Notebook.includeOnCreate = Notebook.fields.filter((field) => !Notebook.excludeOnCreate.includes(field));
 Notebook.sanitizeOnCreate = function(received) {
     return Notebook.sanitize(received, { toExclude: Notebook.excludeOnCreate });
 }
 
 Notebook.excludeOnUpdate = ['id', 'userId'].concat(Notebook.hiddenFields);
+Notebook.includeOnUpdate = Notebook.fields.filter((field) => !Notebook.excludeOnUpdate.includes(field));
 Notebook.sanitizeOnUpdate = function(received) {
     return Notebook.sanitize(received, { toExclude: Notebook.excludeOnUpdate });
 }
 
-// TODO foreign keys
-Notebook.excludeOnRetrieve = [];
+Notebook.excludeOnRetrieve = [].concat(Notebook.referenceFields);
+Notebook.includeOnRetrieve = Notebook.fields.filter((field) => !Notebook.excludeOnCreate.includes(field));
 /**
  * @param retrieved
  * @param toInclude 
@@ -89,6 +93,28 @@ Notebook.sanitizeOnRetrieve = function(retrieved, toInclude) {
         toExclude: Notebook.excludeOnRetrieve, 
         toInclude: toInclude === '*' ? undefined : toInclude
     });
+}
+
+
+/**
+ * Get the 'include' object for the option parameter of 'findAll'.
+ * TODO count, next page url
+ * 
+ * @param options
+ *      expand        true means to expand
+ *      expandLimit   number limit of expanded association models
+ */
+Notebook.getExpandDef = function({ expand = false, expLimit = 20 } = {}) {
+    let def = [];
+    for (let association of ASSOCIATIONS) {
+        def.push({
+            model: association,
+            attributes: expand ? association.includeOnRetrieve : ['id'],
+            limit: expLimit,
+            separate: false
+        });
+    }
+    return def;
 }
 
 

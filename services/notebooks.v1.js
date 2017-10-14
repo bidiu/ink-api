@@ -7,16 +7,21 @@ const InkError = require('../common/models/ink-errors');
  *      id of the notebook to retrieve.
  * @param options
  *      userId      (optional)
+ *      expand      (optional)
+ *      expLimit    (optional)
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(notebookId, { userId } = {}) {
+function retrieve(notebookId, { userId, params } = {}) {
     let where = { id: notebookId };
     if (userId) { where.userId = userId; }
 
     return Notebook.findOne({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
-                where: where
+                where: where,
+                include: Notebook.getExpandDef(
+                    { expand: params._expand, expLimit: params._expLimit }
+                )
             })
             .then((retrieved) => {
                 if (retrieved) {

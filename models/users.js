@@ -117,16 +117,19 @@ User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) 
 }
 
 User.excludeOnCreate = ['id', 'status', 'secret'].concat(User.hiddenFields);
+User.includeOnCreate = User.fields.filter((field) => !User.excludeOnCreate.includes(field));
 User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
 User.excludeOnUpdate = ['id', 'username', 'password', 'secret'].concat(User.hiddenFields);
+User.includeOnUpdate = User.fields.filter((field) => !User.excludeOnUpdate.includes(field));
 User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnUpdate });
 }
 
 User.excludeOnRetrieve = ['password', 'secret'];
+User.includeOnRetrieve = User.fields.filter((field) => !User.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
  * @param toInclude 
