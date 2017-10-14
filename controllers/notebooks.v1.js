@@ -1,9 +1,10 @@
+const notebookService = require('../services/notebooks.v1');
 const Res = require('../common/models/responses');
 
 
 /**
  * GET /users/:userId/notebooks
- * TODO GET /notebooks
+ * GET /notebooks
  */
 exports.index = function(req, res, next) {
     res.end('index');
@@ -11,23 +12,45 @@ exports.index = function(req, res, next) {
 
 /**
  * GET /users/:userId/notebooks/:notebookId
- * TODO GET /notebooks/:notebookId
  */
 exports.retrieve = function(req, res, next) {
-    res.end('retrieve');
+    let notebookId = req.params.notebookId;
+    let userId = req.params.userId; // might be undefined
+
+    notebookService.retrieve(notebookId, { userId: userId })
+            .then((retrieved) => {
+                let payload = new Res.Ok({ data: retrieved });
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**
  * POST /users/:userId/notebooks
  * TODO POST /notebooks
+ * 
+ * Never specific foreign owner key in the request body, 
+ * otherwise it will be ignored.
  */
 exports.create = function(req, res, next) {
-    res.end('create');
+    let params = req.body;
+    params.userId = req.params.userId;
+
+    notebookService.create(params)
+            .then((created) => {
+                let payload = new Res.Ok({ data: created });
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**
  * PATCH /users/:userId/notebooks/:notebookId
- * TODO PATCH /notebooks/:notebookId
+ * PATCH /notebooks/:notebookId
  */
 exports.update = function(req, res, next) {
     res.end('update');
@@ -35,7 +58,7 @@ exports.update = function(req, res, next) {
 
 /**
  * DELETE /users/:userId/notebooks/:notebookId
- * TODO DELETE /notebooks/:notebookId
+ * DELETE /notebooks/:notebookId
  */
 exports.destroy = function(req, res, next) {
     res.end('destroy');

@@ -36,20 +36,33 @@ v1Router.delete('/users/:id', (req, res, next) => {
 v1Router.get('/users/:userId/notebooks', (req, res, next) => {
     notebookController.index(req, res, next);
 });
+v1Router.get('/notebooks', (req, res, next) => {
+    notebookController.index(req, res, next);
+})
 
 v1Router.get('/users/:userId/notebooks/:notebookId', (req, res, next) => {
+    notebookController.retrieve(req, res, next);
+});
+v1Router.get('/notebooks/:notebookId', (req, res, next) => {
     notebookController.retrieve(req, res, next);
 });
 
 v1Router.post('/users/:userId/notebooks', (req, res, next) => {
     notebookController.create(req, res, next);
 });
+// TODO POST /notebooks (need auth middleware in the future)
 
 v1Router.patch('/users/:userId/notebooks/:notebookId', (req, res, next) => {
     notebookController.update(req, res, next);
 });
+v1Router.patch('/notebooks/:notebookId', (req, res, next) => {
+    notebookController.update(req, res, next);
+});
 
 v1Router.delete('/users/:userId/notebooks/:notebookId', (req, res, next) => {
+    notebookController.destroy(req, res, next);
+});
+v1Router.delete('/notebooks/:notebookId', (req, res, next) => {
     notebookController.destroy(req, res, next);
 });
 

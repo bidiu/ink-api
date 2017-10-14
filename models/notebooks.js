@@ -18,7 +18,6 @@ const DEF = {
         type: Sequalize.STRING, 
         allowNull: false, 
         validate: {
-            notNull: true,
             notEmpty: true
             // TODO
         }
@@ -35,11 +34,12 @@ const Notebook = sequelize.define(MODEL_NAME, DEF, {
 });
 
 
-// TODO userId?
 // hidden fields are those that are never updated with JS code
 Notebook.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
-// TODO all fields (except for foreign keys)
-Notebook.fields = Object.keys(DEF).concat(Notebook.hiddenFields);
+// foreign keys
+Notebook.referenceFields = ['userId'];
+// all fields (including foreign keys)
+Notebook.fields = Object.keys(DEF).concat(Notebook.hiddenFields, Notebook.referenceFields);
 
 
 /**
@@ -70,11 +70,12 @@ Notebook.sanitizeOnCreate = function(received) {
     return Notebook.sanitize(received, { toExclude: Notebook.excludeOnCreate });
 }
 
-Notebook.excludeOnUpdate = ['id'].concat(Notebook.hiddenFields);
+Notebook.excludeOnUpdate = ['id', 'userId'].concat(Notebook.hiddenFields);
 Notebook.sanitizeOnUpdate = function(received) {
     return Notebook.sanitize(received, { toExclude: Notebook.excludeOnUpdate });
 }
 
+// TODO foreign keys
 Notebook.excludeOnRetrieve = [];
 /**
  * @param retrieved

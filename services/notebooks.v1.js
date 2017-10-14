@@ -3,13 +3,27 @@ const InkError = require('../common/models/ink-errors');
 
 
 /**
- * @param id
+ * @param notebookId
  *      id of the notebook to retrieve.
+ * @param options
+ *      userId      (optional)
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(id) {
+function retrieve(notebookId, { userId } = {}) {
+    let where = { id: notebookId };
+    if (userId) { where.userId = userId; }
 
+    return Notebook.findOne({
+                attributes: { exclude: Notebook.excludeOnRetrieve },
+                where: where
+            })
+            .then((retrieved) => {
+                if (retrieved) {
+                    return retrieved;
+                }
+                throw new InkError.NotFound();
+            });
 }
 
 /**
@@ -19,35 +33,40 @@ function retrieve(id) {
  *      Data (field values) from which notebook will be created. This function won't
  *      alter this parameter.
  * @return 
- *      A promise to resolve the created data with specified fields (or undefined).
+ *      A promise to resolve the created data.
  */
 function create(params) {
+    let sanitized = Notebook.sanitizeOnCreate(params);
 
+    return Notebook.create(sanitized)
+            .then((created) => {
+                return retrieve(created.id);
+            });
 }
 
 /**
  * TODO should be in an transaction
  * TODO updating secret, password ...
  * 
- * @param id
+ * @param notebookId
  *      id of the notebook to update.
  * @param params 
  *      Data (field values) from which notebook will be updated. This function won't
  *      alter this parameter.
  * @return 
- *      A promise to resolve the updated data with specified fields (or undefined).
+ *      A promise to resolve the updated data.
  */
-function update(id, params) {
+function update(notebookId, params) {
 
 }
 
 /**
  * TODO transaction
  * 
- * @param id
- *      id of the notebook to delete.
+ * @param notebookId
+ *      notebookId of the notebook to delete.
  */
-function destroy(id) {
+function destroy(notebookId) {
 
 }
 
