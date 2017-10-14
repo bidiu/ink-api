@@ -57,7 +57,19 @@ exports.create = function(req, res, next) {
  * PATCH /notebooks/:notebookId
  */
 exports.update = function(req, res, next) {
-    res.end('update');
+    let notebookId = req.params.notebookId;
+    let userId = req.params.userId; // might be undefined
+    let params = req.body;
+
+    notebookService.update(notebookId, params, { userId: userId })
+            .then((updated) => {
+                let payload = new Res.Ok({ data: updated });
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**
