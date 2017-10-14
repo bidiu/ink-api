@@ -1,5 +1,6 @@
 const notebookService = require('../services/notebooks.v1');
 const Res = require('../common/models/responses');
+const processPayload = require('../middleware/payload/payload');
 
 
 /**
@@ -21,6 +22,7 @@ exports.retrieve = function(req, res, next) {
     notebookService.retrieve(notebookId, { userId: userId, params: params })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {
@@ -42,6 +44,7 @@ exports.create = function(req, res, next) {
     notebookService.create(params)
             .then((created) => {
                 let payload = new Res.Ok({ data: created });
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {

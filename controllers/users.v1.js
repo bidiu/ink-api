@@ -1,5 +1,6 @@
 const userService = require('../services/users.v1');
 const Res = require('../common/models/responses');
+const processPayload = require('../middleware/payload/payload');
 
 
 /**
@@ -18,6 +19,7 @@ exports.retrieve = function(req, res, next) {
     userService.retrieve(id)
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {
@@ -36,6 +38,7 @@ exports.create = function(req, res, next) {
     userService.create(params)
             .then((created) => {
                 let payload = new Res.Ok({ data: created });
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {
@@ -55,6 +58,7 @@ exports.update = function(req, res, next) {
     userService.update(id, params)
             .then((updated) => {
                 let payload = new Res.Ok({ data: updated });
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {
@@ -71,6 +75,7 @@ exports.destroy = function(req, res, next) {
     userService.destroy(id)
             .then(() => {
                 let payload = new Res.Ok();
+                payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
             .catch((err) => {

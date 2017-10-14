@@ -12,3 +12,11 @@ exports.arrayWrap = function(val) {
         return val instanceof Array ? val : [val];
     }
 }
+
+/**
+ * From '/api/v1/users' to '/api/v1'
+ */
+exports.apiBase = function(url) {
+    // TODO right now for simplicity, just hardcoded
+    return '/api/v1';
+}
