@@ -32,7 +32,7 @@ exports.retrieve = function(req, res, next) {
  * POST /users/:userId/notebooks
  * TODO POST /notebooks
  * 
- * Never specific foreign owner key in the request body, 
+ * Never specify foreign owner key in the request body, 
  * otherwise it will be ignored.
  */
 exports.create = function(req, res, next) {
