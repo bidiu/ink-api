@@ -45,7 +45,7 @@ function create(params) {
 
     return Notebook.create(sanitized)
             .then((created) => {
-                return retrieve(created.id);
+                return retrieve(created.id, { params: params });
             });
 }
 
