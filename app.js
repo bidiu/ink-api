@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
+const queryParser = require('./middleware/queries/query-parser');
 const bodyParser = require('body-parser');
 const modelMap = require('./models/models');
 const apiRouter = require('./routers/api/api');
@@ -16,9 +17,10 @@ const app = express();
 
 // load global middleware
 app.use(logger('dev'));
+app.use(cookieParser());
+app.use(queryParser);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 // load routers
 app.use('/api', apiRouter);
