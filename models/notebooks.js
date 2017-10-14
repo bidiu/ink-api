@@ -31,6 +31,12 @@ const DEF = {
 };
 
 const Notebook = sequelize.define(MODEL_NAME, DEF, {
+    getterMethods: {
+        // readonly
+        _endpoint() {
+            return `/${TABLE_NAME}/${this.getDataValue('id')}`;
+        }
+    },
     paranoid: true,
     tableName: TABLE_NAME
 });
@@ -40,7 +46,8 @@ const Notebook = sequelize.define(MODEL_NAME, DEF, {
 Notebook.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
 // foreign keys
 Notebook.referenceFields = ['userId'];
-// all fields (including foreign keys)
+Notebook.readonlyFields = ['_endpoint'];
+// all fields (including foreign keys, except for readonly fields)
 Notebook.fields = Object.keys(DEF).concat(Notebook.hiddenFields, Notebook.referenceFields);
 
 

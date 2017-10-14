@@ -82,6 +82,12 @@ const DEF = {
 
 // sequlize will convert 'user' to 'users' table
 const User = sequelize.define(MODEL_NAME, DEF, {
+    getterMethods: {
+        // readonly
+        _endpoint() {
+            return `/${TABLE_NAME}/${this.getDataValue('id')}`;
+        }
+    },
     paranoid: true,
     tableName: TABLE_NAME
 });
@@ -89,8 +95,10 @@ const User = sequelize.define(MODEL_NAME, DEF, {
 
 // hidden fields are those that are never updated with JS code
 User.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
-// TODO all fields (except for foreign keys)
-User.fields = Object.keys(DEF).concat(User.hiddenFields);
+User.referenceFields = [];
+User.readonlyFields = ['_endpoint'];
+// all fields (including foreign keys, except for readonly fields)
+User.fields = Object.keys(DEF).concat(User.hiddenFields, User.referenceFields);
 
 
 /**
@@ -128,7 +136,7 @@ User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnUpdate });
 }
 
-User.excludeOnRetrieve = ['password', 'secret'];
+User.excludeOnRetrieve = ['password', 'secret'].concat(User.referenceFields);
 User.includeOnRetrieve = User.fields.filter((field) => !User.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
