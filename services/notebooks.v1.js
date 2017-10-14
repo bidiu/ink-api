@@ -12,7 +12,7 @@ const InkError = require('../common/models/ink-errors');
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(notebookId, { userId, params } = {}) {
+function retrieve(notebookId, { userId, params = {} } = {}) {
     let where = { id: notebookId };
     if (userId) { where.userId = userId; }
 
@@ -77,9 +77,14 @@ function update(notebookId, params, { userId } = {}) {
  * 
  * @param notebookId
  *      notebookId of the notebook to delete.
+ * @param options (optional)
+ *      userId      (optional)
  */
-function destroy(notebookId) {
-
+function destroy(notebookId, { userId } = {}) {
+    return retrieve(notebookId, { userId: userId })
+            .then((retrieved) => {
+                return retrieved.destroy();
+            });
 }
 
 

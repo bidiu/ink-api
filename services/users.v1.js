@@ -67,7 +67,7 @@ function destroy(id) {
     return retrieve(id)
             .then((retrieved) => {
                 return retrieved.destroy();
-            })
+            });
 }
 
 

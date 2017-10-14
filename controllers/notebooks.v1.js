@@ -77,5 +77,16 @@ exports.update = function(req, res, next) {
  * DELETE /notebooks/:notebookId
  */
 exports.destroy = function(req, res, next) {
-    res.end('destroy');
+    let notebookId = req.params.notebookId;
+    let userId = req.params.userId; // might be undefined
+
+    notebookService.destroy(notebookId, { userId: userId })
+            .then(() => {
+                let payload = new Res.Ok();
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
