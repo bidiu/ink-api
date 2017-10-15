@@ -85,7 +85,7 @@ Notebook.sanitizeOnUpdate = function(received) {
 }
 
 Notebook.excludeOnRetrieve = [].concat(Notebook.referenceFields);
-Notebook.includeOnRetrieve = Notebook.fields.filter((field) => !Notebook.excludeOnCreate.includes(field));
+Notebook.includeOnRetrieve = Notebook.fields.filter((field) => !Notebook.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
  * @param toInclude 

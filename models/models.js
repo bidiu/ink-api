@@ -8,43 +8,41 @@ Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE'
 
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
- * TODO count, next page url
+ * TODO count, next page url, order
  * 
  * @param options
  *      expand          true means to expand
  *      expLimit        number limit of expanded association models
  */
-User.getExpandDef = function({ expand = false, expLimit = 20 } = {}) {
+User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
     let def = [];
-    for (let association of [Notebook]) {
-        def.push({
-            model: association,
-            attributes: expand ? association.includeOnRetrieve : ['id'],
-            limit: expLimit,
-            separate: false
-        });
-    }
+    // one user has many notebooks
+    def.push({
+        model: Notebook,
+        // have to explicitly specifiy foreign key here
+        attributes: expand ? ['userId'].concat(Notebook.includeOnRetrieve) : ['id', 'userId'],
+        limit: expLimit,
+        separate: true
+    });
     return def;
 }
 
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
- * TODO count, next page url
+ * TODO count, next page url, order
  * 
  * @param options
  *      expand        true means to expand
  *      expandLimit   number limit of expanded association models
  */
-Notebook.getExpandDef = function({ expand = false, expLimit = 20 } = {}) {
+Notebook.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
     let def = [];
-    for (let association of [User]) {
-        def.push({
-            model: association,
-            attributes: expand ? association.includeOnRetrieve : ['id'],
-            limit: expLimit,
-            separate: false
-        });
-    }
+    def.push({
+        model: User,
+        attributes: expand ? User.includeOnRetrieve : ['id'],
+        // belongsTo doesn't need limit
+        separate: false
+    });
     return def;
 }
 

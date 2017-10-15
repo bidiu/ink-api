@@ -15,8 +15,9 @@ exports.index = function(req, res, next) {
  */
 exports.retrieve = function(req, res, next) {
     let id = req.params.id;
+    let params = req.query;
 
-    userService.retrieve(id)
+    userService.retrieve(id, { params: params })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 payload = processPayload(payload, req);

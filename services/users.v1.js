@@ -37,7 +37,7 @@ function create(params) {
     
     return User.create(sanitized)
             .then((created) => {
-                return retrieve(created.id);
+                return retrieve(created.id, { params: params });
             });
 }
 
@@ -56,7 +56,7 @@ function create(params) {
 function update(id, params) {
     let sanitized = User.sanitizeOnUpdate(params);
 
-    return retrieve(id)
+    return retrieve(id, { params: params })
             .then((retrieved) => {
                 return retrieved.update(sanitized)
             });
