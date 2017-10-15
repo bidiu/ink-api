@@ -8,8 +8,13 @@ const InkError = require('../common/models/ink-errors');
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(id) {
-    return User.findById(id, { attributes: { exclude: User.excludeOnRetrieve } })
+function retrieve(id, { params = {} } = {}) {
+    return User.findById(id, {
+                attributes: { exclude: User.excludeOnRetrieve },
+                include: User.getExpandDef(
+                    { expand: params._expand, expLimit: params._expLimit }
+                )
+            })
             .then((retrieved) => {
                 if (retrieved) {
                     return retrieved;

@@ -152,5 +152,4 @@ User.sanitizeOnRetrieve = function(retrieved, toInclude) {
     });
 }
 
-
 module.exports = User;
