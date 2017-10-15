@@ -1,5 +1,6 @@
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
+const pagUtils = require('../utils/pagination');
 
 
 const DEFAULT_INDEX_PARAMS = {
@@ -30,10 +31,11 @@ function index({ userId, params = {} } = {}) {
                 offset: params._limit * (params._pageNo - 1)
             })
             .then(({count: totalCnt, rows: indexed}) => {
-                // TODO _endpoint, _next, _lastPageNo
+                // TODO _endpoint, _next
                 return {
                     _indexed: indexed,
                     _pageNo: params._pageNo,
+                    _lastPageNo: pagUtils.calcLastPageNo(params._limit, totalCnt),
                     _totalCnt: totalCnt
                 };
             });
