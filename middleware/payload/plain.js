@@ -12,13 +12,13 @@ const Sequlize = require('sequelize');
 function plainOneObj(obj) {
     if (obj instanceof Sequlize.Model) {
         return obj.get({ plain: true });
-    } else if (obj instanceof Array) {
-        Object.keys(obj).forEach((i) => {
-            obj[i] = plainOneObj(obj[i]);
+    } else if (obj && typeof obj === 'object') {
+        Object.keys(obj).forEach((k) => {
+            obj[k] = plainOneObj(obj[k]);
         });
         return obj;
     } else {
-        // don't know how to plain
+        // null, undefined or other types which can't be plained
         return obj;
     }
 }
@@ -27,11 +27,6 @@ function plainOneObj(obj) {
  * Convert from Sequlize model instance to plain value object
  */
 module.exports = function(payload, req) {
-    if (!(payload.data instanceof Sequlize.Model) && !(payload.data instanceof Array)) {
-        // don't know how to process
-        return payload;
-    }
-
     payload.data = plainOneObj(payload.data);
     return payload;
 }

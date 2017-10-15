@@ -28,6 +28,7 @@ function processOneObj(obj, apiBase) {
  * 
  */
 module.exports = function(payload, req) {
+    debugger;
     if (!payload.data) { return payload; }
 
     processOneObj(payload.data, commonUtils.apiBase(req.originalUrl));
