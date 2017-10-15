@@ -14,7 +14,7 @@ Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE'
  *      expand          true means to expand
  *      expLimit        number limit of expanded association models
  */
-User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
+User.getExpandDef = function({ expand = false, expLimit = 12, expOrder } = {}) {
     let def = [];
     // one user has many notebooks
     def.push({
@@ -22,6 +22,7 @@ User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
         // have to explicitly specifiy foreign key here
         attributes: expand ? ['userId'].concat(Notebook.includeOnRetrieve) : ['id', 'userId'],
         limit: expLimit,
+        order: [ expand ? ['createdAt', 'DESC'] : ['id', 'DESC'] ],
         separate: true
     });
     return def;
@@ -40,7 +41,7 @@ Notebook.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
     def.push({
         model: User,
         attributes: expand ? User.includeOnRetrieve : ['id'],
-        // belongsTo doesn't need limit
+        // belongsTo doesn't need limit/order
         separate: false
     });
     return def;
