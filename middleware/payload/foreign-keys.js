@@ -2,8 +2,10 @@ const FK_SUFFIX = 'Id';
 
 
 /**
- * @param {*} obj       to be processed (in-place change)
- * @param {*} apiBase 
+ * @param obj           to be processed (in-place change)
+ * @param apiBase       
+ * @return
+ *      the paramter 'obj' itself
  */
 function processOneObj(obj) {
     Object.keys(obj).forEach((key) => {

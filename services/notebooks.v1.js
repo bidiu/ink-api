@@ -3,6 +3,23 @@ const InkError = require('../common/models/ink-errors');
 
 
 /**
+ * @param options (optional)
+ *      userId      (optional)
+ *      params      (optional) filter conditions (where clause).
+ * @return
+ *      A promise to resolve the indexed data (could be an empty array if no matches).
+ */
+function index({ userId, params = {} } = {}) {
+    let where = {};
+    if (userId) { where.userId = userId; }
+
+    return Notebook.findAll({
+                attributes: { exclude: Notebook.excludeOnRetrieve },
+                where: where
+            });
+}
+
+/**
  * @param notebookId
  *      id of the notebook to retrieve.
  * @param options
@@ -88,6 +105,7 @@ function destroy(notebookId, { userId } = {}) {
 }
 
 
+exports.index = index;
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;

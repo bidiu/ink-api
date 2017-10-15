@@ -5,8 +5,10 @@ const KEY_ENDPOINT = '_endpoint';
 
 
 /**
- * @param {*} obj       to be processed (in-place change)
- * @param {*} apiBase 
+ * @param obj       to be processed (in-place change)
+ * @param apiBase
+ * @return
+ *      the paramter 'obj' itself
  */
 function processOneObj(obj, apiBase) {
     Object.keys(obj).forEach((key) => {
