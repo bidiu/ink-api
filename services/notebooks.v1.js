@@ -2,6 +2,14 @@ const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
 
 
+const DEFAULT_INDEX_PARAMS = {
+    _order: [ ['createdAt', 'DESC'] ],
+    _limit: 10,
+    _pageNo: 1,
+    _expand: false,
+    _expLimit: 20
+};
+
 /**
  * @param options (optional)
  *      userId      (optional)
@@ -12,10 +20,22 @@ const InkError = require('../common/models/ink-errors');
 function index({ userId, params = {} } = {}) {
     let where = {};
     if (userId) { where.userId = userId; }
+    params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
 
-    return Notebook.findAll({
+    return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
-                where: where
+                where: where,
+                order: params._order,
+                limit: params._limit,
+                offset: params._limit * (params._pageNo - 1)
+            })
+            .then(({count: totalCnt, rows: indexed}) => {
+                // TODO _endpoint, _next, _lastPageNo
+                return {
+                    _indexed: indexed,
+                    _pageNo: params._pageNo,
+                    _totalCnt: totalCnt
+                };
             });
 }
 
