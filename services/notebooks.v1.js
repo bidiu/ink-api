@@ -9,7 +9,7 @@ const DEFAULT_INDEX_PARAMS = {
     _limit: 10,
     _pageNo: 1,
     _expand: false,
-    _expLimit: 20
+    _expLimit: 12
 };
 
 /**
@@ -25,10 +25,12 @@ function index(path, { userId, params = {} } = {}) {
     let where = {};
     if (userId) { where.userId = userId; }
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
+    let include = Notebook.getExpandDef({expand: params._expand, expLimit: params._expLimit});
 
     return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
                 where: where,
+                include: include,
                 order: params._order,
                 limit: params._limit,
                 offset: params._limit * (params._pageNo - 1)
