@@ -5,6 +5,7 @@ FROM node:6.11
 WORKDIR /usr/src/app
 
 RUN npm install -g nodemon
+RUN npm install -g @angular/cli
 
 # replace this with your application's default port
 EXPOSE 3000
