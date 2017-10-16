@@ -4,17 +4,17 @@ FROM node:6.11
 # Create app directory
 WORKDIR /usr/src/app
 
-RUN npm install -g nodemon
-RUN npm install -g @angular/cli
-
 # replace this with your application's default port
 EXPOSE 3000
 
+RUN npm install -g nodemon
+RUN npm install -g @angular/cli
+
 # for normal dev
-# CMD npm start
+CMD npm start
 
 # for debug
-CMD npm run debug
+# CMD npm run debug
 
 # for production
 # CMD npm install && npm start
