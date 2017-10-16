@@ -2,6 +2,7 @@ const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
 
 
+// cannot be easily changed given current design
 const MODEL_NAME = 'user';
 const TABLE_NAME = 'users';
 
