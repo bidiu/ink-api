@@ -2,31 +2,42 @@ const User = require('./users');
 const Notebook = require('./notebooks');
 
 
+let modelMap = new Map([
+    ['users', User],
+    ['notebooks', Notebook]
+]);
+
+
 User.hasMany(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
 
+const DEFAULT_USER_EXP = {
+    notebooks: { _limit: 12, _strip: false },
+};
+
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
- * TODO count, next page url, order
- * 
- * @param options
- *      expand          true means to expand
- *      expLimit        number limit of expanded association models
  */
-User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
+User.getExpandDef = function({ _expand: expand = {} } = {}) {
     let def = [];
-    // one user has many notebooks
-    def.push({
-        model: Notebook,
-        // have to explicitly specifiy foreign key here
-        attributes: expand ? ['userId'].concat(Notebook.includeOnRetrieve) : ['id', 'userId'],
-        limit: expLimit,
-        order: [ expand ? ['createdAt', 'DESC'] : ['id', 'DESC'] ],
-        separate: true
-    });
+
+    // notebooks
+    if (expand.notebooks) {
+        let exp = Object.assign({}, DEFAULT_USER_EXP.notebooks, expand.notebooks);
+        def.push({
+            model: Notebook,
+            // have to explicitly specifiy foreign key here
+            attributes: exp._strip ? ['id', 'userId'] : ['userId'].concat(Notebook.includeOnRetrieve),
+            // null means expand all notebooks (no limit)
+            limit: exp._limit || undefined,
+            order: [ exp._strip ? ['id', 'DESC'] : ['createdAt', 'DESC'] ],
+            separate: true
+        });
+    }
+
     return def;
-}
+};
 
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
@@ -51,7 +62,4 @@ Notebook.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
 
 
 // order matters
-module.exports = new Map([
-    ['users', User],
-    ['notebooks', Notebook]
-]);
+module.exports = modelMap;

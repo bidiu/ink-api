@@ -11,9 +11,7 @@ const InkError = require('../common/models/ink-errors');
 function retrieve(id, { params = {} } = {}) {
     return User.findById(id, {
                 attributes: { exclude: User.excludeOnRetrieve },
-                include: User.getExpandDef(
-                    { expand: params._expand, expLimit: params._expLimit }
-                )
+                include: User.getExpandDef(params)
             })
             .then((retrieved) => {
                 if (retrieved) {
