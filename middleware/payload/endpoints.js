@@ -1,5 +1,16 @@
-const KEYS = ['_endpoint', '_next'];
+const KEYS = ['_endpoint', '_next', '_prev', '_first', '_last'];
 
+
+function prepend(str, baseUrl, path) {
+    if (str.startsWith('/')) {
+        return baseUrl + str;
+    } else if (str.startsWith('?')) {
+        return baseUrl + path + str;
+    } else {
+        // don't know how to process
+        return str;
+    }
+}
 
 /**
  * @param obj       to be processed (in-place change)
@@ -7,14 +18,14 @@ const KEYS = ['_endpoint', '_next'];
  * @return
  *      the paramter 'obj' itself
  */
-function processOneObj(obj, apiBase) {
+function processOneObj(obj, { baseUrl, path }) {
     Object.keys(obj).forEach((key) => {
         let val = obj[key]
 
-        if (KEYS.includes(key) && val && !val.startsWith(apiBase)) {
-            obj[key] = apiBase + val;
+        if (KEYS.includes(key) && val && !val.startsWith(baseUrl)) {
+            obj[key] = prepend(val, baseUrl, path);
         } else if (val && typeof val === 'object') {
-            obj[key] = processOneObj(val, apiBase);
+            obj[key] = processOneObj(val, { baseUrl: baseUrl, path: path });
         }
     });
     return obj;
@@ -27,6 +38,6 @@ function processOneObj(obj, apiBase) {
 module.exports = function(payload, req) {
     if (!payload.data) { return payload; }
 
-    processOneObj(payload.data, req.baseUrl);
+    processOneObj(payload.data, req);
     return payload;
 }

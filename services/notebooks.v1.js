@@ -1,6 +1,5 @@
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
-const commonUtils = require('../utils/common');
 const pagUtils = require('../utils/pagination');
 
 
@@ -36,26 +35,7 @@ function index(path, { userId, params = {} } = {}) {
                 offset: params._limit * (params._pageNo - 1)
             })
             .then(({count: totalCnt, rows: indexed}) => {
-                let lastPageNo = pagUtils.calcLastPageNo(params._limit, totalCnt);
-                let nextPageNo = pagUtils.calcNextPageNo(params._pageNo, lastPageNo);
-                
-                // TODO _endpoint, _next
-                let data = {
-                    _indexed: indexed,
-                    _pageNo: params._pageNo,
-                    _lastPageNo: lastPageNo,
-                    _limit: params._limit,
-                    _totalCnt: totalCnt,
-                    _endpoint: path + '?params=' + encodeURIComponent(JSON.stringify(params))
-                };
-                if (nextPageNo) {
-                    let _params = commonUtils.copyParams(params, { _pageNo: nextPageNo });
-                    data._next = path + '?params=' + encodeURIComponent(JSON.stringify(_params));
-                } else {
-                    data._next = null;
-                }
-
-                return data;
+                return pagUtils.addPagInfo({ _indexed: indexed, _totalCnt: totalCnt }, params);
             });
 }
 
