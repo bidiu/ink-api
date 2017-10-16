@@ -34,7 +34,9 @@ User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
  * 
  * @param options
  *      expand        true means to expand
- *      expandLimit   number limit of expanded association models
+ *      expandLimit   number limit of expanded association models, some
+ *                    particular expand type will ignore this (for example, 
+ *                    tags of a note).
  */
 Notebook.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
     let def = [];
