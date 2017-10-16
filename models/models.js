@@ -13,9 +13,8 @@ Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE'
  * @param options
  *      expand          true means to expand
  *      expLimit        number limit of expanded association models
- *      expOrder        TODO
  */
-User.getExpandDef = function({ expand = false, expLimit = 12, expOrder } = {}) {
+User.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
     let def = [];
     // one user has many notebooks
     def.push({
