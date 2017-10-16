@@ -14,9 +14,17 @@ exports.arrayWrap = function(val) {
 }
 
 /**
+ * Deprecated.
  * From '/api/v1/users' to '/api/v1'
  */
 exports.apiBase = function(url) {
     // TODO right now for simplicity, just hardcoded
     return '/api/v1';
+}
+
+/**
+ * Note that this is only shallow copy.
+ */
+exports.copyParams = function(params, over = {}) {
+    return Object.assign({}, params, over);
 }

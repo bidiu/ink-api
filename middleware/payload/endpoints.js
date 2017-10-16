@@ -1,7 +1,4 @@
-const commonUtils = require('../../utils/common');
-
-
-const KEY_ENDPOINT = '_endpoint';
+const KEYS = ['_endpoint', '_next'];
 
 
 /**
@@ -14,7 +11,7 @@ function processOneObj(obj, apiBase) {
     Object.keys(obj).forEach((key) => {
         let val = obj[key]
 
-        if (key === KEY_ENDPOINT) {
+        if (KEYS.includes(key) && val && !val.startsWith(apiBase)) {
             obj[key] = apiBase + val;
         } else if (val && typeof val === 'object') {
             obj[key] = processOneObj(val, apiBase);
@@ -30,6 +27,6 @@ function processOneObj(obj, apiBase) {
 module.exports = function(payload, req) {
     if (!payload.data) { return payload; }
 
-    processOneObj(payload.data, commonUtils.apiBase(req.originalUrl));
+    processOneObj(payload.data, req.baseUrl);
     return payload;
 }

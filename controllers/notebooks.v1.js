@@ -8,10 +8,11 @@ const processPayload = require('../middleware/payload/payload');
  * GET /notebooks
  */
 exports.index = function(req, res, next) {
+    debugger;
     let userId = req.params.userId; // might be undefined, which means get timeline
     let params = req.query;
 
-    notebookService.index({ userId: userId, params: params })
+    notebookService.index(req.path, { userId: userId, params: params })
             .then((indexed) => {
                 let payload = new Res.Ok({ data: indexed });
                 payload = processPayload(payload, req);

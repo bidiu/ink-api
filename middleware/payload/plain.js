@@ -27,6 +27,8 @@ function plainOneObj(obj) {
  * Convert from Sequlize model instance to plain value object
  */
 module.exports = function(payload, req) {
+    if (!payload.data) { return payload; }
+
     payload.data = plainOneObj(payload.data);
     return payload;
 }

@@ -1,5 +1,6 @@
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
+const commonUtils = require('../utils/common');
 const pagUtils = require('../utils/pagination');
 
 
@@ -12,13 +13,15 @@ const DEFAULT_INDEX_PARAMS = {
 };
 
 /**
+ * @param path
+ *      used to generate response
  * @param options (optional)
  *      userId      (optional)
  *      params      (optional) filter conditions (where clause).
  * @return
  *      A promise to resolve the indexed data (could be an empty array if no matches).
  */
-function index({ userId, params = {} } = {}) {
+function index(path, { userId, params = {} } = {}) {
     let where = {};
     if (userId) { where.userId = userId; }
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
@@ -31,13 +34,26 @@ function index({ userId, params = {} } = {}) {
                 offset: params._limit * (params._pageNo - 1)
             })
             .then(({count: totalCnt, rows: indexed}) => {
+                let lastPageNo = pagUtils.calcLastPageNo(params._limit, totalCnt);
+                let nextPageNo = pagUtils.calcNextPageNo(params._pageNo, lastPageNo);
+                
                 // TODO _endpoint, _next
-                return {
+                let data = {
                     _indexed: indexed,
                     _pageNo: params._pageNo,
-                    _lastPageNo: pagUtils.calcLastPageNo(params._limit, totalCnt),
-                    _totalCnt: totalCnt
+                    _lastPageNo: lastPageNo,
+                    _limit: params._limit,
+                    _totalCnt: totalCnt,
+                    _endpoint: path + '?params=' + encodeURIComponent(JSON.stringify(params))
                 };
+                if (nextPageNo) {
+                    let _params = commonUtils.copyParams(params, { _pageNo: nextPageNo });
+                    data._next = path + '?params=' + encodeURIComponent(JSON.stringify(_params));
+                } else {
+                    data._next = null;
+                }
+
+                return data;
             });
 }
 
