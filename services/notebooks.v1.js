@@ -3,12 +3,11 @@ const InkError = require('../common/models/ink-errors');
 const pagUtils = require('../utils/pagination');
 
 
+// no need to take care '_expand' here
 const DEFAULT_INDEX_PARAMS = {
     _order: [ ['createdAt', 'DESC'] ],
-    _limit: 10,
-    _pageNo: 1,
-    _expand: false,
-    _expLimit: 12
+    _limit: 12,
+    _pageNo: 1
 };
 
 /**
@@ -24,12 +23,11 @@ function index(path, { userId, params = {} } = {}) {
     let where = {};
     if (userId) { where.userId = userId; }
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
-    let include = Notebook.getExpandDef({expand: params._expand, expLimit: params._expLimit});
 
     return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
                 where: where,
-                include: include,
+                include: Notebook.getExpandDef(params),
                 order: params._order,
                 limit: params._limit,
                 offset: params._limit * (params._pageNo - 1)
@@ -56,9 +54,7 @@ function retrieve(notebookId, { userId, params = {} } = {}) {
     return Notebook.findOne({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
                 where: where,
-                include: Notebook.getExpandDef(
-                    { expand: params._expand, expLimit: params._expLimit }
-                )
+                include: Notebook.getExpandDef(params)
             })
             .then((retrieved) => {
                 if (retrieved) {

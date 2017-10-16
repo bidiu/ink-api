@@ -13,7 +13,7 @@ Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE'
 
 
 const DEFAULT_USER_EXP = {
-    notebooks: { _limit: 12, _strip: false },
+    notebooks: { _limit: 12, _strip: false }
 };
 
 /**
@@ -39,6 +39,11 @@ User.getExpandDef = function({ _expand: expand = {} } = {}) {
     return def;
 };
 
+
+const DEFAULT_NOTEBOOK_EXP = {
+    users: { _limit: 1, _strip: false }
+};
+
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
  * TODO count, next page url, order
@@ -49,16 +54,22 @@ User.getExpandDef = function({ _expand: expand = {} } = {}) {
  *                    particular expand type will ignore this (for example, 
  *                    tags of a note).
  */
-Notebook.getExpandDef = function({ expand = false, expLimit = 12 } = {}) {
+Notebook.getExpandDef = function({ _expand: expand = {} } = {}) {
     let def = [];
-    def.push({
-        model: User,
-        attributes: expand ? User.includeOnRetrieve : ['id'],
-        // belongsTo doesn't need limit/order
-        separate: false
-    });
+
+    // users
+    if (expand.users) {
+        let exp = Object.assign({}, DEFAULT_NOTEBOOK_EXP.users, expand.users);
+        def.push({
+            model: User,
+            attributes: exp._strip ? ['id'] : User.includeOnRetrieve,
+            // no need for limit and order
+            separate: false
+        });
+    }
+
     return def;
-}
+};
 
 
 // order matters
