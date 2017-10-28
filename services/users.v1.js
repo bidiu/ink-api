@@ -5,6 +5,7 @@ const pagUtils = require('../utils/pagination');
 
 // no need to take care '_expand' here
 const DEFAULT_INDEX_PARAMS = {
+    _where: {},
     _order: [ ['createdAt', 'DESC'] ],
     _limit: 12,
     _pageNo: 1
@@ -21,6 +22,7 @@ function index({ params = {} } = {}) {
 
     return User.findAndCountAll({
                 attributes: { exclude: User.excludeOnRetrieve },
+                where: params._where,
                 include: User.getExpandDef(params),
                 order: params._order,
                 limit: params._limit,
