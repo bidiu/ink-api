@@ -15,14 +15,27 @@ function validateOneObj(obj, allowedKeys) {
     });
 }
 
+/**
+ * validation notions:
+ *      - not differentiate non-exist and undefined (actually not a value for JSON)
+ *      - deem null as a set value (so null is illegal for '_where' - see next one)
+ *      - only object type (but cannot be null) is valid for '_where'
+ */
 module.exports = function(req, res, model) {
     let where = req.method === 'GET' ? req.query._where : req.body._where;
     let payload = null;
 
-    if (!where) { return true; }
-    else if (!model) {
-        // for safety reasson, restrain the endpoints that accept '_where' param
+    if (typeof where === 'undefined') {
+        return true;
+    } else if (req.method !== 'GET') {
+        // for safety reason, only GET method allows '_where' param
+        payload = new Res.BadReq({ details: 'HTTP method doesn\'t accept \'_where\' param.' });
+    } else if (!model) {
+        // for safety reason, restrain the endpoints that accept '_where' param
         payload = new Res.BadReq({ details: 'The endpoint you requested doesn\'t accept \'_where\' param.' });
+    } else if (!(where && typeof where === 'object')) {
+        // only object type (but cannot be null) is valid for '_where'
+        payload = new Res.BadReq({ details: '\'_where\' param is wrongly constructed.' });
     } else {
         try {
             validateOneObj(where, model.includeOnRetrieve.concat( Object.keys(ALLOWED_OP_ALIASES) ));
