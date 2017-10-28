@@ -13,6 +13,12 @@ InkError.prototype.constructor = InkError;
 /* more specific errors */
 const ERROR_TYPES = [
     (() => {
+        function BadReq({ message = 'Request is bad.', details, data } = {}) {
+            InkError.call(this, message, details, data);
+        }
+        return BadReq;
+    })(),
+    (() => {
         function NotFound({ message = 'Resources are not found.', details, data } = {}) {
             InkError.call(this, message, details, data);
         }
