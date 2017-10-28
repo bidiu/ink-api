@@ -6,6 +6,7 @@ const Res = require('../../common/models/responses');
  *      2. Clear other query parameters except for 'params',
  *         if methodis GET. And if 'params' is not a valid JSON,
  *         return 400 response.
+ *      3. Clear body if method is GET.
  */
 module.exports = function(req, res, next) {
     try {
@@ -15,6 +16,7 @@ module.exports = function(req, res, next) {
                 query = JSON.parse(req.query.params);
             }
             req.query = query;
+            req.body = {};
         } else {
             req.query = {};
         }
