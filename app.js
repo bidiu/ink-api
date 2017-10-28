@@ -4,6 +4,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const queryParser = require('./middleware/queries/query-parser');
 const bodyParser = require('body-parser');
+const paramsValidator = require('./middleware/params/params-validator');
 const modelMap = require('./models/models');
 const apiRouter = require('./routers/api/api');
 const notFoundHandler = require('./middleware/errors/not-found');
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(queryParser);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(paramsValidator);
 
 // load routers
 app.use('/api', apiRouter);
