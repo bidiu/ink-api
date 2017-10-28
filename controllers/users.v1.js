@@ -7,7 +7,17 @@ const processPayload = require('../middleware/payload/payload');
  * GET /users
  */
 exports.index = function(req, res, next) {
-    res.end('index');
+    let params = req.query;
+
+    userService.index({ params: params })
+            .then((indexed) => {
+                let payload = new Res.Ok({ data: indexed });
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 }
 
 /**

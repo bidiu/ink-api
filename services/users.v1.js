@@ -1,6 +1,35 @@
 const User = require('../models/users');
 const InkError = require('../common/models/ink-errors');
+const pagUtils = require('../utils/pagination');
 
+
+// no need to take care '_expand' here
+const DEFAULT_INDEX_PARAMS = {
+    _order: [ ['createdAt', 'DESC'] ],
+    _limit: 12,
+    _pageNo: 1
+};
+
+/**
+ * @param options (optional)
+ *      params      (optional) filter conditions (where/order/limit/pageNo...)
+ * @return
+ *      A promise to resolve the indexed data (could be an empty array if no matches).
+ */
+function index({ params = {} } = {}) {
+    params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
+
+    return User.findAndCountAll({
+                attributes: { exclude: User.excludeOnRetrieve },
+                include: User.getExpandDef(params),
+                order: params._order,
+                limit: params._limit,
+                offset: params._limit * (params._pageNo - 1)
+            })
+            .then(({count: totalCnt, rows: indexed}) => {
+                return pagUtils.addPagInfo({ _indexed: indexed, _totalCnt: totalCnt }, params);
+            });
+}
 
 /**
  * @param id
@@ -74,6 +103,7 @@ function destroy(id) {
 }
 
 
+exports.index = index;
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;
