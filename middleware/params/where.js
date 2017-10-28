@@ -19,7 +19,7 @@ module.exports = function(req, res, model) {
     let where = req.method === 'GET' ? req.query._where : req.body._where;
     let payload = null;
 
-    if (!where) { return; }
+    if (!where) { return true; }
     else if (!model) {
         // for safety reasson, restrain the endpoints that accept '_where' param
         payload = new Res.BadReq({ details: 'The endpoint you requested doesn\'t accept \'_where\' param.' });
