@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const logger = require('morgan');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const queryParser = require('./middleware/queries/query-parser');
@@ -11,6 +12,7 @@ const notFoundHandler = require('./middleware/errors/not-found');
 const inkErrorHandler = require('./middleware/errors/ink-errors');
 const sequelizeErrorHandler = require('./middleware/errors/sequelize-errors');
 const errorHandler = require('./middleware/errors/errors');
+const appConfig = require('./config/app.config');
 
 
 const app = express();
@@ -18,6 +20,7 @@ const app = express();
 
 // load global middleware
 app.use(logger('dev'));
+if (appConfig.env === 'dev') { app.use(cors()); }
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
