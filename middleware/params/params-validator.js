@@ -13,7 +13,9 @@ const REGISTERED = [
     require('./where')
 ];
 
-const API_BASE_REGEX = /^\/api\/v\d+\//;
+// only try to validate if requesting /api/v${version}
+const API_BASE_REGEX = /^\/api\/v\d+\//gi;
+const MODEL_NAME_REGEX = /[a-zA-Z]+(?!.+[a-zA-Z]+)/gi
 
 /**
  * Map requested API endpoint to corresponding requested model, if any.
@@ -22,23 +24,25 @@ const API_BASE_REGEX = /^\/api\/v\d+\//;
  *      mapped model class, or null if endpoint doesn't map to any model
  */
 function getModel(path) {
-    let modelName = path.replace(API_BASE_REGEX, '');
-    let i = modelName.indexOf('/');
-    if (i !== -1) {
-        modelName = modelName.substring(0, i);
-    }
+    let matched = MODEL_NAME_REGEX.exec(path);
+    let modelName = matched ? matched[0] : '';
+    MODEL_NAME_REGEX.lastIndex = 0;
     return modelMap.get(modelName) || null;
 }
 
 module.exports = function(req, res, next) {
-    let model = getModel(req.path);
-
-    for (let validate of REGISTERED) {
-        if (!validate(req, res, model)) {
-            // failed
-            return;
+    if (API_BASE_REGEX.test(req.path)) {
+        API_BASE_REGEX.lastIndex = 0;
+        let model = getModel(req.path);
+        
+        for (let validate of REGISTERED) {
+            if (!validate(req, res, model)) {
+                // failed
+                return;
+            }
         }
     }
+    API_BASE_REGEX.lastIndex = 0;
     // everything is okay
     next();
 }
