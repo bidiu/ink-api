@@ -38,7 +38,7 @@ module.exports = function(req, res, model) {
         payload = new Res.BadReq({ details: '\'_where\' param is wrongly constructed.' });
     } else {
         try {
-            validateOneObj(where, model.includeOnRetrieve.concat( Object.keys(ALLOWED_OP_ALIASES) ));
+            validateOneObj(where, model.includeOnRetrieve.concat( model.referenceFields, Object.keys(ALLOWED_OP_ALIASES) ));
         } catch (e) {
             if (e instanceof InkError) {
                 // don't relay on the InkError middleware at the end
