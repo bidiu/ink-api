@@ -22,7 +22,7 @@ const DEFAULT_INDEX_PARAMS = {
  */
 function index(path, { userId, params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
-    if (userId) { params._where.userId = userId; }
+    if (userId) { params._where.userId = +userId; }
 
     return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
