@@ -10,7 +10,8 @@ const modelMap = require('../../models/models');
  *      - send error response (MUST return false)
  */
 const REGISTERED = [
-    require('./where')
+    require('./where'),
+    require('./limit')
 ];
 
 // only try to validate if requesting /api/v${version}
