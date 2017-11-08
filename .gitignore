@@ -58,6 +58,7 @@ typings/
 .env
 
 /config/**/*.json
+/config/**/*.pem
 !/config/**/*.example.json
 .DS_Store
 *~
