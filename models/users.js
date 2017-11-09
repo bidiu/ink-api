@@ -43,6 +43,13 @@ const DEF = {
             notEmpty: true
         }
     },
+    salt: {
+        type: Sequalize.STRING, 
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
+    },
     name: {
         type: Sequalize.STRING, 
         allowNull: false,
@@ -125,19 +132,19 @@ User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) 
     return sanitized;
 }
 
-User.excludeOnCreate = ['id', 'status', 'secret'].concat(User.hiddenFields);
+User.excludeOnCreate = ['id', 'status', 'salt', 'secret'].concat(User.hiddenFields);
 User.includeOnCreate = User.fields.filter((field) => !User.excludeOnCreate.includes(field));
 User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
-User.excludeOnUpdate = ['id', 'username', 'password', 'secret'].concat(User.hiddenFields);
+User.excludeOnUpdate = ['id', 'username', 'password', 'salt', 'secret'].concat(User.hiddenFields);
 User.includeOnUpdate = User.fields.filter((field) => !User.excludeOnUpdate.includes(field));
 User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnUpdate });
 }
 
-User.excludeOnRetrieve = ['password', 'secret'].concat(User.referenceFields);
+User.excludeOnRetrieve = ['password', 'salt', 'secret'].concat(User.referenceFields);
 User.includeOnRetrieve = User.fields.filter((field) => !User.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
