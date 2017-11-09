@@ -5,7 +5,7 @@
  *      3. 1            => [ 1 ]
  *      4. [ 1 ]        => [ 1 ]
  */
-exports.arrayWrap = function(val) {
+function arrayWrap(val) {
     if (val === null || val === undefined) {
         return undefined;
     } else {
@@ -17,7 +17,7 @@ exports.arrayWrap = function(val) {
  * Deprecated.
  * From '/api/v1/users' to '/api/v1'
  */
-exports.apiBase = function(url) {
+function apiBase(url) {
     // TODO right now for simplicity, just hardcoded
     return '/api/v1';
 }
@@ -25,6 +25,11 @@ exports.apiBase = function(url) {
 /**
  * Note that this is only shallow copy.
  */
-exports.copyParams = function(params, over = {}) {
+function copyParams(params, over = {}) {
     return Object.assign({}, params, over);
 }
+
+
+exports.arrayWrap = arrayWrap;
+exports.apiBase = apiBase;
+exports.copyParams = copyParams;
