@@ -23,6 +23,19 @@ const ERROR_TYPES = [
             InkError.call(this, message, details, data);
         }
         return NotFound;
+    })(),
+    (() => {
+        // either no authentication or bad authentication
+        function BadAuthentication({ message = 'You are not authenticated.', details, data } = {}) {
+            InkError.call(this, message, details, data);
+        }
+        return BadAuthentication;
+    })(),
+    (() => {
+        function NoAuthorization({ message = 'You don\'t have the authorization.', details, data } = {}) {
+            InkError.call(this, message, details, data);
+        }
+        return NoAuthorization;
     })()
 ];
 
