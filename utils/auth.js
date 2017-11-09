@@ -25,7 +25,7 @@ function genRandomStr(len = 32) {
  * @return
  *      a promise resolve the derived key, or reject with any error
  */
-function deriveKeyFromPasswd(password, salt, iterations = 100000, keylen = 64, digest = HMAC_ALGO) {
+function deriveKey(password, salt, iterations = 100000, keylen = 64, digest = HMAC_ALGO) {
     return new Promise((resolve, reject) => {
         crypto.pbkdf2(password, salt, iterations, keylen, digest, (err, derivedKey) => {
             if (err) {
@@ -89,5 +89,5 @@ function comparePasswd(password, salt, key, iterations = 100000, keylen = 64, di
 
 exports.genRandomStr = genRandomStr;
 exports.genSalt = genRandomStr;
-exports.deriveKeyFromPasswd = deriveKeyFromPasswd;
+exports.deriveKey = deriveKey;
 exports.comparePasswd = comparePasswd;
