@@ -3,13 +3,10 @@ const fs = require('fs');
 
 function readKey(filename) {
     try {
-        let content = fs.readFileSync(filename, { encoding: 'utf8' });
-        return content.replace(/-+.+-+/gi, '')
-                .replace(/\s/gi, '');
+        return fs.readFileSync(filename, { encoding: 'utf8' });
     } catch (e) {
         console.error('Failed to read public/private keys, abort.');
-        console.error('> Details: ');
-        console.error(e);
+        console.error('Details: \n' + e);
         process.exit(1);
     }
 }
