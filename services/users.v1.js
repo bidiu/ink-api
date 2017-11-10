@@ -1,5 +1,6 @@
 const User = require('../models/users');
 const InkError = require('../common/models/ink-errors');
+const authUtils = require('../utils/auth');
 const pagUtils = require('../utils/pagination');
 
 
@@ -63,10 +64,15 @@ function retrieve(id, { params = {} } = {}) {
  */
 function create(params) {
     let sanitized = User.sanitizeOnCreate(params);
-    
-    return User.create(sanitized)
+    sanitized.salt = authUtils.genSalt();
+
+    return authUtils.deriveKey(sanitized.password, sanitized.salt)
+            .then((derivedKey) => {
+                sanitized.password = derivedKey;
+                return User.create(sanitized)
+            })
             .then((created) => {
-                return retrieve(created.id, { params: params });
+                return retrieve(created.id, { params });
             });
 }
 
