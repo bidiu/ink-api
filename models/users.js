@@ -122,7 +122,7 @@ User.fields = Object.keys(DEF).concat(User.hiddenFields, User.referenceFields);
 User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) {
     let sanitized = {};
     toInclude = toInclude.filter((field) => {
-        return User.fields.includes(field) && !toExclude.includes(field);
+        return !toExclude.includes(field);
     });
     Object.keys(raw).forEach((field) => {
         if (toInclude.includes(field)) {
@@ -138,10 +138,13 @@ User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
-User.excludeOnUpdate = ['id', 'username', 'password', 'salt', 'secret'].concat(User.hiddenFields);
+User.excludeOnUpdate = ['id', 'username', 'salt', 'secret'].concat(User.hiddenFields);
 User.includeOnUpdate = User.fields.filter((field) => !User.excludeOnUpdate.includes(field));
 User.sanitizeOnUpdate = function(received) {
-    return User.sanitize(received, { toExclude: User.excludeOnUpdate });
+    return User.sanitize(received, {
+        toExclude: User.excludeOnUpdate, 
+        toInclude: ['oldPassword'].concat(User.fields)
+    });
 }
 
 User.excludeOnRetrieve = ['password', 'salt', 'secret'].concat(User.referenceFields);
