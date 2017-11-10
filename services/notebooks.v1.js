@@ -78,7 +78,7 @@ function create(params) {
 
     return Notebook.create(sanitized)
             .then((created) => {
-                return retrieve(created.id, { params: params });
+                return retrieve(created.id, { params });
             });
 }
 
@@ -99,12 +99,12 @@ function create(params) {
 function update(notebookId, params, { userId } = {}) {
     let sanitized = Notebook.sanitizeOnUpdate(params);
 
-    return retrieve(notebookId, { userId: userId, params: params })
+    return retrieve(notebookId, { userId, params })
             .then((retrieved) => {
                 return retrieved.update(sanitized);
             })
             .then(() => {
-                return retrieve(notebookId, { userId: userId, params: params });
+                return retrieve(notebookId, { userId, params });
             });
 }
 
@@ -117,7 +117,7 @@ function update(notebookId, params, { userId } = {}) {
  *      userId      (optional)
  */
 function destroy(notebookId, { userId } = {}) {
-    return retrieve(notebookId, { userId: userId })
+    return retrieve(notebookId, { userId })
             .then((retrieved) => {
                 return retrieved.destroy();
             });
