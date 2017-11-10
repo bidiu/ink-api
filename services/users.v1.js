@@ -76,9 +76,30 @@ function create(params) {
             });
 }
 
+function _updatePasswd(retrieved, password, oldPassword) {
+    if (!password) { throw new InkError.BadReq({ message: 'You have to provide the new password.' }); }
+
+    return retrieved.reload()
+            .then((retrieved) => {
+                return authUtils.verifyPasswd(oldPassword, retrieved.salt, retrieved.password);
+            })
+            .then(() => {
+                return authUtils.deriveKey(password, retrieved.salt);
+            })
+            .then((password) => {
+                return retrieved.update({ password });
+            });
+}
+
 /**
+ * You should NOT call this to update password and other fields
+ * at the same time. Instead, you should call this method first
+ * to update password, and then call second time to update other 
+ * fields (or switch the order). Because updating password and 
+ * other fields at the same time is a very rare scenario. If you 
+ * violate this, only password will be updated.
+ * 
  * TODO should be in an transaction
- * TODO updating secret, password ...
  * 
  * @param id
  *      id of the user to update.
@@ -91,9 +112,20 @@ function create(params) {
 function update(id, params) {
     let sanitized = User.sanitizeOnUpdate(params);
 
-    return retrieve(id, { params: params })
+    return retrieve(id, { params })
             .then((retrieved) => {
-                return retrieved.update(sanitized)
+                if (sanitized.password || sanitized.oldPassword) {
+                    // update password
+                    return _updatePasswd(retrieved, sanitized.password, sanitized.oldPassword);
+                } else {
+                    // update other fields
+                    delete sanitized.password;
+                    delete sanitized.oldPassword;
+                    return retrieved.update(sanitized);
+                }
+            })
+            .then(() => {
+                return retrieve(id, { params });
             });
 }
 
