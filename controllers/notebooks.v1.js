@@ -11,7 +11,7 @@ exports.index = function(req, res, next) {
     let userId = req.params.userId; // might be undefined, which means get timeline
     let params = req.query;
 
-    notebookService.index(req.path, { userId: userId, params: params })
+    notebookService.index(req.path, { userId, params })
             .then((indexed) => {
                 let payload = new Res.Ok({ data: indexed });
                 payload = processPayload(payload, req);
@@ -30,7 +30,7 @@ exports.retrieve = function(req, res, next) {
     let userId = req.params.userId; // might be undefined
     let params = req.query;
 
-    notebookService.retrieve(notebookId, { userId: userId, params: params })
+    notebookService.retrieve(notebookId, { userId, params })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 payload = processPayload(payload, req);
@@ -72,7 +72,7 @@ exports.update = function(req, res, next) {
     let userId = req.params.userId; // might be undefined
     let params = req.body;
 
-    notebookService.update(notebookId, params, { userId: userId })
+    notebookService.update(notebookId, params, { userId })
             .then((updated) => {
                 let payload = new Res.Ok({ data: updated });
                 payload = processPayload(payload, req);
@@ -91,7 +91,7 @@ exports.destroy = function(req, res, next) {
     let notebookId = req.params.notebookId;
     let userId = req.params.userId; // might be undefined
 
-    notebookService.destroy(notebookId, { userId: userId })
+    notebookService.destroy(notebookId, { userId })
             .then(() => {
                 let payload = new Res.Ok();
                 payload = processPayload(payload, req);

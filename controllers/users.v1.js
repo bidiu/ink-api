@@ -9,7 +9,7 @@ const processPayload = require('../middleware/payload/payload');
 exports.index = function(req, res, next) {
     let params = req.query;
 
-    userService.index({ params: params })
+    userService.index({ params })
             .then((indexed) => {
                 let payload = new Res.Ok({ data: indexed });
                 payload = processPayload(payload, req);
@@ -27,7 +27,7 @@ exports.retrieve = function(req, res, next) {
     let id = req.params.id;
     let params = req.query;
 
-    userService.retrieve(id, { params: params })
+    userService.retrieve(id, { params })
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 payload = processPayload(payload, req);
