@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const InkError = require('../common/models/ink-errors');
 
 
-crypto.DEFAULT_ENCODING = 'hex';
 const HMAC_ALGO = 'sha512';
 
 /**
@@ -32,7 +31,7 @@ function deriveKey(password, salt, iterations = 100000, keylen = 64, digest = HM
                 // mostly, programming error
                 reject(err);
             } else {
-                resolve(derivedKey);
+                resolve(derivedKey.toString('hex'));
             }
         });
     });
@@ -60,7 +59,7 @@ function verifyPasswd(password, salt, key, iterations = 100000, keylen = 64, dig
                 return;
             }
 
-            if (derivedKey === key) {
+            if (derivedKey.toString('hex') === key) {
                 resolve();
             } else {
                 reject(new InkError.BadAuthentication());
