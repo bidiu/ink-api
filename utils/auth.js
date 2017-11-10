@@ -24,7 +24,7 @@ function genRandomStr(len = 32) {
  * @return
  *      a promise resolve the derived key, or reject with any error
  */
-function deriveKey(password, salt, iterations = 100000, keylen = 64, digest = HMAC_ALGO) {
+function deriveKey(password, salt, { iterations = 100000, keylen = 64, digest = HMAC_ALGO } = {}) {
     return new Promise((resolve, reject) => {
         crypto.pbkdf2(password, salt, iterations, keylen, digest, (err, derivedKey) => {
             if (err) {
@@ -50,7 +50,7 @@ function deriveKey(password, salt, iterations = 100000, keylen = 64, digest = HM
  *      a promise, resolve with nothing when validation is passed, 
  *      otherwise reject with an InkError/programming error
  */
-function verifyPasswd(password, salt, key, iterations = 100000, keylen = 64, digest = HMAC_ALGO) {
+function verifyPasswd(password, salt, key, { iterations = 100000, keylen = 64, digest = HMAC_ALGO } = {}) {
     return new Promise((resolve, reject) => {
         crypto.pbkdf2(password, salt, iterations, keylen, digest, (err, derivedKey) => {
             if (err) {
