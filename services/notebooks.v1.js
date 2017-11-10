@@ -102,6 +102,9 @@ function update(notebookId, params, { userId } = {}) {
     return retrieve(notebookId, { userId: userId, params: params })
             .then((retrieved) => {
                 return retrieved.update(sanitized);
+            })
+            .then(() => {
+                return retrieve(notebookId, { userId: userId, params: params });
             });
 }
 
