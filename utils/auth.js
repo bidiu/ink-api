@@ -40,9 +40,9 @@ function deriveKey(password, salt, { iterations = 100000, keylen = 64, digest = 
 /**
  * verify user-input password against saved salt and key
  * 
- * @param {string} password     user-input password
+ * @param {string} password     user-input password (to verify)
  * @param {string} salt         saved salt
- * @param {string} key          saved key
+ * @param {string} key          saved key (hashed password)
  * @param {number} iterations   optional
  * @param {number} keylen       optional, in bytes
  * @param {string} digest       optional
@@ -52,6 +52,8 @@ function deriveKey(password, salt, { iterations = 100000, keylen = 64, digest = 
  */
 function verifyPasswd(password, salt, key, { iterations = 100000, keylen = 64, digest = HMAC_ALGO } = {}) {
     return new Promise((resolve, reject) => {
+        if (!password) { reject(new InkError.BadAuthentication()); return; }
+
         crypto.pbkdf2(password, salt, iterations, keylen, digest, (err, derivedKey) => {
             if (err) {
                 // mostly, programming error
@@ -74,6 +76,8 @@ function verifyPasswd(password, salt, key, { iterations = 100000, keylen = 64, d
  */
 function comparePasswd(password, salt, key, iterations = 100000, keylen = 64, digest = HMAC_ALGO) {
     return new Promise((resolve, reject) => {
+        if (!password) { reject(false); return; }
+
         crypto.pbkdf2(password, salt, iterations, keylen, digest, (err, derivedKey) => {
             if (err) {
                 // mostly, programming error
@@ -89,4 +93,5 @@ function comparePasswd(password, salt, key, iterations = 100000, keylen = 64, di
 exports.genRandomStr = genRandomStr;
 exports.genSalt = genRandomStr;
 exports.deriveKey = deriveKey;
+exports.verifyPasswd = verifyPasswd;
 exports.comparePasswd = comparePasswd;
