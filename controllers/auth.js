@@ -18,9 +18,11 @@ exports.create = function(req, res, next) {
 /**
  * PATCH /auth/tokens
  * 
+ * refresh access_tokens
+ * 
  * params:
- *      - refresh_token
  *      - cookie/body/both
+ *      - refresh_token as cookie
  */
 exports.update = function(req, res, next) {
     res.end('refresh tokens');
