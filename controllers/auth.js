@@ -10,7 +10,7 @@
  * or as a guest user. And also it is totally okay to call this endpoint second time
  * after first time succeeded. This is because this endpoint is not technically for
  * logging in (thus not trying to log in after already logged in), but for requesting 
- * access token; a client may request several access tokens for different scopes with 
+ * access tokens; a client may request several access tokens for different scopes with 
  * more than one request.
  * 
  * First, you need to understand what logging in really means. Basically, if 
@@ -22,8 +22,10 @@
  * comparions are after sanitizing these scopes) as previous one, system WON'T bother
  * doing anything (because client is requesting what it already has). Note that in this
  * case, the refresh_token won't be refreshed. This is the design: refresh_token is long-
- * lived and itself cannot be refreshed (in other word, user cannot log in forever, 
- * even though the user is using it forever). 
+ * lived (1 month, typically) and itself cannot be refreshed. In other words, user 
+ * cannot log in forever, even though the user is using it constantly. At some point, 
+ * user has to re-type in his/her credentials to access another refresh_token and its
+ * access_tokens (log in again). 
  * 
  * If, in other cases, the client tries to enlarge the 'scopes', then the credential 
  * has to be provided again (or set 'asGuest' true again).
@@ -37,19 +39,33 @@
  * tampered, in blacklist), this endpoint might send a 401 response to the client, or
  * might just discard the 'refresh_token' (think the user haven't logged in yet, thus start
  * a new requesting-access-token process) - which case really depends on the JWT implementation.
- * TDOD so the implementation really need to be taken care of.
+ * |
+ * |
+ * |/
+ * '
+ * <Fix>
+ * First, you need to understand that I really don't want a client instance (like Chrome) holds
+ * two user's valid refresh_tokens (does not care guest) at the same time, because refresh_token 
+ * really means the login state of an account (even access_token is not important at all). You
+ * don't want chrome logging in as two users. The server cannot guarantee this, because client 
+ * can do many tricks to lie to the server. But server still will do its best to prevent this.
+ * 
+ * If in any case user tries to tamper the refresh_token, no matter whetter the refresh_token is
+ * expired or not, 401 will always be sent back (user has to clear its cookie to reset everything).
+ * If the refresh_token just expires or in the blacklist, server will think the user is logged out,
+ * a fresh new requesting-access-token process (or say, login process) will start. If refresh_token
+ * is okay, the server will think either client is trying to change the scope (enlarge, shrink), or
+ * client sent this request wrongly to acquire what it already has. More details see down below. 
+ * </Fix>
  * 
  * As long as second time the refresh token is all good, system will think the client 
- * has logged in. And if the client is trying to add more scopes to access, system will verify 
+ * has logged in. And if the client is trying to add new scopes to access, system will verify 
  * the credentials (username/email/password or as guest) against the 'sub' and 'asGuest' in the
  * refresh token. If subjects are not same, 401 will be returned.
  * 
  * Note that there is an exception, switching from guest to a user is allowed (you don't need to
  * log out from guest before logging in as a registered account). 
- * TODO so implementation need to take care of this.
  * 
- * 
- * TODO how client take of these errors (how to retry after auth error)
  * 
  * params: 
  *      - username/email + password
@@ -67,7 +83,6 @@ exports.create = function(req, res, next) {
  * refresh access_tokens
  * 
  * params:
- *      - cookie/body/both
  *      - refresh_token as cookie
  */
 exports.update = function(req, res, next) {
