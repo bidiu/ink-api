@@ -18,5 +18,9 @@ authRouter.patch('/tokens', (req, res, next) => {
     authController.update(req, res, next);
 });
 
+authRouter.delete('/tokens', (req, res, next) => {
+    authController.destroy(req, res, next);
+});
+
 
 module.exports = authRouter;
