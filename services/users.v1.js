@@ -54,6 +54,38 @@ function retrieve(id, { params = {} } = {}) {
 }
 
 /**
+ * Advanced version of 'retrieve' method above.
+ * Do not set both 'id' and 'username', otherwise 'id' will
+ * take precedence.
+ * 
+ * Same as version 1, if no result is found, an NotFound error
+ * will be thrown.
+ * 
+ * @param options
+ *      id          user id (optional)
+ *      username    could also be email address
+ *      params      same as 'retrieve' method
+ *      sanitize    whether santize to mimic retrival situation (see v1 above),
+ *                  default true, if set false, basically will return almost all 
+ *                  fields including 'passowrd', 'salt', etc. So DO use this flag 
+ *                  with CAUTION! Otherwise, you might introduce some vulnerability 
+ *                  to the system!
+ */
+function retrieveV2({ id, username, params = {}, sanitize = true } = {}) {
+    if (id) { return retrieve(id, { params }); }
+
+    return User.findAndCountAll({
+                attributes: { exclude: sanitize ? User.excludeOnRetrieve : [] },
+                where: { $or: [{ username }, { email: username }] },
+                include: User.getExpandDef(params),
+            })
+            .then(({count, rows}) => {
+                if (count) { return rows[0]; }
+                throw new InkError.NotFound();
+            });
+}
+
+/**
  * TODO should be in an transaction
  * 
  * @param params 
@@ -145,6 +177,7 @@ function destroy(id) {
 
 exports.index = index;
 exports.retrieve = retrieve;
+exports.retrieveV2 = retrieveV2;
 exports.create = create;
 exports.update = update;
 exports.destroy = destroy;
