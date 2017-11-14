@@ -1,5 +1,33 @@
+const authService = require('../services/auth/auth');
+const authConfig = require('../config/app.config').authConfig;
+const Res = require('../common/models/responses');
+const processPayload = require('../middleware/payload/payload');
+const ms = require('ms');
+
+const NOTE_MSG = 'You are responsible for storing user\'s tokens securely, especially for \'refresh_token\'.';
+
 /**
- * POST /auth/tokens
+ * will change in place, and return the param itself
+ * 
+ * @param {Array<string>} cookie
+ *      [ 'cookie_name', 'cookie_value' ]
+ * @return
+ *      [ 'cookie_name', 'cookie_value', { cookie_options } ]
+ */
+function appendCookieOps(cookie) {
+    let c = cookie.concat([{
+        maxAge: cookie[0] === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
+        secure: true,
+        httpOnly: true
+    }]);
+
+    // debugger;
+
+    return c;
+}
+
+/**
+ * POST /auth/tokens (non-idempotent, but safe call as many time as the client want)
  * 
  * Log in (or as guest): requst one or more access_tokens and one refresh_tokens
  * for refreshing these access_tokens.
@@ -68,13 +96,27 @@
  * 
  * 
  * params: 
- *      - username/email + password
+ *      - username/email? + password?
  *      - asGuest?
  *      - scopes
  *      - refresh_token as cookie
  */
 exports.create = function(req, res, next) {
-    res.end('gen tokens');
+    let { scopes, username, password, asGuest } = req.body;
+    let refToken = req.cookies.refresh_token;
+
+    authService.create(scopes, { username, password, asGuest, refToken })
+            .then((cookies) => {
+                // set all tokens
+                cookies.forEach((c) => res.cookie( ...appendCookieOps(c) ));
+
+                let payload = new Res.Ok({ details: NOTE_MSG });
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });
 };
 
 /**
@@ -90,7 +132,7 @@ exports.update = function(req, res, next) {
 };
 
 /**
- * log out
+ * log out, remove all refresh_token and access_tokens
  */
 exports.destroy = function(req,res, next) {
     res.end('log out');

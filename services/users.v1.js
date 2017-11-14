@@ -86,6 +86,20 @@ function retrieveV2({ id, username, params = {}, sanitize = true } = {}) {
 }
 
 /**
+ * guest is immutable, so after calling this method once, 
+ * you can try to cahce the result
+ * 
+ * when first time calling this method, if no guest user exists in
+ * database, a guest user will be created and saved
+ * 
+ * @return
+ *      a promise resolving the guest user, or rejecting any error
+ */
+function retrieveGuest() {
+    // TODO
+}
+
+/**
  * TODO should be in an transaction
  * 
  * @param params 
@@ -181,3 +195,4 @@ exports.retrieveV2 = retrieveV2;
 exports.create = create;
 exports.update = update;
 exports.destroy = destroy;
+exports.retrieveGuest = retrieveGuest;
