@@ -15,15 +15,11 @@ const NOTE_MSG = 'You are responsible for storing user\'s tokens securely, espec
  *      [ 'cookie_name', 'cookie_value', { cookie_options } ]
  */
 function appendCookieOps(cookie) {
-    let c = cookie.concat([{
+    return cookie.concat([{
         maxAge: cookie[0] === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
         secure: true,
         httpOnly: true
     }]);
-
-    // debugger;
-
-    return c;
 }
 
 /**
