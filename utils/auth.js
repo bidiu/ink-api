@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const ms = require('ms');
 const authConfig = require('../config/app.config').authConfig;
 const InkError = require('../common/models/ink-errors');
 
