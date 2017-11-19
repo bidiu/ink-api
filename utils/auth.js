@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const ms = require('ms');
-const authConfig = require('../config/app.config').authConfig;
+const appConfig = require('../config/app.config');
+const authConfig = appConfig.authConfig;
 const InkError = require('../common/models/ink-errors');
 
 // TODO move to config/auth
@@ -192,7 +193,10 @@ function verifyToken(token, publicKey, options) {
 }
 
 /**
- * convert a refresh or access token to a cookie
+ * convert a refresh or access token to a cookie, if
+ * `token.value` is `null/undefined`, then this utility
+ * function will try to delete the cookie of it by
+ * setting a expired date time
  * 
  * @param {*} token
  * @param {string} authPath
@@ -201,10 +205,15 @@ function verifyToken(token, publicKey, options) {
  *      [ cookie_name, cookie_value, { cookie_options } ]
  */
 function toCookie(token, { authPath = '/auth' } = {}) {
-    return [token.type, token.value, {
-        maxAge: token.type === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
+    let maxAge = 0;
+    if (token.value) {
+        maxAge = token.type === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp);
+    }
+
+    return [token.type, '', {
+        maxAge,
         path: token.type === 'refresh_token' ? authPath : token.scope,
-        secure: true,
+        secure: appConfig.env === 'production',
         httpOnly: true
     }];
 }
