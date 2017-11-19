@@ -199,7 +199,7 @@ function verifyToken(token, publicKey, options) {
  * @return
  *      [ cookie_name, cookie_value, { cookie_options } ]
  */
-function toCookie(token, authPath) {
+function toCookie(token, { authPath = '/auth' } = {}) {
     return [token.type, token.value, {
         maxAge: token.type === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
         path: token.type === 'refresh_token' ? authPath : token.scope,
