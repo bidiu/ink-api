@@ -190,6 +190,24 @@ function verifyToken(token, publicKey, options) {
     });
 }
 
+/**
+ * convert a refresh or access token to a cookie
+ * 
+ * @param {*} token
+ * @param {string} authPath
+ *      typically '/auth'
+ * @return
+ *      [ cookie_name, cookie_value, { cookie_options } ]
+ */
+function toCookie(token, authPath) {
+    return [token.type, token.value, {
+        maxAge: token.type === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
+        path: token.type === 'refresh_token' ? authPath : token.scope,
+        secure: true,
+        httpOnly: true
+    }];
+}
+
 exports.genRandomStr = genRandomStr;
 exports.genSalt = genRandomStr;
 exports.deriveKey = deriveKey;
@@ -198,3 +216,4 @@ exports.comparePasswd = comparePasswd;
 exports.signAccToken = signAccToken;
 exports.signRefToken = signRefToken;
 exports.verifyToken = verifyToken;
+exports.toCookie = toCookie;
