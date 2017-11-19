@@ -87,13 +87,23 @@ function _verifyRefToken(refToken, publicKey, options) {
 /**
  * generate a refresh token
  * 
- * @param {*} scopes 
- * @param {*} user 
+ * @param {Array<string>} scopes 
+ *      requested scopes, such as '/api/v1'
+ * @param {User} user 
+ *      user requesting the scope, might be the special guest user
+ * @return
+ *      a promise
  */
 function _genRefToken(scopes, user) {
     // TODO
     return authUtils.signRefToken({}, appConfig.privateKey)
-            .then((refToken) => [ 'refresh_token', refToken ]);
+            .then((token) => {
+                return {
+                    type: 'refresh_token',
+                    value: token,
+                    scopes: scopes 
+                };
+            });
 }
 
 /**
@@ -109,7 +119,13 @@ function _genRefToken(scopes, user) {
 function _genAccToken(scope, user) {
     // TODO
     return authUtils.signAccToken({}, appConfig.privateKey)
-            .then((accToken) => [ 'access_token', accToken ]);
+            .then((token) => {
+                return {
+                    type: 'access_token',
+                    value: token,
+                    scope: scope
+                };
+            });
 }
 
 /**

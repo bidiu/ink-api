@@ -1,26 +1,11 @@
+const ms = require('ms');
 const authService = require('../services/auth/auth');
 const authConfig = require('../config/app.config').authConfig;
 const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
-const ms = require('ms');
+const toCookie = require('../utils/auth').toCookie;
 
-const NOTE_MSG = 'You are responsible for storing user\'s tokens securely, especially for \'refresh_token\'.';
-
-/**
- * will change in place, and return the param itself
- * 
- * @param {Array<string>} cookie
- *      [ 'cookie_name', 'cookie_value' ]
- * @return
- *      [ 'cookie_name', 'cookie_value', { cookie_options } ]
- */
-function appendCookieOps(cookie) {
-    return cookie.concat([{
-        maxAge: cookie[0] === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp),
-        secure: true,
-        httpOnly: true
-    }]);
-}
+const CREATE_NOTE = 'You are responsible for storing user\'s tokens securely, especially for \'refresh_token\'.';
 
 /**
  * POST /auth/tokens (non-idempotent, but safe call as many time as the client want)
@@ -102,11 +87,12 @@ exports.create = function(req, res, next) {
     let refToken = req.cookies.refresh_token;
 
     authService.create(scopes, { username, password, asGuest, refToken })
-            .then((cookies) => {
-                // set all tokens
-                cookies.forEach((c) => res.cookie( ...appendCookieOps(c) ));
+            .then((tokens) => {
+                tokens.map(toCookie).forEach((cookie) => {
+                    res.cookie(...cookie);
+                });
 
-                let payload = new Res.Ok({ details: NOTE_MSG });
+                let payload = new Res.Ok({ details: CREATE_NOTE });
                 payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
