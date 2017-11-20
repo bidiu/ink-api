@@ -1,6 +1,7 @@
 const userService = require('../users.v1');
 const authUtils = require('../../utils/auth');
 const appConfig = require('../../config/app.config');
+const RefreshToken = require('../../common/models/ref-tokens');
 const InkError = require('../../common/models/ink-errors');
 
 const NONEXIST_CREDENTIAL_DETAILS = 'The login credential (username/email) you are using doesn\'t exist.';
@@ -96,7 +97,9 @@ function _verifyRefToken(refToken, publicKey, options) {
  */
 function _genRefToken(scopes, user) {
     // TODO
-    return authUtils.signRefToken({}, appConfig.privateKey)
+    let payload = new RefreshToken(null, false, scopes).getPlain();
+
+    return authUtils.signRefToken(payload, appConfig.privateKey)
             .then((token) => {
                 return {
                     type: 'refresh_token',
@@ -188,9 +191,23 @@ function update() {
 
 /**
  * facade service for 'destroy' on auth controller
+ * note that it's safe to call this many times
+ * 
+ * @param {string} refToken the refresh token
+ * @return
+ *      a promise resolving tokens (including refresh and access tokens),
+ *      which could be converted to cookies to invalidate client's cookies
  */
-function destroy() {
+function destroy(refToken) {
+    if (!refToken) { return Promise.resolve([ ]); } // already logged out
 
+    return _verifyRefToken(refToken, appConfig.publicKey, { exp: false, rev: false })
+            .then((payload) => {
+                return [{ type: 'refresh_token', value: null, scopes: payload.scopes }]
+                        .concat(payload.scopes.map((scope) => {
+                            return { type: 'access_token', value: null, scope };
+                        }));
+            });
 }
 
 exports.create = create;

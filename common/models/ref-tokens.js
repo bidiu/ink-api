@@ -18,4 +18,13 @@ function RefreshToken(userId, asGuest, scopes) {
     this.scopes = scopes;
 }
 
-exports.RefreshToken = RefreshToken;
+RefreshToken.prototype.getPlain = function() {
+    return {
+        jti: this.jti,
+        sub: this.sub,
+        asGuest: this.asGuest,
+        scopes: this.scopes
+    };
+}
+
+module.exports = RefreshToken;

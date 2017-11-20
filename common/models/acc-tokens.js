@@ -20,4 +20,14 @@ function AccessToken(userId, asGuest, scope, endpoints) {
     this.endpoints = endpoints;
 }
 
+AccessToken.prototype.getPlain = function() {
+    return {
+        jti: this.jti,
+        sub: this.sub,
+        asGuest: this.asGuest,
+        scope: this.scope,
+        endpoints: this.endpoints
+    };
+}
+
 module.exports = AccessToken;

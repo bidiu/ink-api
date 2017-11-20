@@ -84,7 +84,7 @@ const CREATE_NOTE = 'You are responsible for storing user\'s tokens securely, es
  */
 exports.create = function(req, res, next) {
     let { scopes, username, password, asGuest } = req.body;
-    let refToken = req.cookies.refresh_token;
+    let refToken = req.cookies['refresh_token'];
 
     authService.create(scopes, { username, password, asGuest, refToken })
             .then((tokens) => {
@@ -115,7 +115,22 @@ exports.update = function(req, res, next) {
 
 /**
  * log out, remove all refresh_token and access_tokens
+ * note that it's safe to call this many times
  */
-exports.destroy = function(req,res, next) {
-    res.end('log out');
+exports.destroy = function(req, res, next) {
+    let refToken = req.cookies['refresh_token'];
+
+    return authService.destroy(refToken)
+            .then((tokens) => {
+                tokens.map(toCookie).forEach((cookie) => {
+                    res.cookie(...cookie);
+                });
+
+                let payload = new Res.Ok();
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });;
 };
