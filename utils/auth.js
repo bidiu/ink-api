@@ -210,7 +210,7 @@ function toCookie(token, { authPath = '/auth' } = {}) {
         maxAge = token.type === 'refresh_token' ? ms(authConfig.refTokenExp) : ms(authConfig.accTokenExp);
     }
 
-    return [token.type, '', {
+    return [token.type, token.value || '', {
         maxAge,
         path: token.type === 'refresh_token' ? authPath : token.scope,
         secure: appConfig.env === 'production',
