@@ -112,7 +112,9 @@ const REF_TOKEN_SIGN_OPTIONS = {
  * 
  * @param {}        payload 
  * @param {string}  privateKey 
- * @param {*}       options     (optional) mostly you don't need this
+ * @param {*}       options     (optional)
+ *      mostly you don't need to take care of this, for more info, 
+ *      see the `jsonwebtoken` doc
  */
 function signRefToken(payload, privateKey, options) {
     options = Object.assign({}, REF_TOKEN_SIGN_OPTIONS, options);
@@ -140,7 +142,9 @@ const ACC_TOKEN_SIGN_OPTIONS = {
  * 
  * @param {*}       payload 
  * @param {string}  privateKey 
- * @param {*}       options     (optional) mostly you don't need this
+ * @param {*}       options (optional)
+ *      mostly you don't need to take care of this, for more info, 
+ *      see the `jsonwebtoken` doc
  */
 function signAccToken(payload, privateKey, options) {
     options = Object.assign({}, ACC_TOKEN_SIGN_OPTIONS, options);
