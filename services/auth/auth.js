@@ -92,14 +92,16 @@ function _verifyRefToken(refToken, publicKey, options) {
  *      requested scopes, such as '/api/v1'
  * @param {User} user 
  *      user requesting the scope, might be the special guest user
+ * @param {*} options (optional)
+ *      see `authUtils.signRefToken()`
  * @return
  *      a promise
  */
-function _genRefToken(scopes, user) {
+function _genRefToken(scopes, user, options) {
     // TODO
-    let payload = new RefreshToken(null, false, scopes).getPlain();
+    let payload = new RefreshToken(user.id, false, scopes).getPlain();
 
-    return authUtils.signRefToken(payload, appConfig.privateKey)
+    return authUtils.signRefToken(payload, appConfig.privateKey, options)
             .then((token) => {
                 return {
                     type: 'refresh_token',
@@ -116,12 +118,14 @@ function _genRefToken(scopes, user) {
  *      typically like '/api/v1'
  * @param {User} user
  *      user requesting the scope, might be the special guest user
+ * @param {*} options (optional)
+ *      see `authUtils.signAccToken()`
  * @return
  *      a promise
  */
-function _genAccToken(scope, user) {
+function _genAccToken(scope, user, options) {
     // TODO
-    return authUtils.signAccToken({}, appConfig.privateKey)
+    return authUtils.signAccToken({}, appConfig.privateKey, options)
             .then((token) => {
                 return {
                     type: 'access_token',
@@ -154,26 +158,52 @@ function _genAccToken(scope, user) {
  */
 function create(scopes, { username, password, asGuest = false, refToken } = {}) {
     if (!scopes) { throw new InkError.BadReq({ message: '\'scopes\' must be provided.' }); }
-    if (!refToken) { return login(scopes, username, password, asGuest); }
 
-    // TODO
+    return _verifyRefToken(refToken, appConfig.publicKey)
+            .then((payload) => {
+                return _relogin(scopes, payload, { username, password, asGuest });
+            }, (err) => {
+                return _login(scopes, username, password, asGuest);
+            });
 };
+
+/**
+ * TODO Consider guest situation:
+ *  - allow login from guest status
+ *  - disallow login to guest from any other user account
+ * 
+ * @param scopes        MUST be post-santized
+ * @param payload 
+ * @param options
+ * @return
+ *      see 'create' above
+ */
+function _relogin(scopes, payload, { username, password, asGuest = false } = {}) {
+    if (asGuest) {
+        // TODO
+    } else {
+        return _verifyCredential(username, password, payload.sub)
+                .then((user) => {
+                    return Promise.all(
+                        [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
+                    );
+                });
+    }
+}
 
 /**
  * Similar to 'create' method above, but here this method is executed when no valid 
  * refToken is present (either expires or in blacklist). Call this method only it 
  * conforms to just mentioned situation. If you aren't sure, always call 'create'.
  * 
- * @param scopes
+ * @param scopes        MUST be post-santized
  * @param username
  * @param password
  * @param asGuest       if set true, username and password will be ignored
  * @return
  *      see 'create' above
  */
-function login(scopes, username, password, asGuest = false) {
-    if (!scopes) { throw new InkError.BadReq({ message: '\'scopes\' must be provided.' }); }
-
+function _login(scopes, username, password, asGuest = false) {
     return (asGuest ? userService.retrieveGuest() : _verifyCredential(username, password))
             .then((user) => {
                 return Promise.all(
@@ -211,6 +241,5 @@ function destroy(refToken) {
 }
 
 exports.create = create;
-exports.login = login;
 exports.update = update;
 exports.destroy = destroy;
