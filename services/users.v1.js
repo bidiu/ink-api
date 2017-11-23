@@ -37,6 +37,8 @@ function index({ params = {} } = {}) {
 /**
  * @param id
  *      id of the user to retrieve.
+ * @param params
+ *      used to generate expanded fields
  * @returns
  *      A promise to resolve the retrieved data.
  */
