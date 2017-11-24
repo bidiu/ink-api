@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 EXPOSE 3000
 
 RUN npm install -g nodemon
-RUN npm install -g @angular/cli
+RUN npm install -g --unsafe-perm @angular/cli
 
 # for dev (tagged with 'ink-api')
 CMD npm run debug
