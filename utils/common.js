@@ -1,4 +1,5 @@
-const { execSync } = require('child_process');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const path = require('path');
 
 /**
@@ -33,21 +34,25 @@ function copyParams(params, over = {}) {
 }
 
 /**
- * only support JavaScript, put the script in `script`
- * directory
+ * Only support JavaScript, put the script in `script` directory,
  * 
- * @param {*} script 
- * @param {*} options
+ * Note that the script will run in a separate node process, so 
+ * calling this function will bring somewhat performance overhead.
+ * And also note that this is an async function.
+ * 
+ * Also note that `node` must be in the PATH of the running OS (docker
+ * container). The shell used is sh.
+ * 
+ * @param {string} script 
+ *      the script's filename, without extention (.js)
+ * @return
+ *      a promise, for resolve what, refer to the doc of 
+ *      `child_process.exec()`
  */
-function execScript(script, { child = true } = {}) {
-    if (child) {
-        return execSync(`node ./${script}.js`, {
-            cwd: path.join(__dirname, '..', 'scripts'),
-            stdio: 'inherit'
-        });
-    } else {
-        require(`../scripts/${script}`);
-    }
+function execScript(script) {
+    return exec(`node ./${script}.js`, {
+        cwd: path.join(__dirname, '..', 'scripts')
+    });
 }
 
 exports.arrayWrap = arrayWrap;
