@@ -43,6 +43,9 @@ function copyParams(params, over = {}) {
  * Also note that `node` must be in the PATH of the running OS (docker
  * container). The shell used is sh.
  * 
+ * Last, keep in mind that because script is run in a separate process,
+ * dead lock would be possible on database if you are careless.
+ * 
  * @param {string} script 
  *      the script's filename, without extention (.js)
  * @return
