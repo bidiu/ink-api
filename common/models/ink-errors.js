@@ -36,6 +36,12 @@ const ERROR_TYPES = [
             InkError.call(this, message, details, data);
         }
         return NoAuthorization;
+    })(),
+    (() => {
+        function InternalErr({ message = 'Internal server error occurred.', details, data } = {}) {
+            InkError.call(this, message, details, data);
+        }
+        return InternalErr;
     })()
 ];
 

@@ -11,10 +11,10 @@ let guest = {
 
 userService.create(guest)
         .then((created) => {
-            console.log('Guest user was just created: ' + created);
             process.exit(0);
         })
         .catch((err) => {
-            console.error(err);
             process.exit(1);
         });
+
+// TODO all tables should be in an transaction

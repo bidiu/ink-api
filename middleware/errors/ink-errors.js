@@ -6,7 +6,8 @@ const Res = require('../../common/models/responses');
 const ERROR_MAP = new Map([
     [InkError.BadReq, Res.BadReq],
     [InkError.BadAuthentication, Res.UnAuth],
-    [InkError.NotFound, Res.NotFound]
+    [InkError.NotFound, Res.NotFound],
+    [InkError.InternalErr, Res.ServerErr]
 ]);
 
 

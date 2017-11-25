@@ -2,6 +2,7 @@ const User = require('../models/users');
 const InkError = require('../common/models/ink-errors');
 const authUtils = require('../utils/auth');
 const pagUtils = require('../utils/pagination');
+const { execScript } = require('../utils/common');
 
 
 // no need to take care '_expand' here
@@ -94,11 +95,25 @@ function retrieveV2({ id, username, params = {}, sanitize = true } = {}) {
  * when first time calling this method, if no guest user exists in
  * database, a guest user will be created and saved
  * 
+ * TODO transaction definitely is an issue here
+ * 
  * @return
  *      a promise resolving the guest user, or rejecting any error
  */
-function retrieveGuest() {
-    // TODO
+async function retrieveGuest() {
+    try {
+        return await retrieveV2({ username: 'guest' });
+    } catch (err) {
+        if (! (err instanceof InkError.NotFound)) { throw err; }
+    }
+
+    try {
+        await execScript('fill-guest');
+    } catch (err) {
+        throw new InkError.InternalErr();
+    }
+
+    return await retrieveV2({ username: 'guest' });
 }
 
 /**
