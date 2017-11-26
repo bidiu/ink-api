@@ -6,7 +6,7 @@ const Res = require('../../common/models/responses');
 /**
  * verify payload of the access_token
  */
-function verifyPayload(payload) {
+function verifyPayload(payload, req) {
 
 }
 
@@ -21,6 +21,7 @@ module.exports = async function(req, res, next) {
             let resPayload = new Res.Forbidden();
             res.status(resPayload.status).json(resPayload);
         } else {
+            // unknown erro, let express handle
             next(err);
         }
     }
