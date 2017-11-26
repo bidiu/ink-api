@@ -99,7 +99,7 @@ function _verifyRefToken(refToken, publicKey, options) {
  */
 function _genRefToken(scopes, user, options) {
     // TODO
-    let payload = new RefreshToken(user.id, false, scopes).getPlain();
+    let payload = new RefreshToken(user.id, user.username === 'guest', scopes).getPlain();
 
     return authUtils.signRefToken(payload, appConfig.privateKey, options)
             .then((token) => {
@@ -168,10 +168,6 @@ function create(scopes, { username, password, asGuest = false, refToken } = {}) 
 };
 
 /**
- * TODO Consider guest situation:
- *  - allow login from guest status
- *  - disallow login to guest from any other user account
- * 
  * @param scopes        MUST be post-santized
  * @param payload 
  * @param options
@@ -180,9 +176,20 @@ function create(scopes, { username, password, asGuest = false, refToken } = {}) 
  */
 function _relogin(scopes, payload, { username, password, asGuest = false } = {}) {
     if (asGuest) {
-        // TODO
+        if (!payload.asGuest) {
+            // not allow logging into guest without logging out from regular account
+            throw new InkError.BadReq({ details: 'To proceed, you must log out from current account first.' });
+        }
+
+        return userService.retrieveGuest()
+                .then((user) => {
+                    return Promise.all(
+                        [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
+                    );
+                });
     } else {
-        return _verifyCredential(username, password, payload.sub)
+        // allow logging into regular account from guest directly
+        return _verifyCredential(username, password, payload.asGuest ? undefined : payload.sub)
                 .then((user) => {
                     return Promise.all(
                         [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
