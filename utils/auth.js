@@ -176,19 +176,24 @@ const TOKEN_VERI_OPTIONS = {
  * provided by auth servier.
  * 
  * @param {string}  token       null/undefined will fail the verification
- * @param {string}  publicKey 
+ * @param {string}  type        token type: refresh_token/access_token
+ * @param {string}  publicKey
  * @param {*}       options     (optional) See doc of jsonwebtoken
  * @return
  *      a promise resolve the JWT payload, or rejecting an error if 
  *      verifaication fails
  */
-function verifyToken(token, publicKey, options) {
+function verifyToken(token, type, publicKey, options) {
     options = Object.assign({}, TOKEN_VERI_OPTIONS, options);
 
     return new Promise((resolve, reject) => {
         jwt.verify(token, publicKey, options, (err, payload) => {
             if (err) {
-                reject(new InkError.BadAuthentication({ details: 'You provided an invalid token.' }));
+                if (type === 'access_token') {
+                    reject( new InkError.NoAuthorization({ details: 'You provided an invalid access token.' }) );
+                } else {
+                    reject( new InkError.BadAuthentication({ details: 'You provided an invalid refresh token.' }) );
+                }
             } else {
                 resolve(payload);
             }

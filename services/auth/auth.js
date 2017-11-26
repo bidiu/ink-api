@@ -84,7 +84,7 @@ function _mapTokenVeriOptions({ alg, exp, iss, rev } = {}) {
 function _verifyRefToken(refToken, publicKey, options) {
     options = _mapTokenVeriOptions( Object.assign({}, REF_VERI_OPTIONS, options) );
 
-    return authUtils.verifyToken(refToken, publicKey, options);
+    return authUtils.verifyToken(refToken, 'refresh_token', publicKey, options);
 }
 
 /**
