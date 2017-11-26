@@ -30,21 +30,21 @@ function scopeToEndpoints(scope, user) {
  * note that order matters here, so more specific rules should go first
  */
 function toApiV1Endpoints(user) {
-    const base = '/api/v1'
+    const baseUrl = '/api/v1'
     const endpoints = [ ];
 
     // use resources
     endpoints.push({
         methods: [ 'GET', 'PATCH', 'DELETE' ],
-        path: `${base}/users/${user.id}`
+        path: `${baseUrl}/users/${user.id}`
     });
     endpoints.push({
         methods: user.username === 'guest' ? [ 'GET', 'POST' ] : [ 'GET' ],
-        path: `${base}/users`
+        path: `${baseUrl}/users`
     });
     endpoints.push({
         methods: [ 'GET' ],
-        path: `${base}/users/:id`
+        path: `${baseUrl}/users/:id`
     });
 
     return endpoints;
