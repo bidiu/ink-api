@@ -1,6 +1,7 @@
 const userService = require('../users.v1');
 const authUtils = require('../../utils/auth');
 const appConfig = require('../../config/app.config');
+const authConfig = appConfig.authConfig;
 const RefreshToken = require('../../common/models/ref-tokens');
 const InkError = require('../../common/models/ink-errors');
 
@@ -89,7 +90,7 @@ function _verifyRefToken(refToken, publicKey, options) {
  * generate a refresh token
  * 
  * @param {Array<string>} scopes 
- *      requested scopes, such as '/api/v1'
+ *      requested scopes, such as '/api/v1', and MUST be post-santized
  * @param {User} user 
  *      user requesting the scope, might be the special guest user
  * @param {*} options (optional)
@@ -98,7 +99,6 @@ function _verifyRefToken(refToken, publicKey, options) {
  *      a promise
  */
 function _genRefToken(scopes, user, options) {
-    // TODO
     let payload = new RefreshToken(user.id, user.username === 'guest', scopes).getPlain();
 
     return authUtils.signRefToken(payload, appConfig.privateKey, options)
@@ -115,7 +115,7 @@ function _genRefToken(scopes, user, options) {
  * generate a access_token corresponding to the given scope
  * 
  * @param {string} scope
- *      typically like '/api/v1'
+ *      typically like '/api/v1', and MUST be post-santized
  * @param {User} user
  *      user requesting the scope, might be the special guest user
  * @param {*} options (optional)
@@ -133,6 +133,14 @@ function _genAccToken(scope, user, options) {
                     scope: scope
                 };
             });
+}
+
+function _verifyScopes(scopes) {
+    // scopes must be provided
+    if (!scopes) { throw new InkError.BadReq({ message: '\'scopes\' must be provided.' }); }
+    // verify these scopes then
+    let badScopes = scopes.filter((s) => !authConfig.verifyScope(s));
+    if (badScopes.length) { throw new InkError.BadReq({ message: `Invalid scopes: ${badScopes}` }); }
 }
 
 /**
@@ -157,7 +165,7 @@ function _genAccToken(scope, user, options) {
  *      or resolve an error that first occurs during token generation
  */
 function create(scopes, { username, password, asGuest = false, refToken } = {}) {
-    if (!scopes) { throw new InkError.BadReq({ message: '\'scopes\' must be provided.' }); }
+    _verifyScopes();
 
     return _verifyRefToken(refToken, appConfig.publicKey)
             .then((payload) => {
@@ -221,6 +229,9 @@ function _login(scopes, username, password, asGuest = false) {
 
 /**
  * facade service for 'update' on auth controller
+ * 
+ * TODO Note that here doesn't verify the scopes again, in the future 
+ * we might need to (similar to revocation)
  * 
  * @param {string} refToken the refresh token
  * @return
