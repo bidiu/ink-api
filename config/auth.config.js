@@ -19,10 +19,35 @@ function verifyScope(scope, user) {
  *          [ { methods: [ 'GET' ], path: '/api/v1/users/123' }, ... ]
  */
 function scopeToEndpoints(scope, user) {
-    return [{
+    if (scope === '/api/v1') {
+        return toApiV1Endpoints(user);
+    } else {
+        return [ ];
+    }
+}
+
+/**
+ * note that order matters here, so more specific rules should go first
+ */
+function toApiV1Endpoints(user) {
+    const base = '/api/v1'
+    const endpoints = [ ];
+
+    // use resources
+    endpoints.push({
+        methods: [ 'GET', 'PATCH', 'DELETE' ],
+        path: `${base}/users/${user.id}`
+    });
+    endpoints.push({
+        methods: user.username === 'guest' ? [ 'GET', 'POST' ] : [ 'GET' ],
+        path: `${base}/users`
+    });
+    endpoints.push({
         methods: [ 'GET' ],
-        path: '/api/v1/users/1007'
-    }];
+        path: `${base}/users/:id`
+    });
+
+    return endpoints;
 }
 
 
