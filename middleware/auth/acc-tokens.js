@@ -21,7 +21,7 @@ module.exports = async function(req, res, next) {
             let resPayload = new Res.Forbidden();
             res.status(resPayload.status).json(resPayload);
         } else {
-            // unknown erro, let express handle
+            // unknown error, let express handle
             next(err);
         }
     }
