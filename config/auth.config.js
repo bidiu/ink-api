@@ -59,6 +59,7 @@ module.exports = {
     jwtSignAlgo: 'RS512',
     refTokenExp: '90d',
     accTokenExp: '1h',
+    eagerLoading: true,
     verifyScope,
     scopeToEndpoints
 };
