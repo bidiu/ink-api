@@ -3,6 +3,7 @@ const authUtils = require('../../utils/auth');
 const appConfig = require('../../config/app.config');
 const authConfig = appConfig.authConfig;
 const RefreshToken = require('../../common/models/ref-tokens');
+const AccessToken = require('../../common/models/acc-tokens');
 const InkError = require('../../common/models/ink-errors');
 
 const NONEXIST_CREDENTIAL_DETAILS = 'The login credential (username/email) you are using doesn\'t exist.';
@@ -124,8 +125,10 @@ function _genRefToken(scopes, user, options) {
  *      a promise
  */
 function _genAccToken(scope, user, options) {
-    // TODO
-    return authUtils.signAccToken({}, appConfig.privateKey, options)
+    let endpoints = authConfig.scopeToEndpoints(scope, user);
+    let payload = new AccessToken(user.id, user.username === 'guest', scope, endpoints).getPlain();
+
+    return authUtils.signAccToken(payload, appConfig.privateKey, options)
             .then((token) => {
                 return {
                     type: 'access_token',
@@ -165,7 +168,7 @@ function _verifyScopes(scopes) {
  *      or resolve an error that first occurs during token generation
  */
 function create(scopes, { username, password, asGuest = false, refToken } = {}) {
-    _verifyScopes();
+    _verifyScopes(scopes);
 
     return _verifyRefToken(refToken, appConfig.publicKey)
             .then((payload) => {

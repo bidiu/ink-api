@@ -19,7 +19,10 @@ function verifyScope(scope, user) {
  *          [ { methods: [ 'GET' ], path: '/api/v1/users/123' }, ... ]
  */
 function scopeToEndpoints(scope, user) {
-
+    return [{
+        methods: [ 'GET' ],
+        path: '/api/v1/users/1007'
+    }];
 }
 
 
