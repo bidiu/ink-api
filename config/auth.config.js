@@ -1,4 +1,5 @@
 module.exports = {
+    issuer: "https://inkbook.io",
     pubKeyFile: "ink_api_public.pem",
     privKeyFile: "ink_api_private.pem",
     hmacAlgo: 'sha512',

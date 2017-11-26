@@ -104,7 +104,7 @@ function comparePasswd(password, salt, key, iterations = 100000, keylen = 64, di
 const REF_TOKEN_SIGN_OPTIONS = {
     algorithm: JWT_SIGN_ALGO,
     expiresIn: REF_TOKEN_EXP,
-    issuer: 'https://inkbook.io'
+    issuer: authConfig.issuer
 };
 
 /**
@@ -134,7 +134,7 @@ function signRefToken(payload, privateKey, options) {
 const ACC_TOKEN_SIGN_OPTIONS = {
     algorithm: JWT_SIGN_ALGO,
     expiresIn: ACC_TOKEN_EXP,
-    issuer: 'https://inkbook.io'
+    issuer: authConfig.issuer
 };
 
 /**
@@ -163,7 +163,7 @@ function signAccToken(payload, privateKey, options) {
 
 const TOKEN_VERI_OPTIONS = {
     algorithm: JWT_SIGN_ALGO,
-    issuer: 'https://inkbook.io',
+    issuer: authConfig.issuer,
     ignoreExpiration: false
 };
 
