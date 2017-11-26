@@ -47,7 +47,21 @@ exports.create = function(req, res, next) {
  *      - refresh_token as cookie
  */
 exports.update = function(req, res, next) {
-    res.end('refresh tokens');
+    let refToken = req.cookies['refresh_token'];
+
+    return authService.update(refToken)
+            .then((tokens) => {
+                tokens.map(toCookie).forEach((cookie) => {
+                    res.cookie(...cookie);
+                });
+
+                let payload = new Res.Ok();
+                payload = processPayload(payload, req);
+                res.status(payload.status).json(payload);
+            })
+            .catch((err) => {
+                next(err);
+            });;
 };
 
 /**

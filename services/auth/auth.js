@@ -221,9 +221,17 @@ function _login(scopes, username, password, asGuest = false) {
 
 /**
  * facade service for 'update' on auth controller
+ * 
+ * @param {string} refToken the refresh token
+ * @return
+ *      a promise resolving a list of acess tokens, which could be
+ *      converted to cookies to invalidate client's cookies
  */
-function update() {
-
+async function update(refToken) {
+    let payload = await _verifyRefToken(refToken, appConfig.publicKey);
+    let user = await userService.retrieveV2({ id: payload.sub });
+    
+    return Promise.all( payload.scopes.map((s) => _genAccToken(s, user)) );
 }
 
 /**
