@@ -86,8 +86,8 @@ Notebook.sanitizeOnUpdate = function(received) {
 }
 
 /**
- * inside the app, reference key will be used, but right will be santized by a
- * post middleware (still need design)
+ * TODO inside the app, reference key will be used, but right will be 
+ * santized by a post middleware (still need design)
  */
 Notebook.excludeOnRetrieve = [ ]; // .concat(Notebook.referenceFields);
 Notebook.includeOnRetrieve = Notebook.fields.filter((field) => !Notebook.excludeOnRetrieve.includes(field));
