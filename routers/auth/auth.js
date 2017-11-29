@@ -18,6 +18,9 @@ authRouter.patch('/tokens', (req, res, next) => {
     authController.update(req, res, next);
 });
 
+/**
+ * log out (delete all tokens)
+ */
 authRouter.delete('/tokens', (req, res, next) => {
     authController.destroy(req, res, next);
 });
