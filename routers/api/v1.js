@@ -7,7 +7,7 @@ const notebookController = require('../../controllers/notebooks.v1');
 const v1Router = express.Router();
 
 
-/** user resources start */
+/** --------------- user resources start --------------- */
 
 v1Router.get('/users', (req, res, next) => {
     userController.index(req, res, next);
@@ -29,7 +29,7 @@ v1Router.delete('/users/:id', (req, res, next) => {
     userController.destroy(req, res, next);
 });
 
-/** user resources end */
+/** --------------- user resources end --------------- */
 
 
 /** --------------- notebook resources start --------------- */
