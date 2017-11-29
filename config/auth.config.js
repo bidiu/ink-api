@@ -28,11 +28,19 @@ function scopeToEndpoints(scope, user) {
 }
 
 /**
- * note that order matters here, so more specific rules should go first
+ * Note that order matters here, so more specific rules should go first. More
+ * specific means path without things like `:notebookId`.
+ * 
+ * ## How it works:
+ * Try to find a match from the `endpoints` array from start to end (order
+ * matters here) by comparing the `path`. Once found a match, other endpoints
+ * will by no means be considered. If the matched endpoint's methods contains
+ * the client's current requesting method, then the request is okay.
  */
 function toApiV1Endpoints(user) {
-    const baseUrl = '/api/v1'
+    const baseUrl = '/api/v1';
     const endpoints = [ ];
+    const asGuest = user.username === 'guest';
 
     // use resources
     endpoints.push({
@@ -40,12 +48,26 @@ function toApiV1Endpoints(user) {
         path: `${baseUrl}/users/${user.id}`
     });
     endpoints.push({
-        methods: user.username === 'guest' ? [ 'GET', 'POST' ] : [ 'GET' ],
+        methods: asGuest ? [ 'GET', 'POST' ] : [ 'GET' ],
         path: `${baseUrl}/users`
     });
     endpoints.push({
         methods: [ 'GET' ],
         path: `${baseUrl}/users/:id`
+    });
+
+    // notebook resources
+    endpoints.push({
+        methods: [ 'GET', 'POST' ],
+        path: `${baseUrl}/notebooks`
+    });
+    endpoints.push({
+        methods: [ 'GET' ],
+        path: `${baseUrl}/users/:userId/notebooks`
+    });
+    endpoints.push({
+        methods: [ 'GET', 'PATCH', 'DELETE' ],
+        path: `${baseUrl}/notebooks/:notebookId`
     });
 
     return endpoints;
