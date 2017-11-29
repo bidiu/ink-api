@@ -32,42 +32,41 @@ v1Router.delete('/users/:id', (req, res, next) => {
 /** user resources end */
 
 
-/** notebook resources start */
+/** --------------- notebook resources start --------------- */
 
 v1Router.get('/users/:userId/notebooks', (req, res, next) => {
     notebookController.index(req, res, next);
 });
+/**
+ * Index notebooks across user is an dangerous operation, so it won't be granted
+ * to any user so far. Later, a `timeline` resources will be added. And also, a 
+ * post-filter (still need design here) will be added as well.
+ * 
+ * Goals:
+ *      1. To control what rows are sharable
+ *      2. To control what columns are sharable
+ */
 v1Router.get('/notebooks', (req, res, next) => {
     notebookController.index(req, res, next);
 })
 
-v1Router.get('/users/:userId/notebooks/:notebookId', (req, res, next) => {
-    notebookController.retrieve(req, res, next);
-});
 v1Router.get('/notebooks/:notebookId', (req, res, next) => {
     notebookController.retrieve(req, res, next);
 });
 
-v1Router.post('/users/:userId/notebooks', (req, res, next) => {
+v1Router.post('/notebooks', (req, res, next) => {
     notebookController.create(req, res, next);
 });
-// TODO POST /notebooks (need auth middleware in the future)
 
-v1Router.patch('/users/:userId/notebooks/:notebookId', (req, res, next) => {
-    notebookController.update(req, res, next);
-});
 v1Router.patch('/notebooks/:notebookId', (req, res, next) => {
     notebookController.update(req, res, next);
 });
 
-v1Router.delete('/users/:userId/notebooks/:notebookId', (req, res, next) => {
-    notebookController.destroy(req, res, next);
-});
 v1Router.delete('/notebooks/:notebookId', (req, res, next) => {
     notebookController.destroy(req, res, next);
 });
 
-/** notebook resources end */
+/** --------------- notebook resources end --------------- */
 
 
 /** section resources start */
