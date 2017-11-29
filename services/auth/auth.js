@@ -196,7 +196,9 @@ function _relogin(scopes, payload, { username, password, asGuest = false } = {})
                 .then((user) => {
                     return Promise.all(
                         [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
-                    );
+                    ).then((tokens) => {
+                        return { tokens, sub: user.id };
+                    });
                 });
     } else {
         // allow logging into regular account from guest directly
@@ -204,7 +206,9 @@ function _relogin(scopes, payload, { username, password, asGuest = false } = {})
                 .then((user) => {
                     return Promise.all(
                         [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
-                    );
+                    ).then((tokens) => {
+                        return { tokens, sub: user.id };
+                    });
                 });
     }
 }
@@ -226,7 +230,9 @@ function _login(scopes, username, password, asGuest = false) {
             .then((user) => {
                 return Promise.all(
                     [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
-                );
+                ).then((tokens) => {
+                    return { tokens, sub: user.id };
+                });
             });
 }
 
@@ -245,7 +251,10 @@ async function update(refToken) {
     let payload = await _verifyRefToken(refToken, appConfig.publicKey);
     let user = await userService.retrieveV2({ id: payload.sub });
     
-    return Promise.all( payload.scopes.map((s) => _genAccToken(s, user)) );
+    return Promise.all( payload.scopes.map((s) => _genAccToken(s, user)) )
+            .then((tokens) => {
+                return { tokens, sub: user.id };
+            });
 }
 
 /**

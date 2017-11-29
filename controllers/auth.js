@@ -5,8 +5,6 @@ const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
 const toCookie = require('../utils/auth').toCookie;
 
-const CREATE_NOTE = 'You are responsible for storing user\'s tokens securely, especially for \'refresh_token\'.';
-
 /**
  * POST /auth/tokens (non-idempotent, but safe call as many time as the client want)
  * 
@@ -24,12 +22,12 @@ exports.create = function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
     authService.create(scopes, { username, password, asGuest, refToken })
-            .then((tokens) => {
+            .then(({ tokens, sub }) => {
                 tokens.map(toCookie).forEach((cookie) => {
                     res.cookie(...cookie);
                 });
 
-                let payload = new Res.Ok({ details: CREATE_NOTE });
+                let payload = new Res.Ok({ data: { sub } });
                 payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
@@ -49,13 +47,13 @@ exports.create = function(req, res, next) {
 exports.update = function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
-    return authService.update(refToken)
-            .then((tokens) => {
+    authService.update(refToken)
+            .then(({ tokens, sub }) => {
                 tokens.map(toCookie).forEach((cookie) => {
                     res.cookie(...cookie);
                 });
 
-                let payload = new Res.Ok();
+                let payload = new Res.Ok({ data: { sub } });
                 payload = processPayload(payload, req);
                 res.status(payload.status).json(payload);
             })
@@ -71,7 +69,7 @@ exports.update = function(req, res, next) {
 exports.destroy = function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
-    return authService.destroy(refToken)
+    authService.destroy(refToken)
             .then((tokens) => {
                 tokens.map(toCookie).forEach((cookie) => {
                     res.cookie(...cookie);
