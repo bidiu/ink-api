@@ -22,6 +22,7 @@ function scopeToEndpoints(scope, user) {
     if (scope === '/api/v1') {
         return toApiV1Endpoints(user);
     } else {
+        // unknown scope, don't give any authorization
         return [ ];
     }
 }
