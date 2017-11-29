@@ -7,7 +7,8 @@ const ERROR_MAP = new Map([
     [InkError.BadReq, Res.BadReq],
     [InkError.BadAuthentication, Res.UnAuth],
     [InkError.NotFound, Res.NotFound],
-    [InkError.InternalErr, Res.ServerErr]
+    [InkError.InternalErr, Res.ServerErr],
+    [InkError.NoAuthorization, Res.Forbidden]
 ]);
 
 
