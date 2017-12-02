@@ -296,3 +296,4 @@ function _verifyOwner(instance, auth) {
 exports.create = create;
 exports.update = update;
 exports.destroy = destroy;
+exports._verifyOwner = _verifyOwner;

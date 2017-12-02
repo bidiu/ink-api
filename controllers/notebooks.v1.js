@@ -8,10 +8,11 @@ const processPayload = require('../middleware/payload/payload');
  * GET /notebooks
  */
 exports.index = function(req, res, next) {
+    let auth = req.auth;
     let userId = req.params.userId; // might be undefined
     let params = req.query;
 
-    notebookService.index(req.path, { userId, params })
+    notebookService.index(auth, { userId, params })
             .then((indexed) => {
                 let payload = new Res.Ok({ data: indexed });
                 payload = processPayload(payload, req);
@@ -23,14 +24,13 @@ exports.index = function(req, res, next) {
 }
 
 /**
- * GET /users/:userId/notebooks/:notebookId
+ * GET /notebooks/:notebookId
  */
 exports.retrieve = function(req, res, next) {
     let notebookId = req.params.notebookId;
-    let userId = req.params.userId; // might be undefined
-    let params = req.query;
+    let auth = req.auth;
 
-    notebookService.retrieve(notebookId, { userId, params })
+    notebookService.retrieve(notebookId, auth)
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 payload = processPayload(payload, req);
@@ -42,17 +42,13 @@ exports.retrieve = function(req, res, next) {
 }
 
 /**
- * POST /users/:userId/notebooks
- * TODO POST /notebooks
- * 
- * Never specify foreign owner key in the request body, 
- * otherwise it will be ignored.
+ * POST /notebooks
  */
 exports.create = function(req, res, next) {
     let params = req.body;
-    params.userId = req.params.userId;
+    let auth = req.auth;
 
-    notebookService.create(params)
+    notebookService.create(params, auth)
             .then((created) => {
                 let payload = new Res.Ok({ data: created });
                 payload = processPayload(payload, req);
@@ -64,15 +60,14 @@ exports.create = function(req, res, next) {
 }
 
 /**
- * PATCH /users/:userId/notebooks/:notebookId
  * PATCH /notebooks/:notebookId
  */
 exports.update = function(req, res, next) {
     let notebookId = req.params.notebookId;
-    let userId = req.params.userId; // might be undefined
     let params = req.body;
+    let auth = req.auth;
 
-    notebookService.update(notebookId, params, { userId })
+    notebookService.update(notebookId, params, auth)
             .then((updated) => {
                 let payload = new Res.Ok({ data: updated });
                 payload = processPayload(payload, req);
@@ -84,14 +79,13 @@ exports.update = function(req, res, next) {
 }
 
 /**
- * DELETE /users/:userId/notebooks/:notebookId
  * DELETE /notebooks/:notebookId
  */
 exports.destroy = function(req, res, next) {
     let notebookId = req.params.notebookId;
-    let userId = req.params.userId; // might be undefined
+    let auth = req.auth;
 
-    notebookService.destroy(notebookId, { userId })
+    notebookService.destroy(notebookId, auth)
             .then(() => {
                 let payload = new Res.Ok();
                 payload = processPayload(payload, req);

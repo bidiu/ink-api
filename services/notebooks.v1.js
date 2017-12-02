@@ -1,5 +1,6 @@
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
+const authService = require('../services/auth/auth');
 const pagUtils = require('../utils/pagination');
 
 
@@ -12,15 +13,16 @@ const DEFAULT_INDEX_PARAMS = {
 };
 
 /**
- * @param path
- *      used to generate response
+ * TODO support sharing (need design)
+ * 
+ * @param auth
  * @param options (optional)
  *      userId      (optional)
  *      params      (optional) filter conditions (where clause).
  * @return
  *      A promise to resolve the indexed data (could be an empty array if no matches).
  */
-function index(path, { userId, params = {} } = {}) {
+function index(auth, { userId, params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
     if (userId) { params._where.userId = +userId; }
 
@@ -38,18 +40,19 @@ function index(path, { userId, params = {} } = {}) {
 }
 
 /**
+ * TODO support sharing (need design)
+ * 
  * @param notebookId
  *      id of the notebook to retrieve.
+ * @param auth
  * @param options
- *      userId      (optional)
  *      params      (optional) _expand, _expLimit, ...
  *                  This function and others down below won't alter it.
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(notebookId, { userId, params = {} } = {}) {
+function retrieve(notebookId, auth, { params = {} } = {}) {
     let where = { id: notebookId };
-    if (userId) { where.userId = userId; }
 
     return Notebook.findOne({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
@@ -57,10 +60,9 @@ function retrieve(notebookId, { userId, params = {} } = {}) {
                 include: Notebook.getExpandDef(params)
             })
             .then((retrieved) => {
-                if (retrieved) {
-                    return retrieved;
-                }
-                throw new InkError.NotFound();
+                if (!retrieved) { throw new InkError.NotFound(); }
+                authService._verifyOwner(retrieved, auth);
+                return retrieved;
             });
 }
 
@@ -70,41 +72,41 @@ function retrieve(notebookId, { userId, params = {} } = {}) {
  * @param params 
  *      Data (field values) from which notebook will be created. This function won't
  *      alter this parameter.
+ * @param auth
  * @return 
  *      A promise to resolve the created data.
  */
-function create(params) {
+function create(params, auth) {
+    params.userId = auth.sub;
     let sanitized = Notebook.sanitizeOnCreate(params);
 
     return Notebook.create(sanitized)
             .then((created) => {
-                return retrieve(created.id, { params });
+                return retrieve(created.id, auth);
             });
 }
 
 /**
  * TODO should be in an transaction
- * TODO updating secret, password ...
  * 
  * @param notebookId
  *      id of the notebook to update.
  * @param params 
  *      Data (field values) from which notebook will be updated. This function won't
  *      alter this parameter.
- * @param options (optional)
- *      userId      (optional)
+ * @param auth
  * @return 
  *      A promise to resolve the updated data.
  */
-function update(notebookId, params, { userId } = {}) {
+function update(notebookId, params, auth) {
     let sanitized = Notebook.sanitizeOnUpdate(params);
 
-    return retrieve(notebookId, { userId, params })
+    return retrieve(notebookId, auth)
             .then((retrieved) => {
                 return retrieved.update(sanitized);
             })
             .then(() => {
-                return retrieve(notebookId, { userId, params });
+                return retrieve(notebookId, auth);
             });
 }
 
@@ -113,11 +115,10 @@ function update(notebookId, params, { userId } = {}) {
  * 
  * @param notebookId
  *      notebookId of the notebook to delete.
- * @param options (optional)
- *      userId      (optional)
+ * @param auth
  */
-function destroy(notebookId, { userId } = {}) {
-    return retrieve(notebookId, { userId })
+function destroy(notebookId, auth) {
+    return retrieve(notebookId, auth)
             .then((retrieved) => {
                 return retrieved.destroy();
             });
