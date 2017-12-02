@@ -73,7 +73,7 @@ Notebook.sanitize = function(raw, { toExclude = [], toInclude = Notebook.fields 
     return sanitized;
 }
 
-Notebook.excludeOnCreate = ['id'].concat(Notebook.hiddenFields);
+Notebook.excludeOnCreate = ['id', 'userId'].concat(Notebook.hiddenFields);
 Notebook.includeOnCreate = Notebook.fields.filter((field) => !Notebook.excludeOnCreate.includes(field));
 Notebook.sanitizeOnCreate = function(received) {
     return Notebook.sanitize(received, { toExclude: Notebook.excludeOnCreate });

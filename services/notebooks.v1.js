@@ -77,8 +77,8 @@ function retrieve(notebookId, auth, { params = {} } = {}) {
  *      A promise to resolve the created data.
  */
 function create(params, auth) {
-    params.userId = auth.sub;
     let sanitized = Notebook.sanitizeOnCreate(params);
+    sanitized.userId = auth.sub;
 
     return Notebook.create(sanitized)
             .then((created) => {
