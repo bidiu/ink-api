@@ -20,11 +20,24 @@ const MODEL_DEF = {
             notEmpty: true
             // TODO
         }
+    },
+    // owner field
+    owner: {
+        type: Sequalize.INTEGER,
+        allowNull: false,
+        validate: {
+            min: 1
+        }
     }
 };
 
 const Section = sequelize.define(MODEL_NAME, MODEL_DEF, {
-    // TODO getter for '_endpoint'
+    getterMethods: {
+        // readonly
+        _endpoint() {
+            return `/${TABLE_NAME}/${this.getDataValue('id')}`;
+        }
+    },
     paranoid: true,
     tableName: TABLE_NAME
 });
@@ -33,9 +46,10 @@ const Section = sequelize.define(MODEL_NAME, MODEL_DEF, {
 Section.hiddenFields = ['createdAt', 'updatedAt', 'deletedAt'];
 // foreign keys
 Section.referenceFields = ['notebookId'];
-// TODO Section.readonlyFields = ['_endpoint'];
+Section.ownerFields = ['owner'];
+Section.readonlyFields = ['_endpoint'];
 // all fields (including foreign keys, except for readonly fields)
-Section.fields = Object.keys(DEF).concat(Section.hiddenFields, Section.referenceFields);
+Section.fields = Object.keys(DEF).concat(Section.hiddenFields, Section.referenceFields, Section.ownerFields);
 
 /**
  * Notes:
@@ -60,19 +74,19 @@ Section.sanitize = function(raw, { toExclude = [], toInclude = Section.fields } 
     return sanitized;
 }
 
-Section.excludeOnCreate = ['id'].concat(Section.hiddenFields);
+Section.excludeOnCreate = ['id'].concat(Section.hiddenFields, Section.ownerFields);
 Section.includeOnCreate = Section.fields.filter((field) => !Section.excludeOnCreate.includes(field));
 Section.sanitizeOnCreate = function(received) {
     return Section.sanitize(received, { toExclude: Section.excludeOnCreate });
 }
 
-Section.excludeOnUpdate = ['id'].concat(Section.hiddenFields);
+Section.excludeOnUpdate = ['id'].concat(Section.hiddenFields, Section.ownerFields);
 Section.includeOnUpdate = Section.fields.filter((field) => !Section.excludeOnUpdate.includes(field));
 Section.sanitizeOnUpdate = function(received) {
     return Section.sanitize(received, { toExclude: Section.excludeOnUpdate });
 }
 
-Section.excludeOnRetrieve = [].concat(Section.referenceFields);
+Section.excludeOnRetrieve = [ ];
 Section.includeOnRetrieve = Section.fields.filter((field) => !Section.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
@@ -87,3 +101,5 @@ Section.sanitizeOnRetrieve = function(retrieved, toInclude) {
         toInclude: toInclude === '*' ? undefined : toInclude
     });
 }
+
+module.exports = Section;
