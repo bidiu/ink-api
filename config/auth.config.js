@@ -70,6 +70,16 @@ function toApiV1Endpoints(user) {
         path: `${baseUrl}/notebooks/:notebookId`
     });
 
+    // section resources
+    endpoints.push({
+        methods: [ 'GET', 'POST' ],
+        path: `${baseUrl}/notebooks/:notebookId/sections`
+    });
+    endpoints.push({
+        methods: [ 'GET', 'PATCH', 'DELETE' ],
+        path: `${baseUrl}/sections/:sectionId`
+    });
+
     return endpoints;
 }
 

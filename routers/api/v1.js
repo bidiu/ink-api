@@ -1,7 +1,7 @@
 const express = require('express');
 const userController = require('../../controllers/users.v1');
 const notebookController = require('../../controllers/notebooks.v1');
-// const sectionController = require('../../controllers/sections.v1');
+const sectionController = require('../../controllers/sections.v1');
 
 
 const v1Router = express.Router();
@@ -69,13 +69,29 @@ v1Router.delete('/notebooks/:notebookId', (req, res, next) => {
 /** --------------- notebook resources end --------------- */
 
 
-/** section resources start */
+/** --------------- section resources start --------------- */
 
-// v1Router.get('/notebooks/:notebookId/sections', (req, res, next) => {
-//     sectionController.index(req, res, next);
-// });
+v1Router.get('/notebooks/:notebookId/sections', (req, res, next) => {
+    sectionController.index(req, res, next);
+});
 
-/** section resources start */
+v1Router.get('/sections/:sectionId', (req, res, next) => {
+    sectionController.retrieve(req, res, next);
+});
+
+v1Router.post('/notebooks/:notebookId/sections', (req, res, next) => {
+    sectionController.create(req, res, next);
+});
+
+v1Router.patch('/sections/:sectionId', (req, res, next) => {
+    sectionController.update(req, res, next);
+});
+
+v1Router.delete('/sections/:sectionId', (req, res, next) => {
+    sectionController.destroy(req, res, next);
+});
+
+/** --------------- section resources start --------------- */
 
 
 module.exports = v1Router;
