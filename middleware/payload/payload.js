@@ -6,7 +6,7 @@
 const REGISTERED = [
     require('./plain'),
     require('./endpoints'),
-    require('./foreign-keys')
+    // require('./foreign-keys')
 ];
 
 
