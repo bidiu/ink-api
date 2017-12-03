@@ -1,6 +1,5 @@
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
-const authService = require('../services/auth/auth');
 const pagUtils = require('../utils/pagination');
 
 
@@ -13,8 +12,6 @@ const DEFAULT_INDEX_PARAMS = {
 };
 
 /**
- * TODO support sharing (need design)
- * 
  * @param userId
  * @param auth
  * @param options (optional)
