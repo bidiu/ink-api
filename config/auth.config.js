@@ -29,13 +29,43 @@ function scopeToEndpoints(scope, user) {
 
 /**
  * Note that order matters here, so more specific rules should go first. More
- * specific means path without things like `:notebookId`.
+ * specific means path without keys like `:notebookId`.
  * 
- * ## How it works:
+ * ## How it works
  * Try to find a match from the `endpoints` array from start to end (order
  * matters here) by comparing the `path`. Once found a match, other endpoints
  * will by no means be considered. If the matched endpoint's methods contains
- * the client's current requesting method, then the request is okay.
+ * the client's current requesting method, then the request is okay (however, 
+ * if `exec` is given for the matched endpoint, another test against it will 
+ * be performed - see next).
+ * 
+ * ## Use `exec` field
+ * Any key in the `path` (such as `:sectionId`) could also be further verified
+ * in terms of ownership. One of the premises of this verification is that key
+ * verified against must be a primary key of a model supporting ownership. You 
+ * would use `exec.model` to indicate which model the primary key belongs to:
+ * ```
+ * [{
+ *     key: 'sectionId',
+ *     model: 'sections'
+ * }, {
+ *     // supports verifying multiple keys in the `path`
+ *     // ...
+ * }]
+ * ```
+ * 
+ * > A model supporting owner ship is one whose table has either `userId` or 
+ * `owner` field (or both but with same value).
+ * 
+ * The verification will pass if, for all `exec.key`s, the model instance retrieved 
+ * with `exec.key` and `exec.model` belongs to the holder of the access token.
+ * 
+ * > **IMPORTANT** Because the fact that the auth infrastructure supports ownership
+ * verification (authorization built into JWT), you MUST always use simple form of 
+ * `named keys` (such as `sectionId`) in your router definition. Simple form means
+ * the regular thing you would do like `/sections/:sectionId`. On the other hand, 
+ * complicated form (you must **NOT** use) is ones include advanced features like 
+ * optional keys, such as `/sections/:sectionId+` (you must **NOT** use this).
  */
 function toApiV1Endpoints(user) {
     const baseUrl = '/api/v1';
@@ -58,26 +88,29 @@ function toApiV1Endpoints(user) {
 
     // notebook resources
     endpoints.push({
-        methods: [ 'GET', 'POST' ],
+        methods: [ 'POST' ],
         path: `${baseUrl}/notebooks`
     });
     endpoints.push({
         methods: [ 'GET' ],
-        path: `${baseUrl}/users/:userId/notebooks`
+        path: `${baseUrl}/users/${user.id}/notebooks`
     });
     endpoints.push({
         methods: [ 'GET', 'PATCH', 'DELETE' ],
-        path: `${baseUrl}/notebooks/:notebookId`
+        path: `${baseUrl}/notebooks/:notebookId`,
+        exec: [{ key: 'notebookId', model: 'notebooks' }]
     });
 
     // section resources
     endpoints.push({
         methods: [ 'GET', 'POST' ],
-        path: `${baseUrl}/notebooks/:notebookId/sections`
+        path: `${baseUrl}/notebooks/:notebookId/sections`,
+        exec: [{ key: 'notebookId', model: 'notebooks' }]
     });
     endpoints.push({
         methods: [ 'GET', 'PATCH', 'DELETE' ],
-        path: `${baseUrl}/sections/:sectionId`
+        path: `${baseUrl}/sections/:sectionId`,
+        exec: [{ key: 'sectionId', model: 'sections' }]
     });
 
     return endpoints;
