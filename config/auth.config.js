@@ -32,12 +32,12 @@ function scopeToEndpoints(scope, user) {
  * specific means path without keys like `:notebookId`.
  * 
  * ## How it works
- * Try to find a match from the `endpoints` array from start to end (order
+ * Here, try to find a match from the `endpoints` array from start to end (order
  * matters here) by comparing the `path`. Once found a match, other endpoints
- * will by no means be considered. If the matched endpoint's methods contains
- * the client's current requesting method, then the request is okay (however, 
- * if `exec` is given for the matched endpoint, another test against it will 
- * be performed - see next).
+ * will by no means be considered. If the matched endpoint's `methods` contains
+ * the client's current requesting method, then the request is okay. But if 
+ * `exec` is given for the matched endpoint, yet another test against `exec` 
+ * will also be performed - see next).
  * 
  * ## Use `exec` field
  * Any key in the `path` (such as `:sectionId`) could also be further verified
@@ -62,7 +62,7 @@ function scopeToEndpoints(scope, user) {
  * 
  * > **IMPORTANT** Because the fact that the auth infrastructure supports ownership
  * verification (authorization built into JWT), you MUST always use simple form of 
- * `named keys` (such as `sectionId`) in your router definition. Simple form means
+ * `named keys` (such as `:sectionId`) in your router definition. Simple form means
  * the regular thing you would do like `/sections/:sectionId`. On the other hand, 
  * complicated form (you must **NOT** use) is ones include advanced features like 
  * optional keys, such as `/sections/:sectionId+` (you must **NOT** use this).

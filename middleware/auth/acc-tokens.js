@@ -22,7 +22,7 @@ async function verifyExec(endpoint, requestedPath, sub) {
     let result = rex.exec(requestedPath).slice(1);
 
     let promises = endpoint.exec.map(async ({ key, model: modelName }) => {
-        let pk = result[ keys.map((k) => k.name).indexOf(key) ];
+        let pk = +result[ keys.map((k) => k.name).indexOf(key) ];
         let service = serviceMap.get(modelName);
 
         if (!pk || !service) {
