@@ -61,7 +61,6 @@ function retrieve(notebookId, auth, { params = {} } = {}) {
             })
             .then((retrieved) => {
                 if (!retrieved) { throw new InkError.NotFound(); }
-                authService._verifyOwner(retrieved, auth);
                 return retrieved;
             });
 }

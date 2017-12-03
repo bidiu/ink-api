@@ -227,6 +227,19 @@ function toCookie(token, { authPath = '/auth' } = {}) {
     }];
 }
 
+/**
+ * @param {*} instance 
+ *      model instance
+ * @param {*} sub 
+ *      user id (the user who are requesting the resource server)
+ */
+function verifyOwner(instance, sub) {
+    let owner = instance.userId || instance.owner;
+    if (typeof owner !== 'number' || typeof sub !== 'number' || owner !== sub) {
+        throw new InkError.NoAuthorization();
+    }
+}
+
 exports.genRandomStr = genRandomStr;
 exports.genSalt = genRandomStr;
 exports.deriveKey = deriveKey;
@@ -236,3 +249,4 @@ exports.signAccToken = signAccToken;
 exports.signRefToken = signRefToken;
 exports.verifyToken = verifyToken;
 exports.toCookie = toCookie;
+exports.verifyOwner = verifyOwner;

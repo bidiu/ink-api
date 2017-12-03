@@ -278,22 +278,6 @@ function destroy(refToken) {
             });
 }
 
-/**
- * TODO support sharing
- * 
- * @param {*} modelInstance 
- *      model instance
- * @param {*} auth 
- *      { sub, user }
- */
-function _verifyOwner(instance, auth) {
-    let sub = instance.userId || instance.owner;
-    if (typeof sub !== 'number' || !auth || typeof auth.sub !== 'number' || sub !== auth.sub) {
-        throw new InkError.NoAuthorization();
-    }
-}
-
 exports.create = create;
 exports.update = update;
 exports.destroy = destroy;
-exports._verifyOwner = _verifyOwner;
