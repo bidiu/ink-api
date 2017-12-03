@@ -5,14 +5,13 @@ const processPayload = require('../middleware/payload/payload');
 
 /**
  * GET /users/:userId/notebooks
- * GET /notebooks
  */
 exports.index = function(req, res, next) {
+    let userId = req.params.userId;
     let auth = req.auth;
-    let userId = req.params.userId; // might be undefined
     let params = req.query;
 
-    notebookService.index(auth, { userId, params })
+    notebookService.index(userId, auth, { params })
             .then((indexed) => {
                 let payload = new Res.Ok({ data: indexed });
                 payload = processPayload(payload, req);

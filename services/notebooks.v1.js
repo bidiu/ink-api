@@ -15,16 +15,16 @@ const DEFAULT_INDEX_PARAMS = {
 /**
  * TODO support sharing (need design)
  * 
+ * @param userId
  * @param auth
  * @param options (optional)
- *      userId      (optional)
  *      params      (optional) filter conditions (where clause).
  * @return
  *      A promise to resolve the indexed data (could be an empty array if no matches).
  */
-function index(auth, { userId, params = {} } = {}) {
+function index(userId, auth, { params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
-    if (userId) { params._where.userId = +userId; }
+    params._where.userId = +userId;
 
     return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
@@ -40,8 +40,6 @@ function index(auth, { userId, params = {} } = {}) {
 }
 
 /**
- * TODO support sharing (need design)
- * 
  * @param notebookId
  *      id of the notebook to retrieve.
  * @param auth
