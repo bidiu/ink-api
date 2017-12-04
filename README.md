@@ -1,2 +1,2 @@
-### Ink 印记
+### Ink | 印记
 For markdown lovers.
