@@ -74,7 +74,8 @@ Section.sanitize = function(raw, { toExclude = [], toInclude = Section.fields } 
     return sanitized;
 }
 
-Section.excludeOnCreate = ['id'].concat(Section.hiddenFields, Section.ownerFields);
+// `referenceFields` is here because `notebookId` is part of the endpoint path
+Section.excludeOnCreate = ['id'].concat(Section.hiddenFields, Section.referenceFields, Section.ownerFields);
 Section.includeOnCreate = Section.fields.filter((field) => !Section.excludeOnCreate.includes(field));
 Section.sanitizeOnCreate = function(received) {
     return Section.sanitize(received, { toExclude: Section.excludeOnCreate });
