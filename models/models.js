@@ -1,15 +1,20 @@
 const User = require('./users');
 const Notebook = require('./notebooks');
+const Section = require('./sections');
 
 
 let modelMap = new Map([
     ['users', User],
-    ['notebooks', Notebook]
+    ['notebooks', Notebook],
+    ['sections', Section]
 ]);
 
 
 User.hasMany(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+Notebook.hasMany(Section, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Section.belongsTo(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
 
 const DEFAULT_USER_EXP = {

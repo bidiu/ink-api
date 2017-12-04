@@ -49,7 +49,7 @@ Section.referenceFields = ['notebookId'];
 Section.ownerFields = ['owner'];
 Section.readonlyFields = ['_endpoint'];
 // all fields (including foreign keys, except for readonly fields)
-Section.fields = Object.keys(DEF).concat(Section.hiddenFields, Section.referenceFields, Section.ownerFields);
+Section.fields = Object.keys(MODEL_DEF).concat(Section.hiddenFields, Section.referenceFields, Section.ownerFields);
 
 /**
  * Notes:
