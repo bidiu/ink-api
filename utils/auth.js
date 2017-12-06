@@ -234,6 +234,7 @@ function toCookie(token, { authPath = '/auth' } = {}) {
  *      user id (the user who are requesting the resource server)
  */
 function verifyOwner(instance, sub) {
+    if (sub && typeof sub === 'object') { sub = sub.sub; }
     let owner = instance.userId || instance.owner;
     if (typeof owner !== 'number' || typeof sub !== 'number' || owner !== sub) {
         throw new InkError.NoAuthorization();
