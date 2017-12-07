@@ -1,4 +1,5 @@
 const express = require('express');
+const paramValidator = require('../../middleware/params/params');
 const userController = require('../../controllers/users.v1');
 const notebookController = require('../../controllers/notebooks.v1');
 const sectionController = require('../../controllers/sections.v1');
