@@ -23,7 +23,7 @@ module.exports = function(ruleSet) {
             Object.entries(ruleSet).forEach(([name, rules]) => {
                 
                 rules.forEach((rule) => {
-                    VALIDATOR_MAP.get(rule.validator)(name, params[name], rule);
+                    VALIDATOR_MAP.get(rule.validator)(name, params[name], req.auth, rule);
                 });
             });
 
