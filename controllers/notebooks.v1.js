@@ -27,9 +27,8 @@ exports.index = function(req, res, next) {
  */
 exports.retrieve = function(req, res, next) {
     let notebookId = req.params.notebookId;
-    let auth = req.auth;
 
-    notebookService.retrieve(notebookId, auth)
+    notebookService.retrieve(notebookId)
             .then((retrieved) => {
                 let payload = new Res.Ok({ data: retrieved });
                 payload = processPayload(payload, req);
@@ -64,9 +63,8 @@ exports.create = function(req, res, next) {
 exports.update = function(req, res, next) {
     let notebookId = req.params.notebookId;
     let params = req.body;
-    let auth = req.auth;
 
-    notebookService.update(notebookId, params, auth)
+    notebookService.update(notebookId, params)
             .then((updated) => {
                 let payload = new Res.Ok({ data: updated });
                 payload = processPayload(payload, req);
@@ -82,9 +80,8 @@ exports.update = function(req, res, next) {
  */
 exports.destroy = function(req, res, next) {
     let notebookId = req.params.notebookId;
-    let auth = req.auth;
 
-    notebookService.destroy(notebookId, auth)
+    notebookService.destroy(notebookId)
             .then(() => {
                 let payload = new Res.Ok();
                 payload = processPayload(payload, req);

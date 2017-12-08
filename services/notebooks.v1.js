@@ -39,14 +39,13 @@ function index(userId, auth, { params = {} } = {}) {
 /**
  * @param notebookId
  *      id of the notebook to retrieve.
- * @param auth
  * @param options
  *      params      (optional) _expand, _expLimit, ...
  *                  This function and others down below won't alter it.
  * @returns
  *      A promise to resolve the retrieved data.
  */
-function retrieve(notebookId, auth, { params = {} } = {}) {
+function retrieve(notebookId, { params = {} } = {}) {
     let where = { id: notebookId };
 
     return Notebook.findOne({
@@ -76,7 +75,7 @@ function create(params, auth) {
 
     return Notebook.create(sanitized)
             .then((created) => {
-                return retrieve(created.id, auth);
+                return retrieve(created.id);
             });
 }
 
@@ -88,19 +87,18 @@ function create(params, auth) {
  * @param params 
  *      Data (field values) from which notebook will be updated. This function won't
  *      alter this parameter.
- * @param auth
  * @return 
  *      A promise to resolve the updated data.
  */
-function update(notebookId, params, auth) {
+function update(notebookId, params) {
     let sanitized = Notebook.sanitizeOnUpdate(params);
 
-    return retrieve(notebookId, auth)
+    return retrieve(notebookId)
             .then((retrieved) => {
                 return retrieved.update(sanitized);
             })
             .then(() => {
-                return retrieve(notebookId, auth);
+                return retrieve(notebookId);
             });
 }
 
@@ -111,8 +109,8 @@ function update(notebookId, params, auth) {
  *      notebookId of the notebook to delete.
  * @param auth
  */
-function destroy(notebookId, auth) {
-    return retrieve(notebookId, auth)
+function destroy(notebookId) {
+    return retrieve(notebookId)
             .then((retrieved) => {
                 return retrieved.destroy();
             });
