@@ -11,7 +11,7 @@ const modelMap = require('../../models/models');
  */
 const REGISTERED = [
     require('./where'),
-    require('./limit')
+    // require('./limit')
 ];
 
 // only try to validate if requesting /api/v${version}
