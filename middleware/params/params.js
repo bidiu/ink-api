@@ -16,16 +16,17 @@ const VALIDATOR_MAP = new Map([
  */
 module.exports = function(ruleSet) {
     // generate the middleware to return
-    return function(req, res, next) {
+    return async function(req, res, next) {
         let params = req.method === 'GET' ? req.query : req.body;
 
         try {
-            Object.entries(ruleSet).forEach(([name, rules]) => {
+            let promises = Object.entries(ruleSet).map(async ([name, rules]) => {
                 
-                rules.forEach((rule) => {
-                    VALIDATOR_MAP.get(rule.validator)(name, params[name], req.auth, rule);
-                });
+                for (let rule of rules) {
+                    await VALIDATOR_MAP.get(rule.validator)(name, params[name], req.auth, rule);
+                }
             });
+            await Promise.all(promises);
 
             // everthing is okay
             next();
