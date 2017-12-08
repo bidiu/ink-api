@@ -5,7 +5,8 @@
  * change them, instead throwing errors when running into invalid parameters.
  */
 const VALIDATOR_MAP = new Map([
-    ['type', require('./type-validator')]
+    ['type', require('./type-validator')],
+    ['owner', require('./owner-validator')]
 ]);
 
 /**
