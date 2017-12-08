@@ -3,7 +3,7 @@ const InkError = require('../../common/models/ink-errors');
 /**
  * type validator
  * 
- * @param
+ * @param {*} name
  *      parameter name (field)
  * @param {*} val
  *      the value to validate
