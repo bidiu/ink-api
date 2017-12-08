@@ -6,7 +6,8 @@
  */
 const VALIDATOR_MAP = new Map([
     ['type', require('./type-validator')],
-    ['owner', require('./owner-validator')]
+    ['owner', require('./owner-validator')],
+    ['range', require('./range-validator')]
 ]);
 
 /**
