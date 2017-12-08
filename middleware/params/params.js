@@ -23,6 +23,7 @@ module.exports = function(ruleSet) {
         try {
             let promises = Object.entries(ruleSet).map(async ([name, rules]) => {
                 
+                // here is serial, so order of rules matters
                 for (let rule of rules) {
                     await VALIDATOR_MAP.get(rule.validator)(name, params[name], req.auth, rule);
                 }
