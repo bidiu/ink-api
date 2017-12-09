@@ -7,6 +7,22 @@ const sectionController = require('../../controllers/sections.v1');
 
 const v1Router = express.Router();
 
+/** --------------- api/v1 global param validators start --------------- */
+
+v1Router.use(
+    paramValidator({
+        '_where': [{
+            validator: 'type',
+            type: 'object',
+            allowNull: false
+        }, {
+            validator: 'where'
+        }]
+    })
+);
+
+/** --------------- api/v1 global param validators start --------------- */
+
 
 /** --------------- user resources start --------------- */
 
