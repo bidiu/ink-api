@@ -17,6 +17,15 @@ v1Router.use(
             allowNull: false
         }, {
             validator: 'where'
+        }],
+        '_limit': [{
+            validator: 'type',
+            type: 'number',
+            allowNull: false
+        }, {
+            validator: 'range',
+            min: 1,
+            max: 100
         }]
     })
 );
