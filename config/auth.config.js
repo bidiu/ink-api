@@ -66,6 +66,11 @@ function scopeToEndpoints(scope, user) {
  * the regular thing you would do like `/sections/:sectionId`. On the other hand, 
  * complicated form (you must **NOT** use) is ones include advanced features like 
  * optional keys, such as `/sections/:sectionId+` (you must **NOT** use this).
+ * 
+ * > Also note that `exec` only supports verifying the ownership of a **user
+ * resource**; it doesn't support verifying the user itself. And `exec` will NOT
+ * consider any sharing feature, so if you want sharing, you have to not use `exec`, 
+ * but other mechanisms (such as `param-validators`).
  */
 function toApiV1Endpoints(user) {
     const baseUrl = '/api/v1';
