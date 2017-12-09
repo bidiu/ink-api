@@ -2,40 +2,27 @@ const userService = require('../services/users.v1');
 const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
 
-
 /**
  * GET /users
  */
-exports.index = function(req, res, next) {
+exports.index = async function(req, res, next) {
     let params = req.query;
 
-    userService.index({ params })
-            .then((indexed) => {
-                let payload = new Res.Ok({ data: indexed });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await userService.index({ params });
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * GET /users/1
  */
-exports.retrieve = function(req, res, next) {
+exports.retrieve = async function(req, res, next) {
     let id = req.params.id;
     let params = req.query;
 
-    userService.retrieve(id, { params })
-            .then((retrieved) => {
-                let payload = new Res.Ok({ data: retrieved });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await userService.retrieve(id, { params });
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
@@ -43,18 +30,12 @@ exports.retrieve = function(req, res, next) {
  * 
  * Create a new user.
  */
-exports.create = function(req, res, next) {
+exports.create = async function(req, res, next) {
     let params = req.body;
 
-    userService.create(params)
-            .then((created) => {
-                let payload = new Res.Ok({ data: created });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await userService.create(params);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
@@ -62,34 +43,22 @@ exports.create = function(req, res, next) {
  * 
  * update a existing user (could be partially update)
  */
-exports.update = function(req, res, next) {
+exports.update = async function(req, res, next) {
     let id = req.params.id;
     let params = req.body;
 
-    userService.update(id, params)
-            .then((updated) => {
-                let payload = new Res.Ok({ data: updated });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await userService.update(id, params);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * DELETE /users/1 (idempotent)
  */
-exports.destroy = function(req, res, next) {
+exports.destroy = async function(req, res, next) {
     let id = req.params.id;
 
-    userService.destroy(id)
-            .then(() => {
-                let payload = new Res.Ok();
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    await userService.destroy(id);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }

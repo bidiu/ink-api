@@ -17,23 +17,17 @@ const toCookie = require('../utils/auth').toCookie;
  *      - scopes
  *      - refresh_token as cookie
  */
-exports.create = function(req, res, next) {
+exports.create = async function(req, res, next) {
     let { scopes, username, password, asGuest } = req.body;
     let refToken = req.cookies['refresh_token'];
 
-    authService.create(scopes, { username, password, asGuest, refToken })
-            .then(({ tokens, sub }) => {
-                tokens.map(toCookie).forEach((cookie) => {
-                    res.cookie(...cookie);
-                });
-
-                let payload = new Res.Ok({ data: { sub } });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let { tokens, sub } = await authService.create(scopes, { username, password, asGuest, refToken });
+    let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
+    
+    tokens.map(toCookie).forEach((cookie) => {
+        res.cookie(...cookie);
+    });
+    res.status(payload.status).json(payload);
 };
 
 /**
@@ -44,42 +38,30 @@ exports.create = function(req, res, next) {
  * params:
  *      - refresh_token as cookie
  */
-exports.update = function(req, res, next) {
+exports.update = async function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
-    authService.update(refToken)
-            .then(({ tokens, sub }) => {
-                tokens.map(toCookie).forEach((cookie) => {
-                    res.cookie(...cookie);
-                });
-
-                let payload = new Res.Ok({ data: { sub } });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });;
+    let { tokens, sub } = await authService.update(refToken);
+    let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
+    
+    tokens.map(toCookie).forEach((cookie) => {
+        res.cookie(...cookie);
+    });
+    res.status(payload.status).json(payload);
 };
 
 /**
  * log out, remove all refresh_token and access_tokens
  * note that it's safe to call this many times
  */
-exports.destroy = function(req, res, next) {
+exports.destroy = async function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
-    authService.destroy(refToken)
-            .then((tokens) => {
-                tokens.map(toCookie).forEach((cookie) => {
-                    res.cookie(...cookie);
-                });
+    let tokens = await authService.destroy(refToken);
+    let payload = await processPayload(new Res.Ok(), req);
 
-                let payload = new Res.Ok();
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });;
+    tokens.map(toCookie).forEach((cookie) => {
+        res.cookie(...cookie);
+    });
+    res.status(payload.status).json(payload);
 };

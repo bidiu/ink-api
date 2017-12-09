@@ -2,92 +2,61 @@ const notebookService = require('../services/notebooks.v1');
 const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
 
-
 /**
  * GET /users/:userId/notebooks
  */
-exports.index = function(req, res, next) {
+exports.index = async function(req, res, next) {
     let userId = req.params.userId;
     let auth = req.auth;
     let params = req.query;
 
-    notebookService.index(userId, auth, { params })
-            .then((indexed) => {
-                let payload = new Res.Ok({ data: indexed });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await notebookService.index(userId, auth, { params });
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * GET /notebooks/:notebookId
  */
-exports.retrieve = function(req, res, next) {
+exports.retrieve = async function(req, res, next) {
     let notebookId = req.params.notebookId;
 
-    notebookService.retrieve(notebookId)
-            .then((retrieved) => {
-                let payload = new Res.Ok({ data: retrieved });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await notebookService.retrieve(notebookId);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * POST /notebooks
  */
-exports.create = function(req, res, next) {
+exports.create = async function(req, res, next) {
     let params = req.body;
     let auth = req.auth;
 
-    notebookService.create(params, auth)
-            .then((created) => {
-                let payload = new Res.Ok({ data: created });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await notebookService.create(params, auth);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * PATCH /notebooks/:notebookId
  */
-exports.update = function(req, res, next) {
+exports.update = async function(req, res, next) {
     let notebookId = req.params.notebookId;
     let params = req.body;
 
-    notebookService.update(notebookId, params)
-            .then((updated) => {
-                let payload = new Res.Ok({ data: updated });
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    let data = await notebookService.update(notebookId, params);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * DELETE /notebooks/:notebookId
  */
-exports.destroy = function(req, res, next) {
+exports.destroy = async function(req, res, next) {
     let notebookId = req.params.notebookId;
 
-    notebookService.destroy(notebookId)
-            .then(() => {
-                let payload = new Res.Ok();
-                payload = processPayload(payload, req);
-                res.status(payload.status).json(payload);
-            })
-            .catch((err) => {
-                next(err);
-            });
+    await notebookService.destroy(notebookId);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }

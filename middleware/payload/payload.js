@@ -10,9 +10,9 @@ const REGISTERED = [
 ];
 
 
-function processPayload(payload, req) {
+async function processPayload(payload, req) {
     for (let proc of REGISTERED) {
-        payload = proc(payload, req);
+        payload = await proc(payload, req);
     }
     return payload;
 }
