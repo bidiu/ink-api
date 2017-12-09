@@ -88,7 +88,7 @@ function toApiV1Endpoints(user) {
     });
     endpoints.push({
         methods: [ 'GET' ],
-        path: `${baseUrl}/users/:id`
+        path: `${baseUrl}/users/:id` // user is sharable
     });
 
     // notebook resources
