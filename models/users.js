@@ -1,5 +1,6 @@
 const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
+const SharingLevel = require('../common/constants').SharingLevel;
 
 
 // cannot be easily changed given current design
@@ -62,9 +63,15 @@ const DEF = {
         type: Sequalize.ENUM('new', 'valid'),
         defaultValue: 'new'
     },
-    // a random string unknown to users before email validation
-    secret: {
-        type: Sequalize.STRING, 
+    sharing: {
+        type: Sequalize.ENUM(SharingLevel.NOT_SHARING, SharingLevel.USERS_ONLY, SharingLevel.ANYONE),
+        allowNull: false,
+        defaultValue: SharingLevel.NOT_SHARING
+    },
+    private: {
+        type: Sequalize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     },
     // following are optional
     sex: { type: Sequalize.ENUM('m', 'f') },
@@ -108,6 +115,29 @@ User.readonlyFields = ['_endpoint'];
 // all fields (including foreign keys, except for readonly fields)
 User.fields = Object.keys(DEF).concat(User.hiddenFields, User.referenceFields);
 
+/**
+ * The sharing fields that the user could decide share or not
+ * with others by setting the `sharing` field.
+ * 
+ * Note that this is like a filter (blacklist) that take 
+ * effect **after** the `retrival/indexing` sanitization.
+ * 
+ * Different from `private`, `sharing` gives the user a more
+ * granular control over the specific fields (but what these 
+ * fields are cannot be configured by the user). On the other 
+ * hand, `private` with true will restrain the access of the 
+ * resource to only the owner.
+ */
+User.sharingFields = [ 'email' ];
+/**
+ * User is a sharable resource (a user can view another user's 
+ * profile).
+ * 
+ * Note that only sharable resources need to have `sharing` and 
+ * `private` fields, as well as `Model.sharingfields`.
+ */
+User.sharable = true;
+
 
 /**
  * Notes:
@@ -132,13 +162,13 @@ User.sanitize = function(raw, { toExclude = [], toInclude = User.fields } = {}) 
     return sanitized;
 }
 
-User.excludeOnCreate = ['id', 'status', 'salt', 'secret'].concat(User.hiddenFields);
+User.excludeOnCreate = ['id', 'status', 'salt'].concat(User.hiddenFields);
 User.includeOnCreate = User.fields.filter((field) => !User.excludeOnCreate.includes(field));
 User.sanitizeOnCreate = function(received) {
     return User.sanitize(received, { toExclude: User.excludeOnCreate });
 }
 
-User.excludeOnUpdate = ['id', 'username', 'salt', 'secret'].concat(User.hiddenFields);
+User.excludeOnUpdate = ['id', 'username', 'salt'].concat(User.hiddenFields);
 User.includeOnUpdate = User.fields.filter((field) => !User.excludeOnUpdate.includes(field));
 User.sanitizeOnUpdate = function(received) {
     return User.sanitize(received, {
@@ -147,7 +177,7 @@ User.sanitizeOnUpdate = function(received) {
     });
 }
 
-User.excludeOnRetrieve = ['password', 'salt', 'secret'].concat(User.referenceFields);
+User.excludeOnRetrieve = ['password', 'salt'].concat(User.referenceFields);
 User.includeOnRetrieve = User.fields.filter((field) => !User.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved
