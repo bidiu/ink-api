@@ -5,10 +5,10 @@ const InkError = require('../../common/models/ink-errors');
  * 
  * @param {*} name 
  * @param {*} val 
- * @param {*} auth 
+ * @param {*} req 
  * @param {*} options 
  */
-function validate(name, val, auth, { min, max }) {
+function validate(name, val, req, { min, max }) {
     if (!val || val >= min && val <= max) { return; }
 
     let message = `Range validator: parameter ${name}'s range should be ${min} ~ ${max} (inclusive).`;

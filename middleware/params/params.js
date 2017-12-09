@@ -26,7 +26,7 @@ module.exports = function(ruleSet) {
                 
                 // here is serial, so order of rules matters
                 for (let rule of rules) {
-                    await VALIDATOR_MAP.get(rule.validator)(name, params[name], req.auth, rule);
+                    await VALIDATOR_MAP.get(rule.validator)(name, params[name], req, rule);
                 }
             });
             await Promise.all(promises);

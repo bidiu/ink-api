@@ -10,13 +10,13 @@ const InkError = require('../../common/models/ink-errors');
  *      parameter name (field)
  * @param {*} val 
  *      the value to validate
- * @param {*} auth 
+ * @param {*} req 
  * @param {*} options 
  */
-async function validate(name, val, auth, { model: modelName }) {
+async function validate(name, val, req, { model: modelName }) {
     try {
         let service = serviceMap.get(modelName);
-        authUtils.verifyOwner(await service.retrieve(val), auth);
+        authUtils.verifyOwner(await service.retrieve(val), req.auth);
     } catch(err) {
         throw err instanceof InkError.NoAuthorization ? err : new InkError.NoAuthorization();
     }
