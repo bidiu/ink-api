@@ -71,7 +71,7 @@ const DEF = {
     private: {
         type: Sequalize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: false
     },
     // following are optional
     sex: { type: Sequalize.ENUM('m', 'f') },
