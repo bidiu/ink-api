@@ -8,9 +8,9 @@
  *    the passed-in payload.
  */
 const REGISTERED = [
+    require('./sharing'),
     require('./plain'),
     require('./endpoints'),
-    // require('./foreign-keys')
 ];
 
 
