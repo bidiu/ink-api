@@ -232,12 +232,32 @@ function toCookie(token, { authPath = '/auth' } = {}) {
  *      model instance
  * @param {*} sub 
  *      user id (the user who are requesting the resource server)
+ * @return
+ *      return nothing
  */
 function verifyOwner(instance, sub) {
     if (sub && typeof sub === 'object') { sub = sub.sub; }
     let owner = instance.userId || instance.owner;
     if (typeof owner !== 'number' || typeof sub !== 'number' || owner !== sub) {
         throw new InkError.NoAuthorization();
+    }
+}
+
+/**
+ * Similar to `verifyOwner`, but won't throw any error
+ * 
+ * @param {*} instance 
+ * @param {*} sub 
+ * @return
+ *      true if verification passes, otherwise false
+ */
+function compareOwner(instance, sub) {
+    try {
+        verifyOwner(instance, sub);
+        return true;
+    } catch(err) {
+        if (! (err instanceof InkError.NoAuthorization)) { throw err; }
+        return false;
     }
 }
 
@@ -251,3 +271,4 @@ exports.signRefToken = signRefToken;
 exports.verifyToken = verifyToken;
 exports.toCookie = toCookie;
 exports.verifyOwner = verifyOwner;
+exports.compareOwner = compareOwner;
