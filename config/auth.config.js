@@ -54,7 +54,7 @@ function scopeToEndpoints(scope, user) {
  * }]
  * ```
  * 
- * > A model supporting owner ship is one whose table has either `userId` or 
+ * > A model supporting ownership is one whose table has either `userId` or 
  * `owner` field (or both but with same value).
  * 
  * The verification will pass if, for all `exec.key`s, the model instance retrieved 
