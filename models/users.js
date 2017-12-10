@@ -177,7 +177,7 @@ User.sanitizeOnUpdate = function(received) {
     });
 }
 
-User.excludeOnRetrieve = ['password', 'salt'].concat(User.referenceFields);
+User.excludeOnRetrieve = ['password', 'salt']; //.concat(User.referenceFields);
 User.includeOnRetrieve = User.fields.filter((field) => !User.excludeOnRetrieve.includes(field));
 /**
  * @param retrieved

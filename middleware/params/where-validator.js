@@ -4,6 +4,8 @@ const modelMap = require('../../models/models');
 
 const KEY_NAME = '_where';
 const MODEL_NAME_REGEX = /[a-zA-Z]+(?!.+[a-zA-Z]+)/gi
+// IMPORTANT
+const RESTRICTED_KEYS = [ 'private', 'sharing' ];
 
 /**
  * Map requested API endpoint to corresponding requested model, if any.
@@ -51,7 +53,13 @@ function validate(req, model) {
         throw new InkError.BadReq({ details: '\'_where\' param is wrongly constructed.' });
     } else {
         try {
-            validateOneObj(where, model.includeOnRetrieve.concat( model.referenceFields, Object.keys(ALLOWED_OP_ALIASES) ));
+            let allowedKeys = model.includeOnRetrieve
+                    .concat( Object.keys(ALLOWED_OP_ALIASES) )
+                    .filter((k) => {
+                        return !RESTRICTED_KEYS.includes(k) && !( model.sharingFields && model.sharingFields.includes(k) );
+                    });
+
+            validateOneObj(where, allowedKeys);
         } catch (e) {
             if (e instanceof InkError) {
                 // don't relay on the InkError middleware at the end
