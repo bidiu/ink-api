@@ -50,10 +50,23 @@ async function verifyPayload(payload, req) {
         // verify ownership
         await verifyExec(endpoint, requestedPath, payload.sub);
 
-        let auth = { sub: payload.sub } // user id
+        let auth = {
+            _user: null,
+            // user id (sync)
+            sub: payload.sub,
+            // note this will return a promise (async!)
+            get user() {
+                return ( async () => this._user || await this.retrieve() )();
+            },
+            retrieve: async function() {
+                this._user = await userService.retrieveV2({ id: this.sub });
+                return this._user;
+            }
+        };
         if (authConfig.eagerLoading) {
-            auth.user = await userService.retrieveV2({ id: auth.sub });
+            await auth.retrieve();
         }
+
         req.auth = auth;
     } else {
         // client is not authorized for the requested path
