@@ -4,6 +4,28 @@ const authUtils = require('../utils/auth');
 const pagUtils = require('../utils/pagination');
 const { execScript } = require('../utils/common');
 
+/**
+ * Process `_where` for sharing. Typically, only index action needs 
+ * to call this function. Note this won't change the original `where`, 
+ * but return a new one.
+ * 
+ * @param {*} where orginal where
+ * @param {*} auth  auth
+ * @return          the new where
+ */
+function _processWhereForSharing(where, auth) {
+    return {
+        $and: [
+            where, {
+                $or: [{
+                    private: false
+                }, {
+                    id: auth.sub
+                }]
+            }
+        ]
+    };
+}
 
 // no need to take care '_expand' here
 const DEFAULT_INDEX_PARAMS = {
@@ -14,13 +36,15 @@ const DEFAULT_INDEX_PARAMS = {
 };
 
 /**
+ * @param auth
  * @param options (optional)
  *      params      (optional) filter conditions (where/order/limit/pageNo...)
  * @return
  *      A promise to resolve the indexed data (could be an empty array if no matches).
  */
-function index({ params = {} } = {}) {
+function index(auth, { params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
+    params._where = _processWhereForSharing(params._where, auth);
 
     return User.findAndCountAll({
                 attributes: { exclude: User.excludeOnRetrieve },
@@ -204,7 +228,6 @@ function destroy(id) {
                 return retrieved.destroy();
             });
 }
-
 
 exports.index = index;
 exports.retrieve = retrieve;

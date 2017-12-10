@@ -6,9 +6,10 @@ const processPayload = require('../middleware/payload/payload');
  * GET /users
  */
 exports.index = async function(req, res, next) {
+    let auth = req.auth;
     let params = req.query;
 
-    let data = await userService.index({ params });
+    let data = await userService.index(auth, { params });
     let payload = await processPayload(new Res.Ok({ data }), req);
     res.status(payload.status).json(payload);
 }
