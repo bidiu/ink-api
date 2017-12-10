@@ -1,7 +1,11 @@
 /**
  * Register your post payload process functions here.
- * Order matters here.
- * They all MUST be non-blocking.
+ * 
+ * **Notes**
+ *  - Order matters here.
+ *  - They all MUST be non-blocking.
+ *  - You must return the processed payload, and you are allowed to change 
+ *    the passed-in payload.
  */
 const REGISTERED = [
     require('./plain'),
