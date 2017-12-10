@@ -72,8 +72,9 @@ async function processNonSharable(instance, model, auth) {
 }
 
 async function processInstances(instances, auth) {
-    // TODO
-    return instances;
+    return await Promise.all(
+        instances.map(async (i) => await processInstance(i, auth))
+    );
 }
 
 /**
