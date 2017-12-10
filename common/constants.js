@@ -4,3 +4,5 @@ exports.SharingLevel = Object.freeze({
     // anyone means guest
     ANYONE: '3'
 });
+
+exports.GUEST_USERNAME = 'guest';

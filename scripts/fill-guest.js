@@ -1,10 +1,11 @@
 require('./common');
 const userService = require('../services/users.v1');
+const GUEST_USERNAME = require('../common/constants').GUEST_USERNAME;
 
 let guest = {
     email: 'guest@inkbook.io',
     // hardcoded to `guest`
-    username: 'guest',
+    username: GUEST_USERNAME,
     name: 'Guest',
     password: 'guest1$'
 };
