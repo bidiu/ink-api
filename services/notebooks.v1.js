@@ -2,7 +2,6 @@ const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
 const pagUtils = require('../utils/pagination');
 
-
 // no need to take care '_expand' here
 const DEFAULT_INDEX_PARAMS = {
     _where: {},
@@ -12,16 +11,27 @@ const DEFAULT_INDEX_PARAMS = {
 };
 
 /**
+ * similar to `userService._processWhereForSharing`.
+ */
+function _processWhereForIndex(where, userId) {
+    return {
+        $and: [
+            where, 
+            { userId }
+        ]
+    };
+}
+
+/**
  * @param userId
- * @param auth
  * @param options (optional)
  *      params      (optional) filter conditions (where clause).
  * @return
  *      A promise to resolve the indexed data (could be an empty array if no matches).
  */
-function index(userId, auth, { params = {} } = {}) {
+function index(userId, { params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
-    params._where.userId = +userId;
+    params._where = _processWhereForIndex(params._where, userId);
 
     return Notebook.findAndCountAll({
                 attributes: { exclude: Notebook.excludeOnRetrieve },
@@ -115,7 +125,6 @@ function destroy(notebookId) {
                 return retrieved.destroy();
             });
 }
-
 
 exports.index = index;
 exports.retrieve = retrieve;

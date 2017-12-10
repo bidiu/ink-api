@@ -6,11 +6,10 @@ const processPayload = require('../middleware/payload/payload');
  * GET /users/:userId/notebooks
  */
 exports.index = async function(req, res, next) {
-    let userId = req.params.userId;
-    let auth = req.auth;
+    let userId = +( req.params.userId );
     let params = req.query;
 
-    let data = await notebookService.index(userId, auth, { params });
+    let data = await notebookService.index(userId, { params });
     let payload = await processPayload(new Res.Ok({ data }), req);
     res.status(payload.status).json(payload);
 }
