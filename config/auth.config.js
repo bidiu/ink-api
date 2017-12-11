@@ -88,7 +88,7 @@ function toApiV1Endpoints(user) {
     });
     endpoints.push({
         methods: [ 'GET' ],
-        path: `${baseUrl}/users/:id` // user is sharable
+        path: `${baseUrl}/users/:id(\\d+)` // user is sharable
     });
 
     // notebook resources
@@ -102,19 +102,19 @@ function toApiV1Endpoints(user) {
     });
     endpoints.push({
         methods: [ 'GET', 'PATCH', 'DELETE' ],
-        path: `${baseUrl}/notebooks/:notebookId`,
+        path: `${baseUrl}/notebooks/:notebookId(\\d+)`,
         exec: [{ key: 'notebookId', model: 'notebooks' }]
     });
 
     // section resources
     endpoints.push({
         methods: [ 'GET', 'POST' ],
-        path: `${baseUrl}/notebooks/:notebookId/sections`,
+        path: `${baseUrl}/notebooks/:notebookId(\\d+)/sections`,
         exec: [{ key: 'notebookId', model: 'notebooks' }]
     });
     endpoints.push({
         methods: [ 'GET', 'PATCH', 'DELETE' ],
-        path: `${baseUrl}/sections/:sectionId`,
+        path: `${baseUrl}/sections/:sectionId(\\d+)`,
         exec: [{ key: 'sectionId', model: 'sections' }]
     });
 

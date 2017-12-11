@@ -37,43 +37,43 @@ v1Router.use(
 
 v1Router.get('/users', asyncHandler(userController.index));
 
-v1Router.get('/users/:id', asyncHandler(userController.retrieve));
+v1Router.get('/users/:id(\\d+)', asyncHandler(userController.retrieve));
 
 v1Router.post('/users', asyncHandler(userController.create));
 
-v1Router.patch('/users/:id', asyncHandler(userController.update));
+v1Router.patch('/users/:id(\\d+)', asyncHandler(userController.update));
 
-v1Router.delete('/users/:id', asyncHandler(userController.destroy));
+v1Router.delete('/users/:id(\\d+)', asyncHandler(userController.destroy));
 
 /** --------------- user resources end --------------- */
 
 
 /** --------------- notebook resources start --------------- */
 
-v1Router.get('/users/:userId/notebooks', asyncHandler(notebookController.index));
+v1Router.get('/users/:userId(\\d+)/notebooks', asyncHandler(notebookController.index));
 
-v1Router.get('/notebooks/:notebookId', asyncHandler(notebookController.retrieve));
+v1Router.get('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.retrieve));
 
 v1Router.post('/notebooks', asyncHandler(notebookController.create));
 
-v1Router.patch('/notebooks/:notebookId', asyncHandler(notebookController.update));
+v1Router.patch('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.update));
 
-v1Router.delete('/notebooks/:notebookId', asyncHandler(notebookController.destroy));
+v1Router.delete('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.destroy));
 
 /** --------------- notebook resources end --------------- */
 
 
 /** --------------- section resources start --------------- */
 
-v1Router.get('/notebooks/:notebookId/sections', asyncHandler(sectionController.index));
+v1Router.get('/notebooks/:notebookId(\\d+)/sections', asyncHandler(sectionController.index));
 
-v1Router.get('/sections/:sectionId', asyncHandler(sectionController.retrieve));
+v1Router.get('/sections/:sectionId(\\d+)', asyncHandler(sectionController.retrieve));
 
-v1Router.post('/notebooks/:notebookId/sections', asyncHandler(sectionController.create));
+v1Router.post('/notebooks/:notebookId(\\d+)/sections', asyncHandler(sectionController.create));
 
-v1Router.patch('/sections/:sectionId', asyncHandler(sectionController.update));
+v1Router.patch('/sections/:sectionId(\\d+)', asyncHandler(sectionController.update));
 
-v1Router.delete('/sections/:sectionId', asyncHandler(sectionController.destroy));
+v1Router.delete('/sections/:sectionId(\\d+)', asyncHandler(sectionController.destroy));
 
 /** --------------- section resources start --------------- */
 
