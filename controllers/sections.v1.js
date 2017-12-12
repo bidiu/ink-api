@@ -43,7 +43,12 @@ exports.create = async function(req, res, next) {
  * PATCH /sections/:sectionId
  */
 exports.update = async function(req, res, next) {
-    res.end('update');
+    let sectionId = +req.params.sectionId;
+    let params = req.body;
+
+    let data = await sectionService.update(sectionId, params);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**

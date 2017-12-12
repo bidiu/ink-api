@@ -63,6 +63,23 @@ function create(params, notebookId, auth) {
             });
 }
 
+/**
+ * @param {*} sectionId 
+ * @param {*} params 
+ */
+function update(sectionId, params) {
+    let sanitized = Section.sanitizeOnUpdate(params);
+
+    return retrieve(sectionId)
+            .then((retrieved) => {
+                return retrieved.update(sanitized);
+            })
+            .then(() => {
+                return retrieve(sectionId);
+            });
+}
+
 exports.index = index;
 exports.retrieve = retrieve;
 exports.create = create;
+exports.update = update;

@@ -71,7 +71,15 @@ v1Router.get('/sections/:sectionId(\\d+)', asyncHandler(sectionController.retrie
 
 v1Router.post('/notebooks/:notebookId(\\d+)/sections', asyncHandler(sectionController.create));
 
-v1Router.patch('/sections/:sectionId(\\d+)', asyncHandler(sectionController.update));
+v1Router.patch('/sections/:sectionId(\\d+)',
+    paramValidator({
+        'notebookId': [
+            { validator: 'type', type: 'number', allowNull: false },
+            { validator: 'owner', model: 'notebooks' }
+        ]
+    }),
+    asyncHandler(sectionController.update)
+);
 
 v1Router.delete('/sections/:sectionId(\\d+)', asyncHandler(sectionController.destroy));
 
