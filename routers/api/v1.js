@@ -69,7 +69,12 @@ v1Router.get('/notebooks/:notebookId(\\d+)/sections', asyncHandler(sectionContro
 
 v1Router.get('/sections/:sectionId(\\d+)', asyncHandler(sectionController.retrieve));
 
-v1Router.post('/notebooks/:notebookId(\\d+)/sections', asyncHandler(sectionController.create));
+v1Router.post('/notebooks/:notebookId(\\d+)/sections', 
+    paramValidator({
+        'notebookId': [{ validator: 'ban' }]
+    }),
+    asyncHandler(sectionController.create)
+);
 
 v1Router.patch('/sections/:sectionId(\\d+)',
     paramValidator({
