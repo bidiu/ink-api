@@ -30,7 +30,7 @@ v1Router.use(
     })
 );
 
-/** --------------- api/v1 global param validators start --------------- */
+/** --------------- api/v1 global param validators end --------------- */
 
 
 /** --------------- user resources start --------------- */
