@@ -21,6 +21,11 @@ function getModel(path) {
 }
 
 function validateOneObj(obj, allowedKeys) {
+    if (obj instanceof Array) {
+        validateArray(obj, allowedKeys);
+        return;
+    }
+
     Object.keys(obj).forEach((k) => {
         let v = obj[k];
 
@@ -29,6 +34,10 @@ function validateOneObj(obj, allowedKeys) {
             validateOneObj(v, allowedKeys);
         }
     });
+}
+
+function validateArray(objs, allowedKeys) {
+    objs.forEach((obj) => validateOneObj(obj, allowedKeys));
 }
 
 /**
