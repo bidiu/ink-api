@@ -21,6 +21,15 @@ v1Router.use(
         ],
         'owner': [
             { validator: 'ban' }
+        ],
+        'createdAt': [
+            { validator: 'ban' }
+        ],
+        'updatedAt': [
+            { validator: 'ban' }
+        ],
+        'deletedAt': [
+            { validator: 'ban' }
         ]
     })
 );
@@ -49,9 +58,19 @@ v1Router.get('/users/:userId(\\d+)/notebooks', asyncHandler(notebookController.i
 
 v1Router.get('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.retrieve));
 
-v1Router.post('/notebooks', asyncHandler(notebookController.create));
+v1Router.post('/notebooks', 
+    paramValidator({
+        'userId': [{ validator: 'ban' }]
+    }),
+    asyncHandler(notebookController.create)
+);
 
-v1Router.patch('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.update));
+v1Router.patch('/notebooks/:notebookId(\\d+)', 
+    paramValidator({
+        'userId': [{ validator: 'ban' }]
+    }),
+    asyncHandler(notebookController.update)
+);
 
 v1Router.delete('/notebooks/:notebookId(\\d+)', asyncHandler(notebookController.destroy));
 
