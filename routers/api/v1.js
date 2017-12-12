@@ -11,22 +11,14 @@ const v1Router = express.Router();
 
 v1Router.use(
     paramValidator({
-        '_where': [{
-            validator: 'type',
-            type: 'object',
-            allowNull: false
-        }, {
-            validator: 'where'
-        }],
-        '_limit': [{
-            validator: 'type',
-            type: 'number',
-            allowNull: false
-        }, {
-            validator: 'range',
-            min: 1,
-            max: 100
-        }]
+        '_where': [
+            { validator: 'type', type: 'object', allowNull: false },
+            { validator: 'where' }
+        ],
+        '_limit': [
+            { validator: 'type', type: 'number', allowNull: false }, 
+            { validator: 'range', min: 1, max: 100 }
+        ]
     })
 );
 
