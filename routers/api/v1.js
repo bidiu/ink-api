@@ -18,6 +18,9 @@ v1Router.use(
         '_limit': [
             { validator: 'type', type: 'number', allowNull: false }, 
             { validator: 'range', min: 1, max: 100 }
+        ],
+        'owner': [
+            { validator: 'ban' }
         ]
     })
 );
