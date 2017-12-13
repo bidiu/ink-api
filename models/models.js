@@ -1,12 +1,14 @@
 const User = require('./users');
 const Notebook = require('./notebooks');
 const Section = require('./sections');
+const Note = require('./notes');
 
 
 let modelMap = new Map([
     ['users', User],
     ['notebooks', Notebook],
-    ['sections', Section]
+    ['sections', Section],
+    ['notes', Note]
 ]);
 
 
@@ -15,6 +17,9 @@ Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE'
 
 Notebook.hasMany(Section, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Section.belongsTo(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+Section.hasMany(Note, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Note.belongsTo(Section, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
 
 const DEFAULT_USER_EXP = {
