@@ -3,6 +3,7 @@ const paramValidator = require('../../middleware/params/params');
 const userController = require('../../controllers/users.v1');
 const notebookController = require('../../controllers/notebooks.v1');
 const sectionController = require('../../controllers/sections.v1');
+const noteController = require('../../controllers/notes.v1');
 const asyncHandler = require('../../middleware/common/async');
 
 const v1Router = express.Router();
@@ -95,6 +96,23 @@ v1Router.patch('/sections/:sectionId(\\d+)',
 v1Router.delete('/sections/:sectionId(\\d+)', asyncHandler(sectionController.destroy));
 
 /** --------------- section resources end --------------- */
+
+
+/** --------------- note resources start --------------- */
+
+v1Router.get('/notes', asyncHandler(noteController.index));
+
+v1Router.get('/sections/:sectionId(\\d+)/notes', asyncHandler(noteController.index));
+
+v1Router.get('/notes/:noteId(\\d+)', asyncHandler(noteController.retrieve));
+
+v1Router.post('/sections/:sectionId(\\d+)/notes', asyncHandler(noteController.create));
+
+v1Router.patch('/notes/:noteId(\\d+)', asyncHandler(noteController.update));
+
+v1Router.delete('/notes/:noteId(\\d+)', asyncHandler(noteController.destroy));
+
+/** --------------- note resources end --------------- */
 
 
 module.exports = v1Router;
