@@ -79,7 +79,18 @@ function update(sectionId, params) {
             });
 }
 
+/**
+ * @param {*} sectionId 
+ */
+function destroy(sectionId) {
+    return retrieve(sectionId)
+            .then((retrieved) => {
+                return retrieved.destroy();
+            });
+}
+
 exports.index = index;
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;
+exports.destroy = destroy;

@@ -55,5 +55,9 @@ exports.update = async function(req, res, next) {
  * DELETE /sections/:sectionId
  */
 exports.destroy = async function(req, res, next) {
-    res.end('destroy');
+    let sectionId = +req.params.sectionId;
+
+    await sectionService.destroy(sectionId);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }
