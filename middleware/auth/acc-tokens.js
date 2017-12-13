@@ -11,9 +11,9 @@ const toRegex = require('path-to-regexp');
  * 
  * @param {*} endpoint 
  * @param {*} requestedPath 
- * @param {*} method requesting method
- * @param {*} sub   user id (extracted from `acc_token`'s payload)
- * @return {Promise<void>} resolving undefined
+ * @param {*} method            requesting method
+ * @param {*} sub               user id (extracted from `acc_token`'s payload)
+ * @return {Promise<void>}      resolving undefined
  */
 async function verifyExec(endpoint, requestedPath, method, sub) {
     if (!endpoint.exec) { return; }
