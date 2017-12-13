@@ -1,5 +1,6 @@
 const Sequalize = require('sequelize');
 const sequelize = require('../db/db');
+const SharingLevel = require('../common/constants').SharingLevel;
 
 const MODEL_NAME = 'note';
 const TABLE_NAME = 'notes';
@@ -23,6 +24,16 @@ const MODEL_DEF = {
     content: {
         type: Sequalize.STRING, 
         allowNull: false
+    },
+    sharing: {
+        type: Sequalize.ENUM(SharingLevel.NOT_SHARING, SharingLevel.ANYONE),
+        allowNull: false,
+        defaultValue: SharingLevel.NOT_SHARING
+    },
+    private: {
+        type: Sequalize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     },
     // owner field
     owner: {
@@ -53,6 +64,9 @@ Note.ownerFields = ['owner'];
 Note.readonlyFields = ['_endpoint'];
 // all fields (including foreign keys, except for readonly fields)
 Note.fields = Object.keys(MODEL_DEF).concat(Note.hiddenFields, Note.referenceFields, Note.ownerFields);
+
+Note.sharingFields = [ ];
+Note.sharable = true;
 
 /**
  * Notes:
