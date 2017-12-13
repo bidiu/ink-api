@@ -94,7 +94,7 @@ v1Router.patch('/sections/:sectionId(\\d+)',
 
 v1Router.delete('/sections/:sectionId(\\d+)', asyncHandler(sectionController.destroy));
 
-/** --------------- section resources start --------------- */
+/** --------------- section resources end --------------- */
 
 
 module.exports = v1Router;
