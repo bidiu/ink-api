@@ -118,6 +118,22 @@ function toApiV1Endpoints(user) {
         exec: [{ key: 'sectionId', model: 'sections' }]
     });
 
+    // note resources
+    endpoints.push({
+        methods: [ 'GET' ],
+        path: `${baseUrl}/notes`
+    });
+    endpoints.push({
+        methods: [ 'GET', 'POST' ],
+        path: `${baseUrl}/sections/:sectionId(\\d+)/notes`,
+        exec: [{ key: 'sectionId', model: 'sections' }]
+    });
+    endpoints.push({
+        methods: [ 'GET', 'PATCH', 'DELETE' ],
+        path: `${baseUrl}/notes/:noteId(\\d+)`,
+        exec: [{ key: 'noteId', model: 'notes', methods: ['PATCH', 'DELETE'] }]
+    });
+
     return endpoints;
 }
 
