@@ -11,11 +11,14 @@ const toRegex = require('path-to-regexp');
  * 
  * @param {*} endpoint 
  * @param {*} requestedPath 
+ * @param {*} method requesting method
  * @param {*} sub   user id (extracted from `acc_token`'s payload)
  * @return {Promise<void>} resolving undefined
  */
-async function verifyExec(endpoint, requestedPath, sub) {
-    if (! endpoint.exec) { return; }
+async function verifyExec(endpoint, requestedPath, method, sub) {
+    if (!endpoint.exec || endpoint.exec.methods && !endpoint.exec.methods.includes(method)) {
+        return;
+    }
 
     let keys = [ ]; 
     let rex = toRegex(endpoint.path, keys);
@@ -48,7 +51,7 @@ async function verifyPayload(payload, req) {
     // verify auth exists and http method
     if (endpoint && endpoint.methods.includes(req.method)) {
         // verify ownership
-        await verifyExec(endpoint, requestedPath, payload.sub);
+        await verifyExec(endpoint, requestedPath, req.method, payload.sub);
 
         let auth = {
             _user: null,
