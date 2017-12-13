@@ -16,18 +16,17 @@ const toRegex = require('path-to-regexp');
  * @return {Promise<void>} resolving undefined
  */
 async function verifyExec(endpoint, requestedPath, method, sub) {
-    if (!endpoint.exec || endpoint.exec.methods && !endpoint.exec.methods.includes(method)) {
-        return;
-    }
+    if (!endpoint.exec) { return; }
 
     let keys = [ ]; 
     let rex = toRegex(endpoint.path, keys);
     let result = rex.exec(requestedPath).slice(1);
 
-    let promises = endpoint.exec.map(async ({ key, model: modelName }) => {
+    let promises = endpoint.exec.map(async ({ key, model: modelName, methods }) => {
+        if (methods && !methods.includes(method)) { return; }
+
         let pk = +result[ keys.map((k) => k.name).indexOf(key) ];
         let service = serviceMap.get(modelName);
-
         if (!pk || !service) {
             // programming error
             throw new Error('Auth definition has errors.');
