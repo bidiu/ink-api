@@ -106,7 +106,12 @@ v1Router.get('/sections/:sectionId(\\d+)/notes', asyncHandler(noteController.ind
 
 v1Router.get('/notes/:noteId(\\d+)', asyncHandler(noteController.retrieve));
 
-v1Router.post('/sections/:sectionId(\\d+)/notes', asyncHandler(noteController.create));
+v1Router.post('/sections/:sectionId(\\d+)/notes', 
+    paramValidator({
+        'sectionId': [{ validator: 'ban' }]
+    }),
+    asyncHandler(noteController.create)
+);
 
 v1Router.patch('/notes/:noteId(\\d+)', asyncHandler(noteController.update));
 

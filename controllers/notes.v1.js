@@ -1,3 +1,4 @@
+const noteService = require('../services/notes.v1');
 const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
 
@@ -13,14 +14,24 @@ exports.index = async function(req, res, next) {
  * GET /notes/:noteId(\\d+)
  */
 exports.retrieve = async function(req, res, next) {
-    res.end('retrieve');
+    let noteId = +req.params.noteId;
+
+    let data = await noteService.retrieve(noteId);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
  * POST /sections/:sectionId(\\d+)/notes
  */
 exports.create = async function(req, res, next) {
-    res.end('create');
+    let params = req.body;
+    let sectionId = +req.params.sectionId;
+    let auth = req.auth;
+
+    let data = await noteService.create(params, sectionId, auth);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
