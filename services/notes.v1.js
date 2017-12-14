@@ -26,5 +26,18 @@ function create(params, sectionId, auth) {
             });
 }
 
+function update(noteId, params) {
+    let sanitized = Note.sanitizeOnUpdate(params);
+
+    return retrieve(noteId)
+            .then((retrieved) => {
+                return retrieved.update(sanitized);
+            })
+            .then(() => {
+                return retrieve(noteId);
+            });
+}
+
 exports.retrieve = retrieve;
 exports.create = create;
+exports.update = update;

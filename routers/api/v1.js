@@ -113,7 +113,15 @@ v1Router.post('/sections/:sectionId(\\d+)/notes',
     asyncHandler(noteController.create)
 );
 
-v1Router.patch('/notes/:noteId(\\d+)', asyncHandler(noteController.update));
+v1Router.patch('/notes/:noteId(\\d+)', 
+    paramValidator({
+        'sectionId': [
+            { validator: 'type', type: 'number', allowNull: false },
+            { validator: 'owner', model: 'sections' }
+        ]
+    }),
+    asyncHandler(noteController.update)
+);
 
 v1Router.delete('/notes/:noteId(\\d+)', asyncHandler(noteController.destroy));
 

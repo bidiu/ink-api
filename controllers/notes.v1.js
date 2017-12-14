@@ -38,7 +38,12 @@ exports.create = async function(req, res, next) {
  * PATCH /notes/:noteId(\\d+)
  */
 exports.update = async function(req, res, next) {
-    res.end('update');
+    let noteId = +req.params.noteId;
+    let params = req.body;
+
+    let data = await noteService.update(noteId, params);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
