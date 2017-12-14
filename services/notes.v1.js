@@ -38,6 +38,14 @@ function update(noteId, params) {
             });
 }
 
+function destroy(noteId) {
+    return retrieve(noteId)
+            .then((retrieved) => {
+                return retrieved.destroy();
+            });
+}
+
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;
+exports.destroy = destroy;
