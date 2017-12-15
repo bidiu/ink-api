@@ -102,8 +102,6 @@ v1Router.delete('/sections/:sectionId(\\d+)', asyncHandler(sectionController.des
 
 v1Router.get('/notes', asyncHandler(noteController.index));
 
-v1Router.get('/sections/:sectionId(\\d+)/notes', asyncHandler(noteController.index));
-
 v1Router.get('/notes/:noteId(\\d+)', asyncHandler(noteController.retrieve));
 
 v1Router.post('/sections/:sectionId(\\d+)/notes', 

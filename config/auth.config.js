@@ -124,7 +124,7 @@ function toApiV1Endpoints(user) {
         path: `${baseUrl}/notes`
     });
     endpoints.push({
-        methods: [ 'GET', 'POST' ],
+        methods: [ 'POST' ],
         path: `${baseUrl}/sections/:sectionId(\\d+)/notes`,
         exec: [{ key: 'sectionId', model: 'sections' }]
     });
