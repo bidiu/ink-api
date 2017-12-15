@@ -4,10 +4,14 @@ const processPayload = require('../middleware/payload/payload');
 
 /**
  * GET /notes
- * GET /sections/:sectionId(\\d+)/notes
  */
 exports.index = async function(req, res, next) {
-    res.end('index');
+    let auth = req.auth;
+    let params = req.query;
+
+    let data = await noteService.index(auth, { params });
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
