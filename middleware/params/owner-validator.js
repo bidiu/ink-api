@@ -14,6 +14,8 @@ const InkError = require('../../common/models/ink-errors');
  * @param {*} options 
  */
 async function validate(name, val, req, { model: modelName }) {
+    if (!val) { return; }
+
     try {
         let service = serviceMap.get(modelName);
         authUtils.verifyOwner(await service.retrieve(val), req.auth);
