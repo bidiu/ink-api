@@ -2,13 +2,17 @@ const User = require('./users');
 const Notebook = require('./notebooks');
 const Section = require('./sections');
 const Note = require('./notes');
+const Tag = require('./tags');
+const ItemTag = require('./items-tags');
 
 
 let modelMap = new Map([
     ['users', User],
     ['notebooks', Notebook],
     ['sections', Section],
-    ['notes', Note]
+    ['notes', Note],
+    ['tags', Tag],
+    ['items_tags', ItemTag]
 ]);
 
 
@@ -20,6 +24,24 @@ Section.belongsTo(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCA
 
 Section.hasMany(Note, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Note.belongsTo(Section, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+Note.belongsToMany(Tag, {
+    through: {
+        model: ItemTag,
+        unique: false,
+        scope: { itemType: 'note' }
+    },
+    foreignKey: 'itemId',
+    constraints: false
+});
+Tag.belongsToMany(Note, {
+    through: {
+        model: ItemTag,
+        unique: false
+    },
+    foreignKey: 'tagId',
+    constraints: false
+});
 
 
 const DEFAULT_USER_EXP = {
