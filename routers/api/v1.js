@@ -132,7 +132,12 @@ v1Router.put('/notes/:noteId(\\d+)/tags',
     asyncHandler(noteController.tagReplace)
 );
 
-v1Router.patch('/notes/:noteId(\\d+)/tags', asyncHandler(noteController.tagUpdate));
+v1Router.patch('/notes/:noteId(\\d+)/tags', 
+    paramValidator({
+        'names': [{ validator: 'array', required: true, elType: 'string' }]
+    }),
+    asyncHandler(noteController.tagUpdate)
+);
 
 v1Router.delete('/notes/:noteId(\\d+)/tags/:tag', asyncHandler(noteController.tagDestroy));
 

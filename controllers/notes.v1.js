@@ -88,7 +88,12 @@ exports.tagReplace = async function(req, res, next) {
  * PATCH /notes/:noteId(\\d+)/tags
  */
 exports.tagUpdate = async function(req, res, next) {
-    res.end(noteService.tagUpdate());
+    let noteId = +req.params.noteId;
+    let names = req.body.names;
+
+    await noteService.tagUpdate(noteId, names);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }
 
 /**

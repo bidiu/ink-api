@@ -112,8 +112,29 @@ function tagReplace(noteId, names) {
     });
 }
 
-function tagUpdate() {
-    return 'tagUpdate';
+/**
+ * will start a new transaction
+ * 
+ * @param {*} noteId 
+ * @param {*} names 
+ */
+function tagUpdate(noteId, names) {
+    return sequelize.transaction((transaction) => {
+        let note = null;
+
+        return retrieve(noteId)
+                .then((retrieved) => {
+                    note = retrieved;
+                })
+                .then(() => {
+                    return Promise.all(
+                        names.map((name) => tagService.retrieveOrCreate(name, { transaction }))
+                    );
+                })
+                .then((tags) => {
+                    return note.addTags(tags);
+                });
+    });
 }
 
 function tagDestroy() {
