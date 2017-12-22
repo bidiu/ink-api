@@ -1,4 +1,6 @@
+const sequelize = require('../db/db');
 const Note = require('../models/notes');
+const tagService = require('../services/tags.v1');
 const InkError = require('../common/models/ink-errors');
 const pagUtils = require('../utils/pagination');
 const { appendConditions } = require('../utils/sequel');
@@ -26,12 +28,13 @@ function index(auth, { params = {} } = {}) {
             });
 }
 
-function retrieve(noteId) {
+function retrieve(noteId, { transaction } = {}) {
     let where = { id: noteId };
 
     return Note.findOne({
                 attributes: { exclude: Note.excludeOnRetrieve },
-                where
+                where,
+                transaction
             })
             .then((retrieved) => {
                 if (!retrieved) { throw new InkError.NotFound(); }
@@ -73,8 +76,30 @@ function tagIndex() {
     return 'tagIndex';
 }
 
-function tagReplace() {
-    return 'tagReplace';
+/**
+ * will start a new transaction
+ * 
+ * @param {*} noteId
+ * @param {*} names tag names
+ */
+function tagReplace(noteId, names) {
+    return sequelize.transaction((transaction) => {
+        let note = null;
+
+        return retrieve(noteId, { transaction })
+                .then((retrieved) => {
+                    note = retrieved;
+                    note.setTags([], { transaction })
+                })
+                .then(() => {
+                    return Promise.all(
+                        names.map((name) => tagService.retrieveOrCreate(name, { transaction }))
+                    );
+                })
+                .then((tags) => {
+                    return note.setTags(tags, { transaction });
+                });
+    });
 }
 
 function tagUpdate() {

@@ -72,7 +72,12 @@ exports.tagIndex = async function(req, res, next) {
  * PUT /notes/:noteId(\\d+)/tags
  */
 exports.tagReplace = async function(req, res, next) {
-    res.end(noteService.tagReplace());
+    let noteId = +req.params.noteId;
+    let names = req.body.names;
+
+    await noteService.tagReplace(noteId, names);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
