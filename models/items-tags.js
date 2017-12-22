@@ -44,6 +44,8 @@ ItemTag.readonlyFields = [];
 // all fields (including foreign keys, except for readonly fields)
 ItemTag.fields = Object.keys(DEF).concat(ItemTag.hiddenFields, ItemTag.referenceFields);
 
+ItemTag.skipSharing = true;
+
 /**
  * Notes:
  *      1. If a field is present both in 'toExclude' and 'toInclude', 

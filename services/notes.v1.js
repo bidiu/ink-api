@@ -84,6 +84,9 @@ function tagIndex(noteId) {
                 .then((note) => {
                     return note.getTags();
                 })
+                .then((tags) => {
+                    return { _indexed: tags };
+                });
     });
 }
 

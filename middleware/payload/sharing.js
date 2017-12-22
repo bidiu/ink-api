@@ -86,7 +86,9 @@ async function processInstances(instances, auth) {
 async function processInstance(instance, auth) {
     let model = instance.__proto__.constructor;
 
-    if (model.sharable) {
+    if (model.skipSharing) {
+        return instance;
+    } else if (model.sharable) {
         instance = await processSharable(instance, model, auth);
     } else {
         instance = await processNonSharable(instance, model, auth);

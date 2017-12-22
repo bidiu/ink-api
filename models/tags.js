@@ -28,6 +28,12 @@ Tag.readonlyFields = [];
 Tag.fields = Object.keys(DEF).concat(Tag.hiddenFields, Tag.referenceFields);
 
 /**
+ * typically models which don't support verifying
+ * ownership will set `skipSharing` to `true`
+ */
+Tag.skipSharing = true;
+
+/**
  * Notes:
  *      1. If a field is present both in 'toExclude' and 'toInclude', 
  *         'toExclude' will take precedence.
