@@ -69,8 +69,28 @@ function destroy(noteId) {
             });
 }
 
+function tagIndex() {
+    return 'tagIndex';
+}
+
+function tagReplace() {
+    return 'tagReplace';
+}
+
+function tagUpdate() {
+    return 'tagUpdate';
+}
+
+function tagDestroy() {
+    return 'tagDestroy';
+}
+
 exports.index = index;
 exports.retrieve = retrieve;
 exports.create = create;
 exports.update = update;
 exports.destroy = destroy;
+exports.tagIndex = tagIndex;
+exports.tagReplace = tagReplace;
+exports.tagUpdate = tagUpdate;
+exports.tagDestroy = tagDestroy;

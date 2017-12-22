@@ -65,26 +65,26 @@ exports.destroy = async function(req, res, next) {
  * GET /notes/:noteId(\\d+)/tags
  */
 exports.tagIndex = async function(req, res, next) {
-    res.end('tagIndex');
+    res.end(noteService.tagIndex());
 }
 
 /**
  * PUT /notes/:noteId(\\d+)/tags
  */
 exports.tagReplace = async function(req, res, next) {
-    res.end('tagReplace');
+    res.end(noteService.tagReplace());
 }
 
 /**
  * PATCH /notes/:noteId(\\d+)/tags
  */
 exports.tagUpdate = async function(req, res, next) {
-    res.end('tagUpdate');
+    res.end(noteService.tagUpdate());
 }
 
 /**
  * DELETE /notes/:noteId(\\d+)/tags/:tag
  */
 exports.tagDestroy = async function(req, res, next) {
-    res.end('tagDestroy');
+    res.end(noteService.tagDestroy());
 }
