@@ -100,5 +100,10 @@ exports.tagUpdate = async function(req, res, next) {
  * DELETE /notes/:noteId(\\d+)/tags/:tag
  */
 exports.tagDestroy = async function(req, res, next) {
-    res.end(noteService.tagDestroy());
+    let noteId = +req.params.noteId;
+    let tag = req.params.tag;
+
+    await noteService.tagDestroy(noteId, tag);
+    let payload = await processPayload(new Res.Ok(), req);
+    res.status(payload.status).json(payload);
 }

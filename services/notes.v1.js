@@ -140,8 +140,20 @@ function tagUpdate(noteId, names) {
     });
 }
 
-function tagDestroy() {
-    return 'tagDestroy';
+/**
+ * will start a new transaction
+ * 
+ * @param {*} noteId 
+ * @param {*} name tag name
+ */
+function tagDestroy(noteId, name) {
+    return sequelize.transaction((transaction) => {
+
+        return retrieve(noteId)
+                .then((note) => {
+                    return note.removeTag(name);
+                });
+    });
 }
 
 exports.index = index;
