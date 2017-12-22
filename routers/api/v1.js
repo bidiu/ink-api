@@ -123,6 +123,14 @@ v1Router.patch('/notes/:noteId(\\d+)',
 
 v1Router.delete('/notes/:noteId(\\d+)', asyncHandler(noteController.destroy));
 
+v1Router.get('/notes/:noteId(\\d+)/tags', asyncHandler(noteController.tagIndex));
+
+v1Router.put('/notes/:noteId(\\d+)/tags', asyncHandler(noteController.tagReplace));
+
+v1Router.patch('/notes/:noteId(\\d+)/tags', asyncHandler(noteController.tagUpdate));
+
+v1Router.delete('/notes/:noteId(\\d+)/tags/:tag', asyncHandler(noteController.tagDestroy));
+
 /** --------------- note resources end --------------- */
 
 

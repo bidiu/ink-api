@@ -133,10 +133,19 @@ function toApiV1Endpoints(user) {
         path: `${baseUrl}/notes/:noteId(\\d+)`,
         exec: [{ key: 'noteId', model: 'notes', methods: ['PATCH', 'DELETE'] }]
     });
+    endpoints.push({
+        methods: [ 'GET', 'PUT', 'PATCH' ],
+        path: `${baseUrl}/notes/:noteId(\\d+)/tags`,
+        exec: [{ key: 'noteId', model: 'notes' }]
+    });
+    endpoints.push({
+        methods: [ 'DELETE' ],
+        path: `${baseUrl}/notes/:noteId(\\d+)/tags/:tag`,
+        exec: [{ key: 'noteId', model: 'notes' }]
+    });
 
     return endpoints;
 }
-
 
 module.exports = {
     issuer: "https://inkbook.io",

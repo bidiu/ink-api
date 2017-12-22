@@ -60,3 +60,31 @@ exports.destroy = async function(req, res, next) {
     let payload = await processPayload(new Res.Ok(), req);
     res.status(payload.status).json(payload);
 }
+
+/**
+ * GET /notes/:noteId(\\d+)/tags
+ */
+exports.tagIndex = async function(req, res, next) {
+    res.end('tagIndex');
+}
+
+/**
+ * PUT /notes/:noteId(\\d+)/tags
+ */
+exports.tagReplace = async function(req, res, next) {
+    res.end('tagReplace');
+}
+
+/**
+ * PATCH /notes/:noteId(\\d+)/tags
+ */
+exports.tagUpdate = async function(req, res, next) {
+    res.end('tagUpdate');
+}
+
+/**
+ * DELETE /notes/:noteId(\\d+)/tags/:tag
+ */
+exports.tagDestroy = async function(req, res, next) {
+    res.end('tagDestroy');
+}
