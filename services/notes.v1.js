@@ -72,8 +72,19 @@ function destroy(noteId) {
             });
 }
 
-function tagIndex() {
-    return 'tagIndex';
+/**
+ * will start a new transaction
+ * 
+ * @param {*} noteId 
+ */
+function tagIndex(noteId) {
+    return sequelize.transaction((transaction) => {
+
+        return retrieve(noteId)
+                .then((note) => {
+                    return note.getTags();
+                })
+    });
 }
 
 /**
@@ -86,10 +97,9 @@ function tagReplace(noteId, names) {
     return sequelize.transaction((transaction) => {
         let note = null;
 
-        return retrieve(noteId, { transaction })
+        return retrieve(noteId)
                 .then((retrieved) => {
                     note = retrieved;
-                    note.setTags([], { transaction })
                 })
                 .then(() => {
                     return Promise.all(
@@ -97,7 +107,7 @@ function tagReplace(noteId, names) {
                     );
                 })
                 .then((tags) => {
-                    return note.setTags(tags, { transaction });
+                    return note.setTags(tags);
                 });
     });
 }

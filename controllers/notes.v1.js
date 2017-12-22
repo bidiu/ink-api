@@ -65,7 +65,11 @@ exports.destroy = async function(req, res, next) {
  * GET /notes/:noteId(\\d+)/tags
  */
 exports.tagIndex = async function(req, res, next) {
-    res.end(noteService.tagIndex());
+    let noteId = +req.params.noteId;
+
+    let data = await noteService.tagIndex(noteId);
+    let payload = await processPayload(new Res.Ok({ data }), req);
+    res.status(payload.status).json(payload);
 }
 
 /**
