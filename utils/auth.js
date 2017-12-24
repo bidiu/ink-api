@@ -229,7 +229,7 @@ function toCookie(token, { authPath = '/auth' } = {}) {
 
 /**
  * @param {*} instance 
- *      model instance
+ *      model instance (could also be plain)
  * @param {*} sub 
  *      user id (the user who are requesting the resource server)
  * @return
