@@ -1,5 +1,6 @@
 const sequelize = require('../db/db');
 const Note = require('../models/notes');
+const Tag = require('../models/tags');
 const tagService = require('../services/tags.v1');
 const InkError = require('../common/models/ink-errors');
 const pagUtils = require('../utils/pagination');
@@ -19,6 +20,11 @@ function index(auth, { params = {} } = {}) {
     return Note.findAndCountAll({
                 attributes: { exclude: Note.excludeOnRetrieve },
                 where,
+                include: [{
+                    model: Tag, 
+                    attributes: ['name'], 
+                    through: { attributes: ['updatedAt'] }
+                }],
                 order: params._order,
                 limit: params._limit,
                 offset: params._limit * (params._pageNo - 1)
@@ -34,6 +40,11 @@ function retrieve(noteId, { transaction } = {}) {
     return Note.findOne({
                 attributes: { exclude: Note.excludeOnRetrieve },
                 where,
+                include: [{
+                    model: Tag, 
+                    attributes: ['name'], 
+                    through: { attributes: ['updatedAt'] }
+                }],
                 transaction
             })
             .then((retrieved) => {
