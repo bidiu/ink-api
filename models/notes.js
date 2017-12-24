@@ -74,8 +74,10 @@ Note.sharable = true;
  * These fields are always private to the owner.
  * `privateFields` is optional, typically defined
  * on a sharable resources.
+ * 
+ * This is like a last-resort feature (for safety)
  */
-Note.privateFields = ['tags']
+Note.privateFields = ['tags', 'sectionId']
 
 /**
  * Notes:
