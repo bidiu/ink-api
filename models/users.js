@@ -98,6 +98,9 @@ const DEF = {
 // sequlize will convert 'user' to 'users' table
 const User = sequelize.define(MODEL_NAME, DEF, {
     getterMethods: {
+        _model() {
+            return 'users';
+        },
         // readonly
         _endpoint() {
             return `/${TABLE_NAME}/${this.getDataValue('id')}`;

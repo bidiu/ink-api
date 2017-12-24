@@ -33,6 +33,9 @@ const MODEL_DEF = {
 
 const Section = sequelize.define(MODEL_NAME, MODEL_DEF, {
     getterMethods: {
+        _model() {
+            return 'sections';
+        },
         // readonly
         _endpoint() {
             return `/${TABLE_NAME}/${this.getDataValue('id')}`;

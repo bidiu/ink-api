@@ -8,8 +8,8 @@
  *    the passed-in payload.
  */
 const REGISTERED = [
-    require('./sharing'),
     require('./plain'),
+    require('./sharing'),
     require('./endpoints'),
 ];
 

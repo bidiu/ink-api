@@ -31,6 +31,9 @@ const DEF = {
 
 const Notebook = sequelize.define(MODEL_NAME, DEF, {
     getterMethods: {
+        _model() {
+            return 'notebooks';
+        },
         // readonly
         _endpoint() {
             return `/${TABLE_NAME}/${this.getDataValue('id')}`;

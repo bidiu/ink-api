@@ -15,6 +15,11 @@ const DEF = {
 };
 
 const Tag = sequelize.define(MODEL_NAME, DEF, {
+    getterMethods: {
+        _model() {
+            return 'tags';
+        }
+    },
     paranoid: true,
     tableName: TABLE_NAME
 });

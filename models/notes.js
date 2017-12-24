@@ -47,6 +47,9 @@ const MODEL_DEF = {
 
 const Note = sequelize.define(MODEL_NAME, MODEL_DEF, {
     getterMethods: {
+        _model() {
+            return 'notes';
+        },
         // readonly
         _endpoint() {
             return `/${TABLE_NAME}/${this.getDataValue('id')}`;
@@ -67,6 +70,12 @@ Note.fields = Object.keys(MODEL_DEF).concat(Note.hiddenFields, Note.referenceFie
 
 Note.sharingFields = [ ];
 Note.sharable = true;
+/**
+ * These fields are always private to the owner.
+ * `privateFields` is optional, typically defined
+ * on a sharable resources.
+ */
+Note.privateFields = ['tags']
 
 /**
  * Notes:

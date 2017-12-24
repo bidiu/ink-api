@@ -2,6 +2,7 @@ const Sequlize = require('sequelize');
 const User = require('../../models/users');
 const authUtils = require('../../utils/auth');
 const InkError = require('../../common/models/ink-errors');
+const modelMap = require('../../models/models');
 const SharingLevel = require('../../common/constants').SharingLevel;
 const GUEST_USERNAME = require('../../common/constants').GUEST_USERNAME;
 
@@ -26,6 +27,14 @@ async function toShare(sharingLevel, auth) {
     }
 }
 
+function shadowPrivateFields(instance, model) {
+    if (!(model.privateFields instanceof Array)) { return; }
+
+    for (let field of model.privateFields) {
+        instance[field] = undefined;
+    }
+}
+
 /**
  * process sharable resouces
  * 
@@ -42,13 +51,17 @@ async function processSharable(instance, model, auth) {
         return instance;
     } else if (instance.private) {
         return null;
-    } else if (await toShare(instance.sharing, auth)) {
-        return instance;
     } else {
-        for (let field of model.sharingFields) {
-            instance[field] = undefined;
+        shadowPrivateFields(instance, model);
+
+        if (await toShare(instance.sharing, auth)) {
+            return instance;
+        } else {
+            for (let field of model.sharingFields) {
+                instance[field] = undefined;
+            }
+            return instance;
         }
-        return instance;
     }
 }
 
@@ -84,7 +97,7 @@ async function processInstances(instances, auth) {
  *      return the instance itself (might processed)
  */
 async function processInstance(instance, auth) {
-    let model = instance.__proto__.constructor;
+    let model = modelMap.get(instance._model);;
 
     if (model.skipSharing) {
         return instance;
@@ -120,7 +133,7 @@ async function postProcess(payload, req) {
     let data = payload.data;
     let auth = req.auth;
 
-    if (data instanceof Sequlize.Model) {
+    if (data._model) {
         // retrieval-like action
         payload.data = await processInstance(data, auth);
     } else {

@@ -32,6 +32,11 @@ const DEF = {
 };
 
 const ItemTag = sequelize.define(MODEL_NAME, DEF, {
+    getterMethods: {
+        _model() {
+            return 'items_tags';
+        }
+    },
     paranoid: false,
     tableName: TABLE_NAME
 });
