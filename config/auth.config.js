@@ -154,7 +154,7 @@ module.exports = {
     hmacAlgo: 'sha512',
     jwtSignAlgo: 'RS512',
     refTokenExp: '90d',
-    accTokenExp: '1h',
+    accTokenExp: '24h',
     eagerLoading: true,
     verifyScope,
     scopeToEndpoints
