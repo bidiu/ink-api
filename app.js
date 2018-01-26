@@ -17,10 +17,17 @@ const appConfig = require('./config/app.config');
 
 const app = express();
 
+const corsOptions = {
+    origin: 'http://localhost:4200',
+    // some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200,
+    // passing cookies, auth headers
+    credentials: true
+}
 
 // load global middleware
 app.use(logger('dev'));
-if (appConfig.env === 'dev') { app.use(cors()); }
+if (appConfig.env === 'dev') { app.use(cors(corsOptions)); }
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
