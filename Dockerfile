@@ -23,12 +23,16 @@ RUN gem install sass
 # global npm packages
 RUN npm install -g nodemon
 RUN npm install -g --unsafe-perm @angular/cli
+RUN npm install -g serve
 
 # for dev (tagged with 'ink-api')
-CMD npm run debug
+CMD npm start
+
+# for release candidate (tagged with 'ink-api:rc')
+# CMD npm run start-rc
 
 # for production (tagged with 'ink-api:production')
-# CMD npm start
+# CMD npm run start-production
 
 # for production (deprecated)
 # CMD npm install && npm start
