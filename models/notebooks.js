@@ -23,6 +23,13 @@ const DEF = {
             // TODO
         }
     },
+    order: {
+        type: Sequalize.INTEGER, 
+        allowNull: false, 
+        validate: {
+            min: 1
+        }
+    },
     // following are optional
     icon: {
         type: Sequalize.STRING,
@@ -76,6 +83,12 @@ Notebook.sanitize = function(raw, { toExclude = [], toInclude = Notebook.fields 
     return sanitized;
 }
 
+/**
+ * Note that if a field is inside the `excludeOnCreate` array, it doesn't mean 
+ * the field cannot be specified when creating. It just mean end USER cannot
+ * specify it. But the server still could generate and specify the field after
+ * sanitizing. Same things happen to other santiizing field definitions.
+ */
 Notebook.excludeOnCreate = ['id', 'userId'].concat(Notebook.hiddenFields);
 Notebook.includeOnCreate = Notebook.fields.filter((field) => !Notebook.excludeOnCreate.includes(field));
 Notebook.sanitizeOnCreate = function(received) {
@@ -108,5 +121,34 @@ Notebook.sanitizeOnRetrieve = function(retrieved, toInclude) {
     });
 }
 
+/**
+ * Another model used for ordering notebooks.
+ * Note that this is not a relation model (count is not
+ * a model, but just a regular field).
+ */
+const NotebookCount = sequelize.define(
+    'notebookCount', {
+        id: {
+            type: Sequalize.INTEGER, 
+            primaryKey: true, 
+            autoIncrement: true,
+            validate: {
+                min: 1
+            }
+        },
+        count: {
+            type: Sequalize.INTEGER, 
+            allowNull: false,
+            validate: {
+                min: 0
+            }
+        }
+        // and userId, set in `models.js`
+    }, {
+        paranoid: true,
+        tableName: 'notebooks_counts'
+    }
+);
 
+Notebook.NotebookCount = NotebookCount;
 module.exports = Notebook;

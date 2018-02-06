@@ -5,6 +5,8 @@ const Note = require('./notes');
 const Tag = require('./tags');
 const ItemTag = require('./items-tags');
 
+// no need to be in model map
+const NotebookCount = Notebook.NotebookCount;
 
 let modelMap = new Map([
     ['users', User],
@@ -18,6 +20,8 @@ let modelMap = new Map([
 
 User.hasMany(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Notebook.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+NotebookCount.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
 Notebook.hasMany(Section, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Section.belongsTo(Notebook, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });

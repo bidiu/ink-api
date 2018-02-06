@@ -1,6 +1,9 @@
+const sequelize = require('../db/db');
 const Notebook = require('../models/notebooks');
 const InkError = require('../common/models/ink-errors');
 const pagUtils = require('../utils/pagination');
+
+const NotebookCount = Notebook.NotebookCount;
 
 // no need to take care '_expand' here
 const DEFAULT_INDEX_PARAMS = {
@@ -70,7 +73,7 @@ function retrieve(notebookId, { params = {} } = {}) {
 }
 
 /**
- * TODO should be in an transaction
+ * Will start a new transaction.
  * 
  * @param params 
  *      Data (field values) from which notebook will be created. This function won't
@@ -83,10 +86,22 @@ function create(params, auth) {
     let sanitized = Notebook.sanitizeOnCreate(params);
     sanitized.userId = auth.sub;
 
-    return Notebook.create(sanitized)
-            .then((created) => {
-                return retrieve(created.id);
-            });
+    return sequelize.transaction((transaction) => {
+
+        let id = null;
+        return retrieveCount(auth.sub, { findOptions: { lock: transaction.LOCK.UPDATE } })
+                .then((count) => {
+                    sanitized.order = count + 1;
+                    return Notebook.create(sanitized);
+                })
+                .then((created) => {
+                    id = created.id;
+                    return increaseCount(auth.sub);
+                })
+                .then(() => {
+                    return retrieve(id);
+                });
+    });
 }
 
 /**
@@ -123,6 +138,56 @@ function destroy(notebookId) {
     return retrieve(notebookId)
             .then((retrieved) => {
                 return retrieved.destroy();
+            });
+}
+
+/**
+ * Retrieve how many notebooks the user currently have.
+ * Note that usually you MUST wrap this with a transaction, and 
+ * provide the UPDATE lock as an option (using the optional param
+ * `findOptions`).
+ * 
+ * This a function private to this module.
+ * 
+ * @param {*} userId 
+ * @param {*} options
+ *      - findOptions
+ *          the options given to sequelize `find` function. If 
+ *          you provide dupulcate (to other params if this function)
+ *          inside the findOptions, the ones in `findOptions` will
+ *          be overwritten.
+ */
+function retrieveCount(userId, { findOptions } = {}) {
+    return NotebookCount.findOne({
+                ...findOptions,
+                where: { userId }
+            })
+            .then((retrieved) => {
+                if (retrieved) {
+                    return retrieved.count;
+                }
+                return NotebookCount.create({ count: 0, userId })
+                        .then((created) => {
+                            return created.count;
+                        });
+            });
+}
+
+/**
+ * See function `retrieveCount` above. This function assumes that
+ * the row related to the given `userId` already existed.
+ * 
+ * This a function private to this module.
+ * 
+ * @param {*} userId
+ * @return a promise resolving nothing
+ */
+function increaseCount(userId) {
+    return NotebookCount.findOne({
+                where: { userId }
+            })
+            .then((retrieved) => {
+                return retrieved.update({ count: retrieved.count + 1 });
             });
 }
 
