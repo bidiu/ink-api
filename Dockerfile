@@ -5,7 +5,7 @@ FROM node:8.9.1
 WORKDIR /usr/src/app
 
 # replace this with your application's default port
-EXPOSE 3000
+EXPOSE 3000 9229
 
 # From docker offical docs
 # (https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/):
