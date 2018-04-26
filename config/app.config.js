@@ -5,8 +5,8 @@ const readSecret = require('../utils/secrets').readSecret;
 
 const SECRET_BASE_DIR = require('../utils/secrets').secretBaseDir;
 
-if (process.env.INK_ENV) {
-    appConfig.env = process.env.INK_ENV;
+if (process.env.INK_API_ENV) {
+    appConfig.env = process.env.INK_API_ENV;
 }
 
 // load auth config

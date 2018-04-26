@@ -10,5 +10,7 @@ EXPOSE 3000 9229
 # install global npm packages
 RUN npm install -g nodemon
 
+ENV INK_API_ENV=dev
+
 # for dev (tagged with 'ink-api')
 CMD npm install && ./scripts/wait-for-it.sh ink_database_dev:3306 -- node scripts/db-sync.js syncAll && npm start
