@@ -34,7 +34,7 @@ function copyParams(params, over = {}) {
 }
 
 /**
- * Only support JavaScript, put the script in `script` directory,
+ * Only support JavaScript, put the script in `scripts` directory,
  * 
  * Note that the script will run in a separate node process, so 
  * calling this function will bring somewhat performance overhead.
