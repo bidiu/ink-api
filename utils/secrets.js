@@ -17,4 +17,5 @@ const readSecret = (name) => {
   return fs.readFileSync(path.join(SECRET_BASE_DIR, name), { encoding: 'utf8' });
 };
 
+exports.secretBaseDir = SECRET_BASE_DIR;
 exports.readSecret = readSecret;

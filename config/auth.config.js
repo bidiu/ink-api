@@ -149,8 +149,8 @@ function toApiV1Endpoints(user) {
 
 module.exports = {
     issuer: "https://inkbook.io",
-    pubKeyFile: "ink_api_public.pem",
-    privKeyFile: "ink_api_private.pem",
+    pubKeyFile: "ink_api_pub_key",
+    privKeyFile: "ink_api_pri_key",
     hmacAlgo: 'sha512',
     jwtSignAlgo: 'RS512',
     refTokenExp: '90d',

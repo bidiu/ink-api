@@ -3,6 +3,8 @@ const pemUtils = require('../utils/pem');
 const appConfig = require('./app.json');
 const readSecret = require('../utils/secrets').readSecret;
 
+const SECRET_BASE_DIR = require('../utils/secrets').secretBaseDir;
+
 if (process.env.INK_ENV) {
     appConfig.env = process.env.INK_ENV;
 }
@@ -12,8 +14,8 @@ let authConfig = require('./auth.config');
 appConfig.authConfig = authConfig;
 
 // prepare public/private keys
-appConfig.publicKey = pemUtils.readPublicKey(path.join(__dirname, 'keys', authConfig.pubKeyFile));
-appConfig.privateKey = pemUtils.readPrivateKey(path.join(__dirname, 'keys', authConfig.privKeyFile));
+appConfig.publicKey = pemUtils.readPublicKey(path.join(SECRET_BASE_DIR, authConfig.pubKeyFile));
+appConfig.privateKey = pemUtils.readPrivateKey(path.join(SECRET_BASE_DIR, authConfig.privKeyFile));
 authConfig.publicKey = appConfig.publicKey;
 authConfig.privateKey = appConfig.privateKey;
 
