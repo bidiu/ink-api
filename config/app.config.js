@@ -1,7 +1,7 @@
 const path = require('path');
 const pemUtils = require('../utils/pem');
 const appConfig = require('./app.json');
-
+const readSecret = require('../utils/secrets').readSecret;
 
 if (process.env.INK_ENV) {
     appConfig.env = process.env.INK_ENV;
@@ -19,6 +19,8 @@ authConfig.privateKey = appConfig.privateKey;
 
 // load db config
 appConfig.dbConfig = require('./db.json')[appConfig.env];
-
+// TODO generalize this part when I have time
+// load db passwd from docker secret
+appConfig.dbConfig.password = readSecret('ink_db_passwd');
 
 module.exports = appConfig;
