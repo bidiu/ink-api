@@ -13,8 +13,10 @@ const SECRET_BASE_DIR = '/run/secrets';
  * 
  * @param {string} name secret's name
  */
-const readSecret = (name) => {
-  return fs.readFileSync(path.join(SECRET_BASE_DIR, name), { encoding: 'utf8' });
+const readSecret = (name, { trim = true } = {}) => {
+  let secret = fs.readFileSync(path.join(SECRET_BASE_DIR, name), { encoding: 'utf8' });
+  if (trim) { secret.trim(); }
+  return secret;
 };
 
 exports.secretBaseDir = SECRET_BASE_DIR;
