@@ -1,29 +1,29 @@
 {
-  "dev": {
-    "host": "ink_database_dev",
-    "port": 3306,
-    "database": "ink_dev",
-    "username": "root",
-    "dialect": "mysql",
-    "pool": {
-      "max": 5,
-      "min": 0,
-      "idle": 10000,
-      "evict": 10000
+    "dev": {
+        "host": "ink_database_dev",
+        "port": 3306,
+        "database": "ink_dev",
+        "username": "root",
+        "dialect": "mysql",
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "idle": 10000,
+            "evict": 10000
+        }
+    },
+    "production": {},
+    "mac": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "database": "ink_dev",
+        "username": "root",
+        "dialect": "mysql",
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "idle": 10000,
+            "evict": 10000
+        }
     }
-  },
-  "production": {},
-  "mac": {
-    "host": "127.0.0.1",
-    "port": 3306,
-    "database": "ink_dev",
-    "username": "root",
-    "dialect": "mysql",
-    "pool": {
-      "max": 5,
-      "min": 0,
-      "idle": 10000,
-      "evict": 10000
-    }
-  }
 }
