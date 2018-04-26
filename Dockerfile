@@ -11,4 +11,4 @@ EXPOSE 3000 9229
 RUN npm install -g nodemon
 
 # for dev (tagged with 'ink-api')
-CMD ./scripts/wait-for-it.sh ink_database_dev:3306 -- node scripts/db-sync.js syncAll && npm start
+CMD npm install && ./scripts/wait-for-it.sh ink_database_dev:3306 -- node scripts/db-sync.js syncAll && npm start
