@@ -77,18 +77,25 @@ User.getExpandDef = function({ _expand: expand = {} } = {}) {
 
 
 const DEFAULT_NOTEBOOK_EXP = {
-    users: { _limit: 1, _strip: false }
+    users: { _limit: 1, _strip: false }, // `_limit` will not be used
+    sections: { _strip: false }
 };
 
 /**
  * Get the 'include' object for the option parameter of 'findAll'.
- * TODO count, next page url, order
+ * 
+ * Right now expand feature is not fully supported; it will be implemented
+ * one by one for each model when needed.
+ * 
+ * Won't implement limit/count.
+ * 
+ * TODO handle removed sections
  * 
  * @param options
- *      expand        true means to expand
+ *      expand        true means to expand (or a expand option object)
  *      expandLimit   number limit of expanded association models, some
  *                    particular expand type will ignore this (for example, 
- *                    tags of a note).
+ *                    tags of a note). (deprecated!)
  */
 Notebook.getExpandDef = function({ _expand: expand = {} } = {}) {
     let def = [];
@@ -101,6 +108,16 @@ Notebook.getExpandDef = function({ _expand: expand = {} } = {}) {
             attributes: exp._strip ? ['id'] : User.includeOnRetrieve,
             // no need for limit and order
             separate: false
+        });
+    }
+
+    // sections
+    if (expand.sections) {
+        let exp = Object.assign({}, DEFAULT_NOTEBOOK_EXP.sections, expand.sections);
+        def.push({
+            model: Section,
+            attributes: exp._strip ? ['id', 'notebookId'] : Section.includeOnRetrieve,
+            separate: true
         });
     }
 
