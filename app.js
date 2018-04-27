@@ -14,7 +14,6 @@ const sequelizeErrorHandler = require('./middleware/errors/sequelize-errors');
 const errorHandler = require('./middleware/errors/errors');
 const appConfig = require('./config/app.config');
 
-
 const app = express();
 
 const corsOptions = {
@@ -45,6 +44,8 @@ app.use(inkErrorHandler);
 app.use(sequelizeErrorHandler);
 app.use(errorHandler);
 
+// execute some bootstrap logic
+require('./scripts/boot');
 
 // create the api server itself and listen
 http.createServer(app).listen(3000);
