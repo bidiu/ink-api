@@ -9,7 +9,7 @@ const NotebookCount = Notebook.NotebookCount;
 const DEFAULT_INDEX_PARAMS = {
     _where: {},
     _order: [ ['createdAt', 'DESC'] ],
-    _limit: 12,
+    _limit: 100,
     _pageNo: 1
 };
 
