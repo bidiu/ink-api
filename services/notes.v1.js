@@ -7,18 +7,25 @@ const pagUtils = require('../utils/pagination');
 const { appendConditions } = require('../utils/sequel');
 
 const DEFAULT_INDEX_PARAMS = {
+    _summary: false,
     _where: {},
     _order: [ ['createdAt', 'DESC'] ],
     _limit: 12,
     _pageNo: 1
 };
 
+const EXCLUDE_FOR_SUMMARY = [
+    ...Note.excludeOnRetrieve,
+    ...['content']
+];
+
 function index(auth, { params = {} } = {}) {
     params = Object.assign({}, DEFAULT_INDEX_PARAMS, params);
+    let exclude = params._summary ? EXCLUDE_FOR_SUMMARY : Note.excludeOnRetrieve;
     let where = appendConditions(params._where, { $or: [{ private: false }, { owner: auth.sub }] });
 
     return Note.findAndCountAll({
-                attributes: { exclude: Note.excludeOnRetrieve },
+                attributes: { exclude },
                 where,
                 include: [{
                     model: Tag, 
