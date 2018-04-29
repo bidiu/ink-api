@@ -4,6 +4,14 @@ const authConfig = require('../config/app.config').authConfig;
 const Res = require('../common/models/responses');
 const processPayload = require('../middleware/payload/payload');
 const toCookie = require('../utils/auth').toCookie;
+const maskCookie = require('../utils/auth').maskCookie;
+
+const mapTokensToCookies = (tokens) => {
+    let cookies = tokens.map(toCookie);
+    let maskedCookies = cookies.map(cookie => 
+        maskCookie(cookie, '_mask', { httpOnly: false }));
+    return [...cookies, ...maskedCookies];
+};
 
 /**
  * POST /auth/tokens (non-idempotent, but safe call as many time as the client want)
@@ -25,7 +33,7 @@ exports.create = async function(req, res, next) {
     let { tokens, sub } = await authService.create(scopes, { username, password, asGuest, refToken });
     let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
     
-    tokens.map(toCookie).forEach((cookie) => {
+    mapTokensToCookies(tokens).forEach((cookie) => {
         res.cookie(...cookie);
     });
     res.status(payload.status).json(payload);
@@ -46,7 +54,7 @@ exports.update = async function(req, res, next) {
     let { tokens, sub } = await authService.update(refToken);
     let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
     
-    tokens.map(toCookie).forEach((cookie) => {
+    mapTokensToCookies(tokens).forEach((cookie) => {
         res.cookie(...cookie);
     });
     res.status(payload.status).json(payload);
@@ -63,7 +71,7 @@ exports.destroy = async function(req, res, next) {
     let tokens = await authService.destroy(refToken);
     let payload = await processPayload(new Res.Ok(), req);
 
-    tokens.map(toCookie).forEach((cookie) => {
+    mapTokensToCookies(tokens).forEach((cookie) => {
         res.cookie(...cookie);
     });
     res.status(payload.status).json(payload);
