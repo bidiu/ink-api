@@ -237,13 +237,15 @@ function toCookie(token, { authPath = '/auth' } = {}) {
  * 
  * @param {Array} cookie 
  *          [name, value, { options }]
+ * @param {string} suffix
+ *          suffix of cookie name, such as `_copy`
  * @param {*} options
  *          optional options that take precedence
  * @return
  *          a copy of the given cookie with value masked 
  */
-function maskCookie(cookie, options = {}) {
-    return [cookie[0], '', { ...cookie[2], ...options }];
+function maskCookie(cookie, suffix, options = {}) {
+    return [cookie[0] + suffix, '', { ...cookie[2], ...options }];
 }
 
 /**
