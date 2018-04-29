@@ -228,6 +228,25 @@ function toCookie(token, { authPath = '/auth' } = {}) {
 }
 
 /**
+ * Mask cookie's value. Name and all options will be preserved.
+ * Note that it will return a new copy (won't change the given
+ * cookie).
+ * 
+ * You can also provide a optional option object. Options within
+ * this object will override options in the given cookie.
+ * 
+ * @param {Array} cookie 
+ *          [name, value, { options }]
+ * @param {*} options
+ *          optional options that take precedence
+ * @return
+ *          a copy of the given cookie with value masked 
+ */
+function maskCookie(cookie, options = {}) {
+    return [cookie[0], '', { ...cookie[2], ...options }];
+}
+
+/**
  * @param {*} instance 
  *      model instance (could also be plain)
  * @param {*} sub 
@@ -270,5 +289,6 @@ exports.signAccToken = signAccToken;
 exports.signRefToken = signRefToken;
 exports.verifyToken = verifyToken;
 exports.toCookie = toCookie;
+exports.maskCookie = maskCookie;
 exports.verifyOwner = verifyOwner;
 exports.compareOwner = compareOwner;
