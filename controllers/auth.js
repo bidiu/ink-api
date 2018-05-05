@@ -30,8 +30,8 @@ exports.create = async function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
 
-    let { tokens, sub } = await authService.create(scopes, { username, password, asGuest, refToken });
-    let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
+    let { tokens, ...data } = await authService.create(scopes, { username, password, asGuest, refToken });
+    let payload = await processPayload(new Res.Ok({ data }), req);
     
     mapTokensToCookies(tokens).forEach((cookie) => {
         res.cookie(...cookie);
@@ -51,8 +51,8 @@ exports.update = async function(req, res, next) {
     let refToken = req.cookies['refresh_token'];
 
 
-    let { tokens, sub } = await authService.update(refToken);
-    let payload = await processPayload(new Res.Ok({ data: { sub } }), req);
+    let { tokens, ...data } = await authService.update(refToken);
+    let payload = await processPayload(new Res.Ok({ data }), req);
     
     mapTokensToCookies(tokens).forEach((cookie) => {
         res.cookie(...cookie);

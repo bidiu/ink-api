@@ -197,7 +197,7 @@ function _relogin(scopes, payload, { username, password, asGuest = false } = {})
                     return Promise.all(
                         [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
                     ).then((tokens) => {
-                        return { tokens, sub: user.id };
+                        return { tokens, sub: user.id, username: user.username };
                     });
                 });
     } else {
@@ -207,7 +207,7 @@ function _relogin(scopes, payload, { username, password, asGuest = false } = {})
                     return Promise.all(
                         [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
                     ).then((tokens) => {
-                        return { tokens, sub: user.id };
+                        return { tokens, sub: user.id, username: user.username };
                     });
                 });
     }
@@ -231,7 +231,7 @@ function _login(scopes, username, password, asGuest = false) {
                 return Promise.all(
                     [ _genRefToken(scopes, user) ].concat(scopes.map((s) => _genAccToken(s, user)))
                 ).then((tokens) => {
-                    return { tokens, sub: user.id };
+                    return { tokens, sub: user.id, username: user.username };
                 });
             });
 }
@@ -253,7 +253,7 @@ async function update(refToken) {
     
     return Promise.all( payload.scopes.map((s) => _genAccToken(s, user)) )
             .then((tokens) => {
-                return { tokens, sub: user.id };
+                return { tokens, sub: user.id, username: user.username };
             });
 }
 
