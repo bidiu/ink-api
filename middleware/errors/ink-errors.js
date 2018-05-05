@@ -2,7 +2,6 @@ const appConfig = require('../../config/app.config');
 const InkError = require('../../common/models/ink-errors');
 const Res = require('../../common/models/responses');
 
-
 const ERROR_MAP = new Map([
     [InkError.BadReq, Res.BadReq],
     [InkError.BadAuthentication, Res.UnAuth],
@@ -10,7 +9,6 @@ const ERROR_MAP = new Map([
     [InkError.InternalErr, Res.ServerErr],
     [InkError.NoAuthorization, Res.Forbidden]
 ]);
-
 
 module.exports = function(err, req, res, next) {
     if (!(err instanceof InkError)) {
@@ -30,7 +28,8 @@ module.exports = function(err, req, res, next) {
         payload = new resType({ 
             message: err.message, 
             details: err.details,
-            data: err.data
+            data: err.data,
+            customCode: err.customCode
         });
     }
 

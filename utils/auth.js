@@ -4,6 +4,7 @@ const ms = require('ms');
 const appConfig = require('../config/app.config');
 const authConfig = appConfig.authConfig;
 const InkError = require('../common/models/ink-errors');
+const codeDef = require('../common/custom-code');
 
 // TODO move to config/auth
 const HMAC_ALGO = authConfig.hmacAlgo || 'sha512';
@@ -62,7 +63,7 @@ function deriveKey(password, salt, { iterations = 100000, keylen = 64, digest = 
 function verifyPasswd(password, salt, key, { iterations = 100000, keylen = 64, digest = HMAC_ALGO, toResolve } = {}) {
     return new Promise((resolve, reject) => {
         if (!password) {
-            reject(new InkError.BadAuthentication({ details: 'You gave an incorrect password.' }));
+            reject(new InkError.BadAuthentication({ details: 'You gave an incorrect password.', customCode: codeDef['WRONG_PASSWD'] }));
             return;
         }
 
@@ -76,7 +77,7 @@ function verifyPasswd(password, salt, key, { iterations = 100000, keylen = 64, d
             if (derivedKey.toString('hex') === key) {
                 resolve(toResolve);
             } else {
-                reject(new InkError.BadAuthentication({ details: 'You gave an incorrect password.' }));
+                reject(new InkError.BadAuthentication({ details: 'You gave an incorrect password.', customCode: codeDef['WRONG_PASSWD'] }));
             }
         });
     });

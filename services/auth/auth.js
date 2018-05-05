@@ -5,6 +5,7 @@ const authConfig = appConfig.authConfig;
 const RefreshToken = require('../../common/models/ref-tokens');
 const AccessToken = require('../../common/models/acc-tokens');
 const InkError = require('../../common/models/ink-errors');
+const codeDef = require('../../common/custom-code');
 
 const NONEXIST_CREDENTIAL_DETAILS = 'The login credential (username/email) you are using doesn\'t exist.';
 
@@ -24,27 +25,27 @@ const NONEXIST_CREDENTIAL_DETAILS = 'The login credential (username/email) you a
  */
 function _verifyCredential(username, password, userId) {
     return userService.retrieveV2({ username, sanitize: false })
-            .then((retrieved) => {
-                if (userId && retrieved.id !== userId) {
-                    // crendetial given doesn't match the user id
-                    throw new InkError.BadAuthentication({ details: 'You gave a wrong login crendential.' });
-                }
+        .then((retrieved) => {
+            if (userId && retrieved.id !== userId) {
+                // crendetial given doesn't match the user id
+                throw new InkError.BadAuthentication({ details: 'You gave a wrong login crendential.', customCode: codeDef['WRONG_CREDENTIAL'] });
+            }
 
-                return authUtils.verifyPasswd(password, retrieved.salt, retrieved.password, {
-                    toResolve: retrieved
-                });
-            }, (err) => {
-                if (err instanceof InkError.NotFound) {
-                    // credential provided by user doesn't exist
-                    throw new InkError.BadAuthentication({ details: NONEXIST_CREDENTIAL_DETAILS });
-                }
-                // programming error
-                throw err;
-            })
-            .then((verified) => {
-                // sanitize fields, like 'password' and 'salt'
-                return userService.retrieve(verified.id);
+            return authUtils.verifyPasswd(password, retrieved.salt, retrieved.password, {
+                toResolve: retrieved
             });
+        }, (err) => {
+            if (err instanceof InkError.NotFound) {
+                // credential provided by user doesn't exist
+                throw new InkError.BadAuthentication({ details: NONEXIST_CREDENTIAL_DETAILS, customCode: codeDef['NONEXIST_ACCOUNT'] });
+            }
+            // programming error
+            throw err;
+        })
+        .then((verified) => {
+            // sanitize fields, like 'password' and 'salt'
+            return userService.retrieve(verified.id);
+        });
 }
 
 const REF_VERI_OPTIONS = {
@@ -189,7 +190,7 @@ function _relogin(scopes, payload, { username, password, asGuest = false } = {})
     if (asGuest) {
         if (!payload.asGuest) {
             // not allow logging into guest without logging out from regular account
-            throw new InkError.BadReq({ details: 'To proceed, you must log out from current account first.' });
+            throw new InkError.BadReq({ details: 'To proceed, you must log out from current account first.', customCode: codeDef['USER_TO_GUEST'] });
         }
 
         return userService.retrieveGuest()
