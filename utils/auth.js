@@ -203,6 +203,20 @@ function verifyToken(token, type, publicKey, options) {
 }
 
 /**
+ * Decode the JWT token without verifying it. This is a thin
+ * wrapper around the `jwt.decode` function.
+ * 
+ * Note that this is a synchronous operation.
+ * 
+ * @param {string} token    the JsonWebToken string
+ * @return
+ *      the decoded web token, or null if given token is malformed
+ */
+function decodeToken(token) {
+    return jwt.decode(token);
+}
+
+/**
  * convert a refresh or access token to a cookie, if
  * `token.value` is `null/undefined`, then this utility
  * function will try to delete the cookie of it by
