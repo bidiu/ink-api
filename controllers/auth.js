@@ -9,7 +9,7 @@ const maskCookie = require('../utils/auth').maskCookie;
 const mapTokensToCookies = (tokens) => {
     let cookies = tokens.map(toCookie);
     let maskedCookies = cookies.map(cookie => 
-        maskCookie(cookie, '_mask', { httpOnly: false }));
+        maskCookie(cookie, '_mask', { httpOnly: false, path: '/' }));
     return [...cookies, ...maskedCookies];
 };
 
