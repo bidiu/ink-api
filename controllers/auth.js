@@ -1,4 +1,3 @@
-const ms = require('ms');
 const authService = require('../services/auth/auth');
 const authConfig = require('../config/app.config').authConfig;
 const Res = require('../common/models/responses');
