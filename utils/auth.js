@@ -210,7 +210,8 @@ function verifyToken(token, type, publicKey, options) {
  * 
  * @param {string} token    the JsonWebToken string
  * @return
- *      the decoded web token, or null if given token is malformed
+ *      the decoded web token (only the payload part), or null if given
+ *      token is malformed
  */
 function decodeToken(token) {
     return jwt.decode(token);
@@ -305,6 +306,7 @@ exports.comparePasswd = comparePasswd;
 exports.signAccToken = signAccToken;
 exports.signRefToken = signRefToken;
 exports.verifyToken = verifyToken;
+exports.decodeToken = decodeToken;
 exports.toCookie = toCookie;
 exports.maskCookie = maskCookie;
 exports.verifyOwner = verifyOwner;
